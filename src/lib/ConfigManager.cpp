@@ -58,7 +58,7 @@ int ConfigManager::parseArgs(int argc, char *argv[])
     }
 
     if (pos.size() < 2) {
-        std::cout << "Usage: [-h] [-m] [-o] [-s] [-f FORMAT] SOURCE DESTINATION" << std::endl;
+        std::cout << "Usage: [-h] [-o] [-s] [-f FORMAT] SOURCE DESTINATION" << std::endl;
         return 1;
     }
 
