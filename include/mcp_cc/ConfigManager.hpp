@@ -17,6 +17,7 @@ class ConfigManager
 
 public:
     std::string format = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_%f";
+    std::string logfile = "log.txt";
     bool flagOverride = false;
     bool flagSimulate = false;
     boost::filesystem::path dirInput;

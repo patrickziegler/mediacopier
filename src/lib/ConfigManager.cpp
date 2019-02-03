@@ -52,13 +52,23 @@ int ConfigManager::parseArgs(int argc, char *argv[])
                 }
             }
 
+            if (arg.find("l") < arg.npos) {
+
+                if (i + 1 < argc) {
+                    logfile = std::string(argv[++i]);
+                } else {
+                    std::cerr << "Option '-l' requires an argument" << std::endl;
+                    return 1;
+                }
+            }
+
         } else {
             pos.push_back(arg);
         }
     }
 
     if (pos.size() < 2) {
-        std::cout << "Usage: [-h] [-o] [-s] [-f FORMAT] SOURCE DESTINATION" << std::endl;
+        std::cout << "Usage: [-h] [-o] [-s] [-f FORMAT] [-l LOGFILE] SOURCE DESTINATION" << std::endl;
         return 1;
     }
 

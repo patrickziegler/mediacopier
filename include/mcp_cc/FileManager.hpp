@@ -31,7 +31,8 @@ public:
 
     template<opType op>
     int operation() {
-        switch (op) {
+        switch (op)
+        {
         case Copy:
             return copy();
         case Move:

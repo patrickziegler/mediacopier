@@ -7,6 +7,7 @@
 * support for **copying** and **moving** files
 * support for **simulation mode** to test operation before execution
 * provide **override flag** to force copying / moving of already existing files
+* ~~provide **skip log flag**~~ to skip writing log files **(WIP)**
 
 ## Getting Started
 
@@ -18,14 +19,15 @@ This software depends on the following librarys:
 * [ffmpeg](https://ffmpeg.org/) (`libavformat`, `libavutil`) [[LGPL](https://ffmpeg.org/legal.html)]
 * [Exiv2](http://exiv2.org/) [[GPL](https://github.com/Exiv2/exiv2/blob/master/license.txt)]
 
-For building the software, you will need:
+Additionally, you will need:
 
 * [OpenMP](https://www.openmp.org/)
 * [CMake](https://cmake.org/) >= 3.9
+* A recent C++ compiler, such as [Clan](https://clang.llvm.org/) or [GCC](https://gcc.gnu.org/)
 
 ### :hammer: Build and Install
 
-The build process consists of three simple steps:
+The build process consists of four simple steps:
 
 1. Define your preferred install location
 ```bash
@@ -49,7 +51,7 @@ make package
 
 ### Generated Files
 
-After the installation process is finished, you should find the file structure seen below:
+After the installation is finished, you should find a file structure as seen below:
 
 ```
 ├── bin
@@ -62,30 +64,31 @@ After the installation process is finished, you should find the file structure s
 │   └── libmcp_cc.so
 ```
 
-The binarys `mcp` and `mmv` provide the tools to copy or move your files. They share some code in `libmcp_cc.so`.
+The binarys `mcp` and `mmv` provide the tools for copying or moving your files. They share some code in `libmcp_cc.so`.
 
-The header files in `include/mcp_cc` are only needed for developing your own software using the code provided in `libmcp_cc.so`. So you probably won't need them.
+The header files in `include/mcp_cc` are only needed for linking your own software to the code provided in `libmcp_cc.so`. So you probably won't need them.
 
 ###  :rocket: Usage
 
 The executables `mcp` and `mmv` are both implementing the following signature:
 
 ```
-Usage: [-h] [-o] [-s] [-f FORMAT] SOURCE DESTINATION
+Usage: [-h] [-o] [-s] [-f FORMAT] [-l LOGFILE] SOURCE DESTINATION
 ```
 
-Where `SOURCE` and `DESTINATION` are mandatory parameters specifying the source and destination folder for copying / moving the files. Relative paths are allowed and `~` will be replaced with the users home directory. The folder `SOURCE` will be searched recursively. Files that are neither image nor video files are ignored. The output folder will be created if necessary.
+Where `SOURCE` and `DESTINATION` are mandatory parameters specifying the source and destination folder for copying or moving the files. Relative paths are allowed. The character `~` will be replaced with the users home directory. The folder `SOURCE` will be searched recursively. Files that are neither image nor video files are ignored. The output folder will be created if necessary.
 
 Flag | Description
 ------------ | -------------
 `-h` | print help text
 `-o` | override existing files
 `-s` | simulate the operation
-`-f FORMAT` | set renaming scheme
+`-f FORMAT` | renaming scheme
+`-l LOGFILE` | name of log file
 
-The parameter `-f FORMAT` specifies, how the destination folder structure and filenames are derived from the information found in the input files. This could be something like `-f "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_%f"`. The replacement characters to be used for this are described in the boost [documentation](https://www.boost.org/doc/libs/1_69_0/doc/html/date_time/date_time_io.html).
+The parameter `-f FORMAT` specifies, how the filenames are derived from the information found in the input files. It could be something like `-f "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_%f"`. You can see that this parameter also allows us to  specify the folder structure in the destination directory. The replacement characters to be used for this are described in the boost [documentation](https://www.boost.org/doc/libs/1_69_0/doc/html/date_time/date_time_io.html).
 
-Calling `mcp ~/in ~/out` should therefore result in the following output:
+After all, calling `mcp ~/in ~/out` should result in some output similar to the following:
 
 ```
 Input dir:      /home/user/in

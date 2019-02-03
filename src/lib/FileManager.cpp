@@ -188,7 +188,7 @@ int FileManager::move()
 int FileManager::simulate()
 {
     try {
-        if (!ConfigManager::instance().flagOverride && exists(pathNew)) {
+        if (!ConfigManager::instance().flagOverride && bf::exists(pathNew)) {
             return 2;
         }
     } catch (const bf::filesystem_error&) {
