@@ -23,7 +23,7 @@ Additionally, you will need:
 
 * [OpenMP](https://www.openmp.org/)
 * [CMake](https://cmake.org/) >= 3.9
-* A recent C++ compiler, such as [Clan](https://clang.llvm.org/) or [GCC](https://gcc.gnu.org/)
+* A recent C++ compiler, such as [Clang](https://clang.llvm.org/) or [GCC](https://gcc.gnu.org/)
 
 ### :hammer: Build and Install
 
@@ -66,7 +66,7 @@ After the installation is finished, you should find a file structure as seen bel
 
 The binarys `mcp` and `mmv` provide the tools for copying or moving your files. They share some code in `libmcp_cc.so`.
 
-The header files in `include/mcp_cc` are only needed for linking your own software to the code provided in `libmcp_cc.so`. So you probably won't need them.
+The header files in `include/mcp_cc` are only needed for linking your own software with `libmcp_cc.so`. So you probably won't need them.
 
 ###  :rocket: Usage
 
