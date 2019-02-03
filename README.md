@@ -107,4 +107,4 @@ Operation finished successfully!
 
 ## License
 
-This project is licensed under the GPL License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the GPL - see the [LICENSE](LICENSE) file for details
