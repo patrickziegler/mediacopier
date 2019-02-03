@@ -7,7 +7,7 @@
 * support for **copying** and **moving** files
 * support for **simulation mode** to test operation before execution
 * provide **override flag** to force copying / moving of already existing files
-* ~~provide **skip log flag**~~ to skip writing log files **(WIP)**
+* ~~provide **skip log flag** to skip writing log files~~ **(WIP)**
 
 ## Getting Started
 
@@ -15,7 +15,7 @@
 
 This software depends on the following librarys:
 
-* [Boost](https://www.boost.org/) (`libboost_filesystem`, `libboost_date_time`) [[Boost Software License](https://www.boost.org/users/license.html)]
+* [Boost](https://www.boost.org/) (`libboost_filesystem`, `libboost_date_time`) [[Boost License](https://www.boost.org/users/license.html)]
 * [ffmpeg](https://ffmpeg.org/) (`libavformat`, `libavutil`) [[LGPL](https://ffmpeg.org/legal.html)]
 * [Exiv2](http://exiv2.org/) [[GPL](https://github.com/Exiv2/exiv2/blob/master/license.txt)]
 
