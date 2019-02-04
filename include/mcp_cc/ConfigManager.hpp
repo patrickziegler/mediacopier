@@ -16,7 +16,7 @@ class ConfigManager
     ~ConfigManager() { pInstance_ = nullptr; }
 
 public:
-    std::string format = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_%f";
+    std::string format = "%Y/%Y-%m/%Y-%m-%d/IMG_%Y%m%d_%H%M%S_%f";
     std::string logfile = "";
     bool flagOverride = false;
     bool flagSimulate = false;
