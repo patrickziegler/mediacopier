@@ -6,6 +6,7 @@
 #include "ProgressBar.hpp"
 
 #include <iostream>
+#include <chrono>
 #include <vector>
 
 template<opType op>
@@ -64,31 +65,45 @@ int run(int argc, char *argv[])
 {
     ProgressBar* bar;
     std::ofstream log;
+    std::chrono::high_resolution_clock::time_point t0;
+    std::chrono::duration<float> dt;
 
     if (ConfigManager::instance().parseArgs(argc, argv)) {
         return 1;
     }
 
-    log.open(ConfigManager::instance().logfile, std::ios::out | std::ios::trunc);
+    if (ConfigManager::instance().logfile != "") {
+        log.open(ConfigManager::instance().logfile, std::ios::out | std::ios::trunc);
+    }
 
     std::cout << "Input dir:\t" << ConfigManager::instance().dirInput.string() << std::endl
-              << "Output dir:\t" << ConfigManager::instance().dirOutput.string() << std::endl
-              << std::endl
-              << "Searching for media files ...";
+              << "Output dir:\t" << ConfigManager::instance().dirOutput.string() << std::endl << std::endl
+              << "Searching for media files ..." << std::endl << std::endl;
 
     std::vector<FileManager> files;
+
+    t0 = std::chrono::high_resolution_clock::now();
 
     for (auto i = boost::filesystem::recursive_directory_iterator(ConfigManager::instance().dirInput); i != boost::filesystem::recursive_directory_iterator(); ++i) {
         try {
             if (!is_directory(i->path())) {
+                std::cout << "Found " << i->path().string() << ": ";
                 files.push_back(FileManager(i->path()));
+                std::cout << "OK" << std::endl;
             }
         } catch (const std::invalid_argument&) {
+            std::cout << "SKIPPED" << std::endl;
             continue;
         }
     }
 
-    std::cout << " Done (" << files.size() << " files found)" << std::endl << std::endl;
+    dt = std::chrono::high_resolution_clock::now() - t0;
+    
+    std::cout << std::endl
+              << "-> " << files.size()
+              << " valid files (" << dt.count() << " s)" << std::endl << std::endl;
+
+    t0 = std::chrono::high_resolution_clock::now();
 
     if (ConfigManager::instance().flagSimulate || op == Simulate) {
 
@@ -109,7 +124,9 @@ int run(int argc, char *argv[])
                 }
             }
 
-            log << get_log_message<Simulate>(files[i], result);
+            if (ConfigManager::instance().logfile != "") {
+                log << get_log_message<Simulate>(files[i], result);
+            }
             bar->update();
         }
 
@@ -128,20 +145,29 @@ int run(int argc, char *argv[])
             break;
         }
 
+        if (ConfigManager::instance().logfile != "") {
 #pragma omp parallel for shared(files, bar)
-        for (size_t i = 0; i < files.size(); ++i) {
-            std::string message = get_log_message<op>(files[i], files[i].operation<op>());
-            bar->update();
+            for (size_t i = 0; i < files.size(); ++i) {
+                std::string message = get_log_message<op>(files[i], files[i].operation<op>());
+                bar->update();
 #pragma omp critical
-            {
-                log << message;
+                {
+                    log << message;
+                }
+            }
+        } else {
+#pragma omp parallel for shared(files, bar)
+            for (size_t i = 0; i < files.size(); ++i) {
+                std::string message = get_log_message<op>(files[i], files[i].operation<op>());
+                bar->update();
             }
         }
     }
 
     log.close();
 
-    std::cout << std::endl << "Operation finished successfully!" << std::endl;
+    dt = std::chrono::high_resolution_clock::now() - t0;
+    std::cout << std::endl << "Operation took " << dt.count() << " s" << std::endl;
     return 0;
 }
 

@@ -69,6 +69,9 @@ bt::ptime FileManager::readExif(const bf::path& file) // http://www.exiv2.org/ex
     for (const std::string& keyDateTime : keysDateTime) {
         try {
             timestamp = parseDateStr(exifData[keyDateTime].toString());
+            if (timestamp != bt::ptime()) {
+                break;
+            }
         } catch (const Exiv2::Error&) {
             continue;
         }
@@ -81,10 +84,12 @@ bt::ptime FileManager::readExif(const bf::path& file) // http://www.exiv2.org/ex
     for (const std::string& keySubSec : keysSubSec) {
         try {
             subsec = exifData[keySubSec].toString();
-            if (subsec.length() > 3) {
-                return timestamp + bt::microseconds(std::stol(subsec));
-            } else {
+            if (subsec.length() < 1) {
+                continue;
+            } else if (subsec.length() < 4) {
                 return timestamp + bt::milliseconds(std::stol(subsec));
+            } else {
+                return timestamp + bt::microseconds(std::stol(subsec));
             }
         } catch (const Exiv2::Error&) {
             continue;
@@ -121,7 +126,7 @@ FileManager::FileManager(const bf::path& file)
     }
 
     std::string ext = file.extension().string();
-    std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
+    // std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
 
     std::ostringstream os;
     os.imbue(outputFormat);
@@ -129,6 +134,7 @@ FileManager::FileManager(const bf::path& file)
 
     pathOld = file;
     pathNew = ConfigManager::instance().dirOutput / bf::path(os.str() + ext);
+    flagOverride = ConfigManager::instance().flagOverride;
 }
 
 std::string FileManager::getPathOld() const
@@ -152,7 +158,7 @@ int FileManager::copy()
         return 4;
     }
 
-    if (ConfigManager::instance().flagOverride) {
+    if (flagOverride) {
         try {
             bf::copy_file(pathOld, pathNew, bf::copy_option::overwrite_if_exists);
         } catch (const bf::filesystem_error&) {
@@ -188,7 +194,7 @@ int FileManager::move()
 int FileManager::simulate()
 {
     try {
-        if (!ConfigManager::instance().flagOverride && bf::exists(pathNew)) {
+        if (!flagOverride && bf::exists(pathNew)) {
             return 2;
         }
     } catch (const bf::filesystem_error&) {

@@ -1,4 +1,4 @@
-#  :camera: mcp_cc
+#  :camera: MediaCopier CC (mcp_cc)
 
 ### Features
 * using **Exiv2** to read fields `Exif.Image.DateTime*`, `Exif.Photo.DateTime*` and `Exif.Photo.SubSecTime*`
@@ -6,8 +6,8 @@
 * ~~using **libjpeg** for automatic rotation of JPEG files according to EXIF image orientation~~ **(WIP)** 
 * support for **copying** and **moving** files
 * support for **simulation mode** to test operation before execution
-* provide **override flag** to force copying / moving of already existing files
-* ~~provide **skip log flag** to skip writing log files~~ **(WIP)**
+* providing **override flag** to force copying / moving of already existing files
+* providing **logfile export** for detailed analysis or postprocessing with other tools (i.E. `exiftran -ai ...`)
 
 ## Getting Started
 
@@ -76,17 +76,17 @@ The executables `mcp` and `mmv` are both implementing the following signature:
 Usage: [-h] [-o] [-s] [-f FORMAT] [-l LOGFILE] SOURCE DESTINATION
 ```
 
-Where `SOURCE` and `DESTINATION` are mandatory parameters specifying the source and destination folder for copying or moving the files. Relative paths are allowed. The character `~` will be replaced with the users home directory. The folder `SOURCE` will be searched recursively. Files that are neither image nor video files are ignored. The output folder will be created if necessary.
+Where `SOURCE` and `DESTINATION` are mandatory parameters specifying the source and destination folder for copying or moving the files. Relative paths are allowed. The character `~` will be replaced with the users home directory. The folder `SOURCE` will be searched recursively. Files without EXIF or video metadata are ignored. The output folder will be created if necessary.
 
 Flag | Description
 ------------ | -------------
 `-h` | print help text
 `-o` | override existing files
 `-s` | simulate the operation
-`-f FORMAT` | renaming scheme
-`-l LOGFILE` | name of log file
+`-f FORMAT` | format of new filenames
+`-l LOGFILE` | write log to LOGFILE
 
-The parameter `-f FORMAT` specifies, how the filenames are derived from the information found in the input files. It could be something like `-f "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_%f"`. You can see that this parameter also allows us to  specify the folder structure in the destination directory. The replacement characters to be used for this are described in the boost [documentation](https://www.boost.org/doc/libs/1_69_0/doc/html/date_time/date_time_io.html).
+The parameter `-f FORMAT` specifies how the filenames are derived from the information found in the input files. It could be something like `-f "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_%f"`. The replacement characters to be used for this are described in the boost [documentation](https://www.boost.org/doc/libs/1_69_0/doc/html/date_time/date_time_io.html). Please note that this parameter also allows to  specify the folder structure in the destination directory.
 
 After all, calling `mcp ~/in ~/out` should result in some output similar to the following:
 
@@ -94,11 +94,18 @@ After all, calling `mcp ~/in ~/out` should result in some output similar to the 
 Input dir:      /home/user/in
 Output dir:     /home/user/out
 
-Searching for media files ... Done (24 files found)
+Searching for media files ...
+
+Found /home/user/in/IMG_2730.JPG: OK
+Found /home/user/in/DSC_4143.NEF: OK
+Found /home/user/in/MVI_3075.MOV: OK
+Found /home/user/in/DSC_4143.NEF.xmp: SKIPPED
+
+-> 3 valid files (0.005 s)
 
 Copying files [========================================>] 100.00 %
 
-Operation finished successfully!
+Operation took 0.054 s
 ```
 
 ## Authors

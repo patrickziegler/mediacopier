@@ -13,6 +13,7 @@ Simulate
 
 class FileManager
 {
+    bool flagOverride;
     boost::filesystem::path pathOld;
     boost::filesystem::path pathNew;
     boost::posix_time::ptime timestamp;
