@@ -182,7 +182,7 @@ int FileManager::move()
 
     if (!result) {
         try {
-            remove(pathOld);
+            bf::remove(pathOld);
         } catch (const bf::filesystem_error&) {
             return 3;
         }
