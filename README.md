@@ -1,4 +1,4 @@
-#  :camera: MediaCopier (mcp_cc)
+#  :camera: MediaCopier
 
 ### Features
 * using **Exiv2** to read fields `Exif.Image.DateTime*`, `Exif.Photo.DateTime*` and `Exif.Photo.SubSecTime*`
