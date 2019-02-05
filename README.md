@@ -49,6 +49,8 @@ export $LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALL_PREFIX/lib
 make package
 ```
 
+For global system integration, use `/usr/local` as `INSTALL_PREFIX` and `sudo make install && sudo ldconfig` for installation.
+
 ### Generated Files
 
 After the installation is finished, you should find a file structure as seen below:
@@ -58,15 +60,15 @@ After the installation is finished, you should find a file structure as seen bel
 │   ├── mcp
 │   └── mmv
 ├── include
-│   └── mcp_cc
+│   └── mediacopier
 │       ├── *.hpp
 ├── lib
-│   └── libmcp_cc.so
+│   └── libmediacopier.so
 ```
 
-The binarys `mcp` and `mmv` provide the tools for copying or moving your files. They share some code in `libmcp_cc.so`.
+The binarys `mcp` and `mmv` provide the tools for copying or moving your files. They share some code in `libmediacopier.so`.
 
-The header files in `include/mcp_cc` are only needed for linking your own software with `libmcp_cc.so`. So you probably won't need them.
+The header files in `include/mediacopier` are only needed for linking your own software with `libmediacopier.so`. So you probably won't need them.
 
 ###  :rocket: Usage
 

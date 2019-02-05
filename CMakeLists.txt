@@ -10,27 +10,27 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Mod
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib") 
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
-project(mcp_cc VERSION 0.1.0)
+project(MediaCopier VERSION 0.2.0)
 
 # ----------   S H A R E D   L I B R A R Y   ----------
 
-add_library(${PROJECT_NAME} SHARED)
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/${PROJECT_NAME}")
+add_library(mediacopier SHARED)
+target_include_directories(mediacopier PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/mediacopier")
 include(src/lib/CMakeLists.txt)
 
 find_package(Boost REQUIRED filesystem date_time)
-target_include_directories(${PROJECT_NAME} PRIVATE ${BOOST_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+target_include_directories(mediacopier PRIVATE ${BOOST_INCLUDE_DIRS})
+target_link_libraries(mediacopier ${Boost_LIBRARIES})
 
 find_package(avformat REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE ${AVFORMAT_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} ${AVFORMAT_LIBRARY})
+target_include_directories(mediacopier PRIVATE ${AVFORMAT_INCLUDE_DIR})
+target_link_libraries(mediacopier ${AVFORMAT_LIBRARY})
 
 find_package(avutil REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE ${AVUTIL_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} ${AVUTIL_LIBRARY})
+target_include_directories(mediacopier PRIVATE ${AVUTIL_INCLUDE_DIR})
+target_link_libraries(mediacopier ${AVUTIL_LIBRARY})
 
-target_link_options(${PROJECT_NAME} PRIVATE "-lexiv2")
+target_link_options(mediacopier PRIVATE "-lexiv2")
 
 # ----------   E X E C U T A B L E S   ----------
 
@@ -39,8 +39,8 @@ add_executable(mmv)
 
 include(src/CMakeLists.txt)
 
-target_link_libraries(mcp ${PROJECT_NAME})
-target_link_libraries(mmv ${PROJECT_NAME})
+target_link_libraries(mcp mediacopier)
+target_link_libraries(mmv mediacopier)
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(mcp OpenMP::OpenMP_CXX)
@@ -54,13 +54,13 @@ install(TARGETS mcp mmv
     COMPONENT bin
     )
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS mediacopier
     LIBRARY
     DESTINATION lib
     COMPONENT bin
     ) # don't forget to run ldconfig as root after installation!
 
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/${PROJECT_NAME}"
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/mediacopier"
     DESTINATION include
     COMPONENT headers
     )
