@@ -16,7 +16,7 @@ project(MediaCopier VERSION 0.2.0)
 
 add_library(mediacopier SHARED)
 target_include_directories(mediacopier PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/mediacopier")
-include(src/lib/CMakeLists.txt)
+include(src/mediacopier/CMakeLists.txt)
 
 find_package(Boost REQUIRED filesystem date_time)
 target_include_directories(mediacopier PRIVATE ${BOOST_INCLUDE_DIRS})
