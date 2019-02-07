@@ -158,7 +158,7 @@ int run(int argc, char *argv[])
         } else {
 #pragma omp parallel for shared(files, bar)
             for (size_t i = 0; i < files.size(); ++i) {
-                std::string message = get_log_message<op>(files[i], files[i].operation<op>());
+                files[i].operation<op>();
                 bar->update();
             }
         }
