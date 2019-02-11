@@ -9,6 +9,8 @@
 #include <iostream>
 #include <chrono>
 
+#include <exiv2/exiv2.hpp>
+
 using operationType = enum {
 Copy,
 Move,
@@ -54,26 +56,28 @@ int run(int argc, char *argv[])
         }
     }
 
-    std::cout << " OK (" << files.size() << " files found)" << std::endl;
+    std::cout << " OK (" << files.size() << " files found)" << std::endl << std::endl;
 
     strategy_ptr strategy;
 
     if (ConfigManager::instance().flagSimulate || opType == Simulate) {
         strategy = (ConfigManager::instance().flagOverride) ? strategy_ptr(new FileSimulationOverwrite()) : strategy_ptr(new FileSimulation());
-        bar = new ProgressBar(files.size(), "Simulating");
+        bar = new ProgressBar(files.size(), strategy->name);
 
-    } else if (opType == Copy) {
-        strategy = (ConfigManager::instance().flagOverride) ? strategy_ptr(new FileCopyOverwrite()) : strategy_ptr(new FileCopy());
-        bar = new ProgressBar(files.size(), "Copying files");
+    } else if (opType == Move) {
+        strategy = (ConfigManager::instance().flagOverride) ? strategy_ptr(new FileMoveOverwrite()) : strategy_ptr(new FileMove());
+        bar = new ProgressBar(files.size(), strategy->name);
 
     } else {
-        strategy = (ConfigManager::instance().flagOverride) ? strategy_ptr(new FileMoveOverwrite()) : strategy_ptr(new FileMove());
-        bar = new ProgressBar(files.size(), "Moving files");
+        strategy = (ConfigManager::instance().flagOverride) ? strategy_ptr(new FileCopyOverwrite()) : strategy_ptr(new FileCopy());
+        bar = new ProgressBar(files.size(), strategy->name);
     }
 
     FileOperation::setStrategy(strategy);
     FileOperation::setPathFormat(ConfigManager::instance().pathFormat);
     FileOperation::setPathPrefix(ConfigManager::instance().dirOutput);
+
+    Exiv2::XmpParser::initialize();
 
     tp = timer::now();
 
@@ -87,10 +91,10 @@ int run(int argc, char *argv[])
             try {
                 FileOperation op(files[i]);
                 message = op.getLogMessage(op.execute());
-                
+
             } catch (const std::invalid_argument&) {
                 std::ostringstream buf;
-                buf << "File operation SKIPPED: Type not supported" << std::endl
+                buf << "File operation [" << strategy->name << "] SKIPPED: Type not supported" << std::endl
                     << files[i].string() << std::endl << std::endl;
                 message = buf.str();
             }

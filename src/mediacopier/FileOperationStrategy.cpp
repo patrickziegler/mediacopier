@@ -119,12 +119,17 @@ inline int resetExifOrientation(const FileOperation& request)
 {
     std::unique_ptr<Exiv2::Image> image;
     Exiv2::ExifData exifData;
+
     try {
         image = Exiv2::ImageFactory::open(request.getPathNew().string());
         image->readMetadata();
+
         exifData = image->exifData();
-        exifData["Exif.Image.Orientation"] = 0;
+        exifData["Exif.Image.Orientation"] = 1;
+
+        image->setExifData(exifData);
         image->writeMetadata();
+
     }  catch (const Exiv2::Error&) {
         return 1;
     }
@@ -144,7 +149,7 @@ int FileCopyOverwrite::execute(const FileOperation& request)
         return 4;
     }
 
-    if (request.getMimeType() != "image/jpeg" || jpeg_copy_rotated(request) || resetExifOrientation(request)) {
+    if (request.getMimeType() != "image/jpeg" || request.getOrientation() < 2 || jpeg_copy_rotated(request) || resetExifOrientation(request)) {
         try {
             bf::copy_file(request.getPathOld(), request.getPathNew(), bf::copy_option::overwrite_if_exists);
         } catch (const bf::filesystem_error&) {
@@ -195,7 +200,7 @@ int FileSimulation::execute(const FileOperation& request)
 {
     std::lock_guard<std::mutex> lck(mtx);
     bf::path path = request.getPathNew();
-    if (bf::exists(path) || (std::find(filesDone.begin(), filesDone.end(), path) == filesDone.end())) {
+    if (bf::exists(path) || (std::find(filesDone.begin(), filesDone.end(), path) != filesDone.end())) {
         return 2;
     } else {
         filesDone.push_back(request.getPathNew());

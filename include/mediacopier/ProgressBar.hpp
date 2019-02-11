@@ -2,12 +2,9 @@
 #define PROGRESSBAR_H
 
 #include <string>
-// #include <mutex>
 
 class ProgressBar
 {
-    // std::mutex mtx;
-
     size_t n;
     size_t i = 0;
     size_t width = 40;

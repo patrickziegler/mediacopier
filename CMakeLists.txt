@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
@@ -49,6 +49,9 @@ include(src/CMakeLists.txt)
 
 target_link_libraries(mcp mediacopier)
 target_link_libraries(mmv mediacopier)
+
+target_link_options(mcp PRIVATE "-lexiv2")
+target_link_options(mmv PRIVATE "-lexiv2")
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(mcp OpenMP::OpenMP_CXX)

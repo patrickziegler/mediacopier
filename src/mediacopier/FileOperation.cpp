@@ -70,9 +70,9 @@ int FileOperation::readExif() // http://www.exiv2.org/examples.html
             if (subsec.length() < 1) {
                 continue;
             } else if (subsec.length() < 4) {
-                timestamp + bt::milliseconds(std::stol(subsec));
+                timestamp += bt::milliseconds(std::stol(subsec));
             } else {
-                timestamp + bt::microseconds(std::stol(subsec));
+                timestamp += bt::microseconds(std::stol(subsec));
             }
         } catch (const Exiv2::Error&) {
             continue;
@@ -107,6 +107,7 @@ int FileOperation::readVideoMeta() // http://ffmpeg.org/doxygen/trunk/metadata_8
 
 int FileOperation::setTimestamp(const std::string& strDateTime)
 {
+    timestamp = bt::ptime();
     for (const std::locale& format : formatsDateTime) {
         std::istringstream buf(strDateTime);
         buf.imbue(format);
@@ -163,7 +164,7 @@ std::string FileOperation::getLogMessage(int code) const
 {
     std::ostringstream buf;
 
-    buf << "File operation ";
+    buf << "File operation [" << strategy->name << "] ";
 
     switch (code)
     {

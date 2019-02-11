@@ -11,11 +11,9 @@ void ProgressBar::init(size_t width)
 
 void ProgressBar::update()
 {
-    // std::lock_guard<std::mutex> lck(mtx);
-
     ++i;
-    double p = double(i) / double(n);
-    size_t pos = size_t(p * width);
+    double p = static_cast<double>(i) / static_cast<double>(n);
+    size_t pos = static_cast<size_t>(p * width);
 
     if (pos > lastPos) {
         std::ostringstream buf;
