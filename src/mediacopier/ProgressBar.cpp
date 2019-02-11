@@ -11,31 +11,34 @@ void ProgressBar::init(size_t width)
 
 void ProgressBar::update()
 {
-    std::lock_guard<std::mutex> lck(mtx);
+    // std::lock_guard<std::mutex> lck(mtx);
 
     ++i;
     double p = double(i) / double(n);
     size_t pos = size_t(p * width);
 
-    std::ostringstream ss;
+    if (pos > lastPos) {
+        std::ostringstream buf;
 
-    ss << prefix
-       << " ["
-       << std::string(pos, '=')
-       << ">"
-       << std::string(width - pos, ' ')
-       << "] "
-       << std::fixed
-       << std::setprecision(2)
-       << std::setfill(' ')
-       << std::setw(6)
-       << 100 * p << " %";
+        buf << prefix
+            << " ["
+            << std::string(pos, '=')
+            << ">"
+            << std::string(width - pos, ' ')
+            << "] "
+            << std::fixed
+            << std::setprecision(2)
+            << std::setfill(' ')
+            << std::setw(6)
+            << 100 * p << " %";
 
-    if (p < 1) {
-        std::cout << ss.str() << "\r";
-    } else {
-        std::cout << ss.str() << std::endl;
+        if (p < 1) {
+            std::cout << buf.str() << "\r";
+        } else {
+            std::cout << buf.str() << std::endl;
+        }
+
+        std::cout.flush();
+        lastPos = pos;
     }
-
-    std::cout.flush();
 }

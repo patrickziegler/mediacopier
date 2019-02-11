@@ -1,15 +1,16 @@
 #include "ConfigManager.hpp"
+
 #include <iostream>
 
 namespace bf = boost::filesystem;
 
 ConfigManager* ConfigManager::pInstance_ = nullptr;
-std::mutex ConfigManager::mtx;
+// std::mutex ConfigManager::mtx;
 
 ConfigManager& ConfigManager::instance()
 {
     if (!pInstance_) {
-        std::lock_guard<std::mutex> lck(mtx);
+        // std::lock_guard<std::mutex> lck(mtx);
         if (!pInstance_) {
             pInstance_ = new ConfigManager;
         }
@@ -19,7 +20,7 @@ ConfigManager& ConfigManager::instance()
 
 int ConfigManager::parseArgs(int argc, char *argv[])
 {
-    std::lock_guard<std::mutex> lck(mtx);
+    // std::lock_guard<std::mutex> lck(mtx);
 
     std::string arg;
     std::vector<std::string> pos;
@@ -45,7 +46,7 @@ int ConfigManager::parseArgs(int argc, char *argv[])
             if (arg.find("f") < arg.npos) {
 
                 if (i + 1 < argc) {
-                    format = std::string(argv[++i]);
+                    pathFormat = std::string(argv[++i]);
                 } else {
                     std::cerr << "Option '-f' requires an argument" << std::endl;
                     return 1;
