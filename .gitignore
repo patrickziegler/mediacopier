@@ -1,5 +1,5 @@
-bin/
 build/
 *.user*
-etc/datetime_cc
-etc/jpegtran
+lib/libjpeg-turbo
+etc/datetime_test
+etc/jpegtran_test

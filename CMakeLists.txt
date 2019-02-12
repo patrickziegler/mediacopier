@@ -6,10 +6,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
-# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
-
 project(MediaCopier VERSION 0.9.0)
 
 # ----------   S H A R E D   L I B R A R Y   ----------
@@ -34,9 +30,8 @@ find_package(JPEG REQUIRED)
 target_include_directories(mediacopier PRIVATE ${JPEG_INCLUDE_DIRS})
 target_link_libraries(mediacopier ${JPEG_LIBRARIES})
 
-find_package(transupp)
-target_include_directories(mediacopier PRIVATE lib/transupp/include)
-target_link_libraries(mediacopier transupp)
+target_include_directories(mediacopier PRIVATE lib/libjpeg-turbo)
+target_sources(mediacopier PRIVATE lib/libjpeg-turbo/transupp.c)
 
 target_link_options(mediacopier PRIVATE "-lexiv2")
 
@@ -65,15 +60,15 @@ install(TARGETS mcp mmv
     COMPONENT bin
     )
 
-install(TARGETS mediacopier transupp
+install(TARGETS mediacopier
     LIBRARY
     DESTINATION lib
     COMPONENT bin
-    ) # don't forget to run ldconfig as root after installation!
+    )
 
-# install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/mediacopier"
-#     DESTINATION include
-#     COMPONENT headers
-#     )
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/mediacopier"
+    DESTINATION include
+    COMPONENT headers
+    )
 
 include(CPackConfig)
