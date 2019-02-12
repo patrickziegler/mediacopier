@@ -118,6 +118,7 @@ int run(int argc, char *argv[])
         }
     }
 
+    bar->close();
     std::cout << std::endl << "Operation took " << get_duration(tp) << " s" << std::endl;
     return 0;
 }

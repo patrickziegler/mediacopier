@@ -4,9 +4,11 @@
 #include <iostream>
 #include <iomanip>
 
-void ProgressBar::init(size_t width)
+void ProgressBar::init()
 {
-    this->width = (width - prefix.length() - 13);
+    width = (width - prefix.length() - 13);
+    std::cout << prefix << " ...\r";
+    std::cout.flush();
 }
 
 void ProgressBar::update()
@@ -30,13 +32,13 @@ void ProgressBar::update()
             << std::setw(6)
             << 100 * p << " %";
 
-        if (p < 1) {
-            std::cout << buf.str() << "\r";
-        } else {
-            std::cout << buf.str() << std::endl;
-        }
-
+        std::cout << buf.str() << "\r";
         std::cout.flush();
         lastPos = pos;
     }
+}
+
+void ProgressBar::close()
+{
+    std::cout << std::endl;
 }
