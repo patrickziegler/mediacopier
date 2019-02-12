@@ -9,36 +9,39 @@ class FileOperation;
 
 struct FileOperationStrategy
 {
-    std::string name = "Nop";
+    const std::string description;
+    FileOperationStrategy(std::string description) : description(description) {}
     virtual ~FileOperationStrategy();
     virtual int execute(const FileOperation&) =0;
 };
 
 struct FileCopyOverwrite : public FileOperationStrategy
 {
-    FileCopyOverwrite() { name = "Copying"; }
+    FileCopyOverwrite() : FileOperationStrategy("Copying") {}
     int execute(const FileOperation&);
 };
 
-class FileCopy : public FileCopyOverwrite
+struct FileCopy : public FileOperationStrategy
 {
+    FileCopy() : FileOperationStrategy("Copying") {}
     int execute(const FileOperation&);
 };
 
-struct FileMoveOverwrite : public FileCopyOverwrite
+struct FileMoveOverwrite : public FileOperationStrategy
 {
-    FileMoveOverwrite() { name = "Moving"; }
+    FileMoveOverwrite() : FileOperationStrategy("Moving") {}
     int execute(const FileOperation&);
 };
 
-struct FileMove : public FileMoveOverwrite
+struct FileMove : public FileOperationStrategy
 {
+    FileMove() : FileOperationStrategy("Moving") {}
     int execute(const FileOperation&);
 };
 
 struct FileSimulationOverwrite : public FileOperationStrategy
 {
-    FileSimulationOverwrite() { name = "Simulating"; }
+    FileSimulationOverwrite() : FileOperationStrategy("Simulating") {}
     int execute(const FileOperation&);
 };
 
@@ -47,7 +50,7 @@ class FileSimulation : public FileOperationStrategy
     std::mutex mtx;
     std::vector<boost::filesystem::path> filesDone;
 public:
-    FileSimulation() { name = "Simulating"; }
+    FileSimulation() : FileOperationStrategy("Simulating") {}
     int execute(const FileOperation&);
 };
 

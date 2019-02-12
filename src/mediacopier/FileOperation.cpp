@@ -34,7 +34,7 @@ const std::vector<std::locale> formatsDateTime = {
     std::locale(std::locale(""), new bt::time_input_facet("%d-%m-%Y %H:%M:%s"))
 };
 
-bt::ptime parseDateStr(const std::string& strDateTime)
+inline bt::ptime parseDateStr(const std::string& strDateTime)
 {
     bt::ptime timestamp;
     for (const std::locale& format : formatsDateTime) {
@@ -167,7 +167,7 @@ std::string FileOperation::getLogMessage(int code) const
 {
     std::ostringstream buf;
 
-    buf << "File operation [" << strategy->name << "] ";
+    buf << "File operation [" << strategy->description << "] ";
 
     switch (code)
     {

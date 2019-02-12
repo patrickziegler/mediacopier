@@ -57,17 +57,31 @@ int run(int argc, char *argv[])
     strategy_ptr strategy;
 
     if (ConfigManager::instance().flagSimulate || opType == Simulate) {
-        strategy = (ConfigManager::instance().flagOverride) ? strategy_ptr(new FileSimulationOverwrite()) : strategy_ptr(new FileSimulation());
-        bar = new ProgressBar(files.size(), strategy->name);
+
+        if (ConfigManager::instance().flagOverride) {
+            strategy = strategy_ptr(new FileSimulationOverwrite());
+        } else {
+            strategy = strategy_ptr(new FileSimulation());
+        }
 
     } else if (opType == Move) {
-        strategy = (ConfigManager::instance().flagOverride) ? strategy_ptr(new FileMoveOverwrite()) : strategy_ptr(new FileMove());
-        bar = new ProgressBar(files.size(), strategy->name);
+
+        if (ConfigManager::instance().flagOverride) {
+            strategy = strategy_ptr(new FileMoveOverwrite());
+        } else {
+            strategy = strategy_ptr(new FileMove());
+        }
 
     } else {
-        strategy = (ConfigManager::instance().flagOverride) ? strategy_ptr(new FileCopyOverwrite()) : strategy_ptr(new FileCopy());
-        bar = new ProgressBar(files.size(), strategy->name);
+
+        if (ConfigManager::instance().flagOverride) {
+            strategy = strategy_ptr(new FileCopyOverwrite());
+        } else {
+            strategy = strategy_ptr(new FileCopy());
+        }
     }
+
+    bar = new ProgressBar(files.size(), strategy->description);
 
     FileOperation::setStrategy(strategy);
     FileOperation::setPathFormat(ConfigManager::instance().pathFormat);
@@ -90,7 +104,7 @@ int run(int argc, char *argv[])
 
             } catch (const std::invalid_argument&) {
                 std::ostringstream buf;
-                buf << "File operation [" << strategy->name << "] SKIPPED: Type not supported" << std::endl
+                buf << "File operation [" << strategy->description << "] SKIPPED: Type not supported" << std::endl
                     << files[i].string() << std::endl << std::endl;
                 message = buf.str();
             }

@@ -30,8 +30,12 @@ using jpeg_error_ptr = jpeg_error*;
     longjmp(err->env, 1);
 }
 
-int jpeg_copy_rotated(const FileOperation& request)
+int jpeg_copy_rotated(const FileOperation& request, const bf::copy_option& copy_option)
 {
+    if (copy_option == bf::copy_option::fail_if_exists && bf::exists(request.getPathNew())) {
+        return 1;
+    }
+
     jpeg_decompress_struct c_info;
     jpeg_compress_struct d_info;
     jpeg_error c_err, d_err;
@@ -55,7 +59,7 @@ int jpeg_copy_rotated(const FileOperation& request)
         trans.transform = JXFORM_ROT_270;
         break;
     default:
-        return 1;
+        return 2;
     }
 
     c_info.err = jpeg_std_error(&c_err.mgr);
@@ -63,7 +67,7 @@ int jpeg_copy_rotated(const FileOperation& request)
 
     if (setjmp(c_err.env)) {
         jpeg_destroy_decompress(&c_info);
-        return 4;
+        return 5;
     }
 
     d_info.err = jpeg_std_error(&d_err.mgr);
@@ -71,19 +75,19 @@ int jpeg_copy_rotated(const FileOperation& request)
 
     if (setjmp(d_err.env)) {
         jpeg_destroy_compress(&d_info);
-        return 5;
+        return 6;
     }
 
     jpeg_create_decompress(&c_info);
     jpeg_create_compress(&d_info);
 
     if ((f_in = fopen(request.getPathOld().c_str(), "rb")) == nullptr) {
-        return 2;
+        return 3;
     }
 
     if ((f_out = fopen(request.getPathNew().c_str(), "wb")) == nullptr) {
         fclose(f_in);
-        return 3;
+        return 4;
     }
 
     jpeg_stdio_src(&c_info, f_in);
@@ -115,7 +119,7 @@ int jpeg_copy_rotated(const FileOperation& request)
     return 0;
 }
 
-inline int resetExifOrientation(const FileOperation& request)
+int reset_exif_orientation(const FileOperation& request)
 {
     std::unique_ptr<Exiv2::Image> image;
     Exiv2::ExifData exifData;
@@ -136,9 +140,7 @@ inline int resetExifOrientation(const FileOperation& request)
     return 0;
 }
 
-FileOperationStrategy::~FileOperationStrategy() {}
-
-int FileCopyOverwrite::execute(const FileOperation& request)
+inline int copy_file(const FileOperation& request, const bf::copy_option& copy_option)
 {
     bf::path pathNewDir(request.getPathNew());
     pathNewDir.remove_filename();
@@ -149,9 +151,9 @@ int FileCopyOverwrite::execute(const FileOperation& request)
         return 4;
     }
 
-    if (request.getMimeType() != "image/jpeg" || request.getOrientation() < 2 || jpeg_copy_rotated(request) || resetExifOrientation(request)) {
+    if (request.getMimeType() != "image/jpeg" || request.getOrientation() < 2 || jpeg_copy_rotated(request, copy_option) || reset_exif_orientation(request)) {
         try {
-            bf::copy_file(request.getPathOld(), request.getPathNew(), bf::copy_option::overwrite_if_exists);
+            bf::copy_file(request.getPathOld(), request.getPathNew(), copy_option);
         } catch (const bf::filesystem_error&) {
             return 1;
         }
@@ -160,18 +162,9 @@ int FileCopyOverwrite::execute(const FileOperation& request)
     return 0;
 }
 
-int FileCopy::execute(const FileOperation& request)
+inline int move_file(const FileOperation& request, const bf::copy_option& copy_option)
 {
-    if (bf::exists(request.getPathNew())) {
-        return 2;
-    } else {
-        return FileCopyOverwrite::execute(request);
-    }
-}
-
-int FileMoveOverwrite::execute(const FileOperation& request)
-{
-    int result = FileCopyOverwrite::execute(request);
+    int result = copy_file(request, copy_option);
     if (!result) {
         try {
             bf::remove(request.getPathOld());
@@ -182,13 +175,26 @@ int FileMoveOverwrite::execute(const FileOperation& request)
     return result;
 }
 
+FileOperationStrategy::~FileOperationStrategy() {}
+
+int FileCopyOverwrite::execute(const FileOperation& request)
+{
+    return copy_file(request, bf::copy_option::overwrite_if_exists);
+}
+
+int FileCopy::execute(const FileOperation& request)
+{
+    return copy_file(request, bf::copy_option::fail_if_exists);
+}
+
+int FileMoveOverwrite::execute(const FileOperation& request)
+{
+    return move_file(request, bf::copy_option::overwrite_if_exists);
+}
+
 int FileMove::execute(const FileOperation& request)
 {
-    if (bf::exists(request.getPathNew())) {
-        return 2;
-    } else {
-        return FileMoveOverwrite::execute(request);
-    }
+    return move_file(request, bf::copy_option::fail_if_exists);
 }
 
 int FileSimulationOverwrite::execute(const FileOperation&)
