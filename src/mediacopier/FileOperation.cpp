@@ -34,12 +34,27 @@ const std::vector<std::locale> formatsDateTime = {
     std::locale(std::locale(""), new bt::time_input_facet("%d-%m-%Y %H:%M:%s"))
 };
 
+bt::ptime parseDateStr(const std::string& strDateTime)
+{
+    bt::ptime timestamp;
+    for (const std::locale& format : formatsDateTime) {
+        std::istringstream buf(strDateTime);
+        buf.imbue(format);
+        buf >> timestamp;
+        if (!timestamp.is_not_a_date_time()) {
+            break;
+        }
+    }
+    return timestamp;
+}
+
 int FileOperation::readExif() // http://www.exiv2.org/examples.html
 {
+    bt::ptime timestamp;
+    bt::time_duration subsec;
     Exiv2::ExifData exifData;
     std::unique_ptr<Exiv2::Image> image;
-    std::string subsec;
-    bool parseFailed = true;
+    std::string buf;
 
     try {
         image = Exiv2::ImageFactory::open(pathOld.string());
@@ -51,8 +66,8 @@ int FileOperation::readExif() // http://www.exiv2.org/examples.html
 
     for (const std::string& keyDateTime : keysDateTime) {
         try {
-            if (!setTimestamp(exifData[keyDateTime].toString())) {
-                parseFailed = false;
+            timestamp = parseDateStr(exifData[keyDateTime].toString());
+            if (!timestamp.is_not_a_date_time()) {
                 break;
             }
         } catch (const Exiv2::Error&) {
@@ -60,24 +75,28 @@ int FileOperation::readExif() // http://www.exiv2.org/examples.html
         }
     }
 
-    if (parseFailed) {
+    if (timestamp.is_not_a_date_time()) {
         return 1;
     }
 
     for (const std::string& keySubSec : keysSubSec) {
         try {
-            subsec = exifData[keySubSec].toString();
-            if (subsec.length() < 1) {
+            buf = exifData[keySubSec].toString();
+            if (buf.length() < 1) {
                 continue;
-            } else if (subsec.length() < 4) {
-                timestamp += bt::milliseconds(std::stol(subsec));
+            } else if (buf.length() < 4) {
+                subsec = bt::milliseconds(std::stol(buf));
+                break;
             } else {
-                timestamp += bt::microseconds(std::stol(subsec));
+                subsec = bt::microseconds(std::stol(buf));
+                break;
             }
         } catch (const Exiv2::Error&) {
             continue;
         }
     }
+
+    this->timestamp = bt::ptime(timestamp + subsec);
 
     try {
         mimeType = image->mimeType();
@@ -86,37 +105,21 @@ int FileOperation::readExif() // http://www.exiv2.org/examples.html
         return 1;
     }
 
-    return 0;
+    return this->timestamp.is_not_a_date_time();
 }
 
 int FileOperation::readVideoMeta() // http://ffmpeg.org/doxygen/trunk/metadata_8c-example.html
 {
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionaryEntry* tag = nullptr;
-    int result = 1;
 
     if (!avformat_open_input(&fmt_ctx, pathOld.c_str(), nullptr, nullptr)) {
         if ((tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX))) {
-            result = setTimestamp(tag->value);
+            timestamp = parseDateStr(tag->value);
         }
     }
-
     avformat_close_input(&fmt_ctx);
-    return result;
-}
-
-int FileOperation::setTimestamp(const std::string& strDateTime)
-{
-    timestamp = bt::ptime();
-    for (const std::locale& format : formatsDateTime) {
-        std::istringstream buf(strDateTime);
-        buf.imbue(format);
-        buf >> timestamp;
-        if (timestamp != bt::ptime()) {
-            return 0;
-        }
-    }
-    return 1;
+    return timestamp.is_not_a_date_time();
 }
 
 void FileOperation::setStrategy(const std::shared_ptr<FileOperationStrategy>& strategy)

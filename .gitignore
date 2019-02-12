@@ -1,3 +1,5 @@
 bin/
 build/
 *.user*
+etc/datetime_cc
+etc/jpegtran

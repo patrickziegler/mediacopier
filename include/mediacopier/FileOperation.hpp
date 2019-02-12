@@ -22,7 +22,6 @@ class FileOperation
 
     int readExif();
     int readVideoMeta();
-    int setTimestamp(const std::string&);
 
 public:
     static void setStrategy(const std::shared_ptr<FileOperationStrategy>&);

@@ -47,12 +47,8 @@ int run(int argc, char *argv[])
     tp = timer::now();
 
     for (auto i = directory_iter(ConfigManager::instance().dirInput); i != directory_iter(); ++i) {
-        try {
-            if (!is_directory(i->path())) {
-                files.push_back(i->path());
-            }
-        } catch (const std::invalid_argument&) {
-            continue;
+        if (!is_directory(i->path())) {
+            files.push_back(i->path());
         }
     }
 
