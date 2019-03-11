@@ -16,6 +16,8 @@ std::shared_ptr<FileOperationStrategy> FileOperation::strategy;
 boost::filesystem::path FileOperation::pathPrefix;
 std::locale FileOperation::pathFormat;
 
+// list of available keys: http://www.exiv2.org/tags.html
+
 const std::vector<std::string> keysDateTime = {
     "Exif.Image.DateTime",
     "Exif.Image.DateTimeOriginal",
@@ -114,6 +116,7 @@ int FileOperation::readVideoMeta() // http://ffmpeg.org/doxygen/trunk/metadata_8
     AVDictionaryEntry* tag = nullptr;
 
     if (!avformat_open_input(&fmt_ctx, pathOld.c_str(), nullptr, nullptr)) {
+        // Key "creation_time" found out with 'ffprobe' command line tool
         if ((tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX))) {
             timestamp = parseDateStr(tag->value);
         }

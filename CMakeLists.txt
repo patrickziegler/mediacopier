@@ -3,72 +3,37 @@ cmake_minimum_required(VERSION 3.9)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 project(MediaCopier VERSION 0.9.0)
 
-# ----------   S H A R E D   L I B R A R Y   ----------
+add_subdirectory(src/mediacopier)
+add_subdirectory(src/mcp)
+add_subdirectory(src/mmv)
+add_subdirectory(test)
 
-add_library(mediacopier SHARED)
-target_include_directories(mediacopier PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/mediacopier")
-include(src/mediacopier/CMakeLists.txt)
+set(CPACK_PACKAGE_VENDOR "Patrick Ziegler")
+set(CPACK_PACKAGE_CONTACT "https://github.com/patrickziegler")
 
-find_package(Boost REQUIRED filesystem date_time)
-target_include_directories(mediacopier PRIVATE ${BOOST_INCLUDE_DIRS})
-target_link_libraries(mediacopier ${Boost_LIBRARIES})
+set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Very fast copying / moving and renaming media files according to the creation date found in their metadata")
 
-find_package(avformat REQUIRED)
-target_include_directories(mediacopier PRIVATE ${AVFORMAT_INCLUDE_DIR})
-target_link_libraries(mediacopier ${AVFORMAT_LIBRARY})
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 
-find_package(avutil REQUIRED)
-target_include_directories(mediacopier PRIVATE ${AVUTIL_INCLUDE_DIR})
-target_link_libraries(mediacopier ${AVUTIL_LIBRARY})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CMAKE_INSTALL_PREFIX})
 
-find_package(JPEG REQUIRED)
-target_include_directories(mediacopier PRIVATE ${JPEG_INCLUDE_DIRS})
-target_link_libraries(mediacopier ${JPEG_LIBRARIES})
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 
-target_include_directories(mediacopier PRIVATE lib/libjpeg-turbo)
-target_sources(mediacopier PRIVATE lib/libjpeg-turbo/transupp.c)
+set(CPACK_GENERATOR "RPM")
 
-target_link_options(mediacopier PRIVATE "-lexiv2")
+set(CPACK_RPM_PACKAGE_RELEASE 1)
+set(CPACK_RPM_COMPONENT_INSTALL OFF)
 
-# ----------   E X E C U T A B L E S   ----------
+set(CPACK_RPM_APP_PACKAGE_NAME "${PROJECT_NAME}")
+set(CPACK_RPM_HEADERS_PACKAGE_NAME "${PROJECT_NAME}-devel")
+set(CPACK_RPM_HEADERS_PACKAGE_REQUIRES "${PROJECT_NAME}")
 
-add_executable(mcp)
-add_executable(mmv)
-
-include(src/CMakeLists.txt)
-
-target_link_libraries(mcp mediacopier)
-target_link_libraries(mmv mediacopier)
-
-target_link_options(mcp PRIVATE "-lexiv2")
-target_link_options(mmv PRIVATE "-lexiv2")
-
-find_package(OpenMP REQUIRED)
-target_link_libraries(mcp OpenMP::OpenMP_CXX)
-target_link_libraries(mmv OpenMP::OpenMP_CXX)
-
-# ----------   I N S T A L L E R S   ----------
-
-install(TARGETS mcp mmv
-    RUNTIME
-    DESTINATION bin
-    COMPONENT bin
-    )
-
-install(TARGETS mediacopier
-    LIBRARY
-    DESTINATION lib
-    COMPONENT bin
-    )
-
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/mediacopier"
-    DESTINATION include
-    COMPONENT headers
-    )
-
-include(CPackConfig)
+include(CPack)

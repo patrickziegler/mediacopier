@@ -102,9 +102,9 @@ int run(int argc, char *argv[])
                 FileOperation op(files[i]);
                 message = op.getLogMessage(op.execute());
 
-            } catch (const std::invalid_argument&) {
+            } catch (const std::invalid_argument& e) {
                 std::ostringstream buf;
-                buf << "File operation [" << strategy->description << "] SKIPPED: Type not supported" << std::endl
+                buf << "File operation [" << strategy->description << "] SKIPPED: " << e.what() << std::endl
                     << files[i].string() << std::endl << std::endl;
                 message = buf.str();
             }

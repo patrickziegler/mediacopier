@@ -1,8 +1,8 @@
-set(AVUTIL_FOUND "NO")
+set(AVFORMAT_FOUND "NO")
 
-find_path(AVUTIL_INCLUDE_DIR libavutil/avutil.h
+find_path(AVFORMAT_INCLUDE_DIR libavformat/avformat.h
     HINTS
-    $ENV{AVUTILDIR}
+    $ENV{AVFORMATDIR}
     PATH_SUFFIXES ffmpeg
     PATHS
     ~/Library/Frameworks
@@ -16,12 +16,12 @@ find_path(AVUTIL_INCLUDE_DIR libavutil/avutil.h
     /mingw/include
     )
 
-message("-- Set AVUTIL_INCLUDE_DIR to ${AVUTIL_INCLUDE_DIR}")
+message("-- Set AVFORMAT_INCLUDE_DIR to ${AVFORMAT_INCLUDE_DIR}")
 
-find_library( AVUTIL_LIBRARY
-    NAMES avutil
+find_library(AVFORMAT_LIBRARY
+    NAMES avformat
     HINTS
-    $ENV{AVUTILDIR}
+    $ENV{AVFORMATDIR}
     PATH_SUFFIXES lib64 lib bin
     PATHS
     /usr/local
@@ -33,6 +33,6 @@ find_library( AVUTIL_LIBRARY
     /mingw
     )
 
-message("-- Set AVUTIL_LIBRARY to ${AVUTIL_LIBRARY}")
+message("-- Set AVFORMAT_LIBRARY to ${AVFORMAT_LIBRARY}")
 
-set(AVUTIL_FOUND "YES")
+set(AVFORMAT_FOUND "YES")
