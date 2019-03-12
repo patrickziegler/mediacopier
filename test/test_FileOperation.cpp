@@ -1,3 +1,4 @@
+#define BOOST_TEST_MODULE test_FileOperation
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 #include "FileOperation.hpp"
@@ -12,8 +13,6 @@ struct FileOperationFixture
         FileOperation::setPathPrefix("data/dst");
     }
 };
-
-BOOST_AUTO_TEST_SUITE(test_FileOperation)
 
 BOOST_FIXTURE_TEST_CASE(rot0_datetime_microsec, FileOperationFixture)
 {
@@ -85,5 +84,3 @@ BOOST_AUTO_TEST_CASE(fail_no_metadata)
     bf::path pathOld("data/lena64_rot270_copy.png");
     BOOST_CHECK_THROW(FileOperation op(pathOld), std::invalid_argument);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

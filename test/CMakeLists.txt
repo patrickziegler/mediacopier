@@ -1,23 +1,12 @@
 find_package(Boost REQUIRED unit_test_framework)
 
-add_executable(test)
+include(BoostTestHelpers)
 
-target_include_directories(test PRIVATE ${BOOST_INCLUDE_DIRS})
+enable_testing()
 
-target_sources(test PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/test_ConfigManager.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test_FileOperation.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test_FileOperationStrategy.cpp"
-    )
-
-target_link_libraries(test mediacopier)
-target_link_libraries(test ${Boost_LIBRARIES})
-
-add_custom_command(
-    TARGET test
-    POST_BUILD
-    COMMAND eval "${CMAKE_BINARY_DIR}/test/test" -l all -r detailed
-    )
+add_boost_test(test_ConfigManager.cpp mediacopier)
+add_boost_test(test_FileOperation.cpp mediacopier)
+add_boost_test(test_FileOperationStrategy.cpp mediacopier)
 
 add_custom_command(
     OUTPUT "${CMAKE_BINARY_DIR}/test/data"
@@ -29,4 +18,4 @@ add_custom_target(
     DEPENDS "${CMAKE_BINARY_DIR}/test/data"
     )
 
-add_dependencies(test test_data)
+add_dependencies(test_FileOperationStrategy test_data)

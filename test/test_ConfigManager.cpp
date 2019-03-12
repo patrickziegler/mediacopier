@@ -1,9 +1,7 @@
-#define BOOST_TEST_MODULE test_MediaCopy
+#define BOOST_TEST_MODULE test_ConfigManager
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 #include "ConfigManager.hpp"
-
-BOOST_AUTO_TEST_SUITE(test_ConfigManager)
 
 BOOST_AUTO_TEST_CASE(parseArgs_all_good)
 {
@@ -101,5 +99,3 @@ BOOST_AUTO_TEST_CASE(parseArgs_missing_positional)
     ConfigManager *config = &ConfigManager::instance();
     BOOST_CHECK_EQUAL(config->parseArgs(argc, argv), 1);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

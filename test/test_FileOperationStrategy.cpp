@@ -1,3 +1,4 @@
+#define BOOST_TEST_MODULE test_FileOperationStrategy
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 #include "FileOperation.hpp"
@@ -19,8 +20,6 @@ struct FileOperationStrategyFixture
         bf::remove_all("tmp");
     }
 };
-
-BOOST_AUTO_TEST_SUITE(test_FileOperationStrategy)
 
 BOOST_FIXTURE_TEST_CASE(rot0_good_size, FileOperationStrategyFixture)
 {
@@ -156,5 +155,3 @@ BOOST_FIXTURE_TEST_CASE(move_override_rot270, FileOperationStrategyFixture)
     FileOperation::setStrategy(strategy_ptr(new FileMoveOverwrite()));
     BOOST_CHECK_EQUAL(op3.execute(), 0);
 }
-
-BOOST_AUTO_TEST_SUITE_END()
