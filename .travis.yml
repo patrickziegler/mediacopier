@@ -1,0 +1,26 @@
+dist: xenial
+sudo: false
+language: cpp
+
+addons:
+  apt:
+    update: true
+    packages:
+      - libboost-filesystem-dev libboost-date-time-dev libboost-test-dev libexiv2-dev libjpeg-turbo-progs ffmpeg  libavcodec-dev libavformat-dev exiftool
+
+env:
+  - OMP_NUM_THREADS=2
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+
+script:
+  - make -j2
+
+after_script:
+  - cd test
+  - ./test_ConfigManager -l all
+  - ./test_FileOperation -l all
+  - ./test_FileOperationStrategy -l all
