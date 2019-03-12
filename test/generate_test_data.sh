@@ -40,12 +40,13 @@ DATA_PATH=$1
 IMG_ORIGINAL="${SCRIPT_PATH}"/lena512color.tiff
 VID_ORIGINAL="${SCRIPT_PATH}"/roundhay_garden_scene.mp4
 
+IMG_RAW_COPY="${DATA_PATH}"/lena16_rot90.tiff
+
 IMG_64_ROT0="${DATA_PATH}"/lena64_rot0.jpg
 IMG_64_ROT90="${DATA_PATH}"/lena64_rot90.jpg
 IMG_64_ROT180="${DATA_PATH}"/lena64_rot180.jpg
 IMG_64_ROT270="${DATA_PATH}"/lena64_rot270.jpg
 
-IMG_64_ROT180_COPY="${DATA_PATH}"/lena64_rot180_copy.jpg
 IMG_64_ROT270_COPY="${DATA_PATH}"/lena64_rot270_copy.png
 
 IMG_50_ROT0="${DATA_PATH}"/lena50_rot0.jpg
@@ -63,6 +64,10 @@ mkdir -p "${DATA_PATH}"
 
 convert "${IMG_ORIGINAL}" -resize 64x64 -quality 25 -colorspace GRAY "${IMG_64_ROT0}"
 
+convert "${IMG_ORIGINAL}" -resize 16x16 -rotate 90 -colorspace GRAY "${IMG_RAW_COPY}"
+exiftool -overwrite_original -DateTimeOriginal="2019-02-05 12:09:32" "${IMG_RAW_COPY}"
+exiftool -overwrite_original -n -Orientation=8 "${IMG_RAW_COPY}"
+
 jpegtran -optimize -rotate 90 "${IMG_64_ROT0}" > "${IMG_64_ROT90}"
 jpegtran -optimize -rotate 180 "${IMG_64_ROT0}" > "${IMG_64_ROT180}"
 jpegtran -optimize -rotate 270 "${IMG_64_ROT0}" > "${IMG_64_ROT270}"
@@ -78,8 +83,6 @@ exiftool -overwrite_original -n -Orientation=3 "${IMG_64_ROT180}" -SubSecTimeOri
 
 exiftool -overwrite_original -DateTimeOriginal="2019-02-05 12:13:32" "${IMG_64_ROT270}"
 exiftool -overwrite_original -n -Orientation=6 "${IMG_64_ROT270}" -SubSecTimeOriginal=123
-
-cp -u "${IMG_64_ROT180}" "${IMG_64_ROT180_COPY}"
 
 convert "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY}"
 
@@ -98,6 +101,6 @@ exiftool -overwrite_original -n -Orientation=8 "${IMG_50_ROT90}"
 
 # --- Create video files in various formats
 
-cp "${VID_ORIGINAL}" "${DATA_PATH}"
+cp --no-preserve mode "${VID_ORIGINAL}" "${DATA_PATH}"
 ffmpeg -i "${VID_ORIGINAL}" -map_metadata 0 -metadata creation_time="2017-10-13 09:29:46" -codec copy "${VID_MOV}"
 ffmpeg -i "${VID_ORIGINAL}" -map_metadata 0 -metadata creation_time="2017-10-13 09:30:46" -codec vp9 -crf 63 "${VID_MKV}"
