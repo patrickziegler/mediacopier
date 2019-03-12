@@ -31,7 +31,7 @@ Additionally, you will need the following libraries for building and testing:
 
 1. Clone this repository and create a build directory
 ```bash
-git clone --recursive git@github.com:patrickziegler/MediaCopier.git
+git clone --recursive https://github.com/patrickziegler/MediaCopier.git
 cd MediaCopier && mkdir build && cd build
 ```
 
