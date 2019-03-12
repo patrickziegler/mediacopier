@@ -29,19 +29,19 @@ Additionally, you will need the following libraries for building and testing:
 
 ### :hammer: Build and Install
 
-* Clone this repository and create a build directory
+1. Clone this repository and create a build directory
 ```bash
 git clone --recursive git@github.com:patrickziegler/MediaCopier.git
 cd MediaCopier && mkdir build && cd build
 ```
 
-* Build and install to `/usr/local` *(default)*
+2. Build and install to `/usr/local` *(default)*
 ```bash
 cmake ..
 make && make install
 ```
 
-* Build and install to another destination *(alternative)*
+3. Build and install to another destination *(alternative)*
 ```bash
 export INSTALL_PREFIX=~/.local
 
@@ -52,7 +52,7 @@ export $PATH=$PATH:$INSTALL_PREFIX/bin
 export $LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALL_PREFIX/lib
 ```
 
-* Build a RPM package to be used with your favorite package manager *(optional)*
+4. Build a RPM package to be used with your favorite package manager *(optional)*
 ```bash
 make package
 ```
