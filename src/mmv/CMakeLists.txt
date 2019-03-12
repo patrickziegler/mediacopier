@@ -11,8 +11,6 @@ target_sources(mmv PRIVATE
 target_link_libraries(mmv mediacopier)
 target_link_libraries(mmv OpenMP::OpenMP_CXX)
 
-target_link_options(mmv PRIVATE "-lexiv2")
-
 install(TARGETS mmv
     RUNTIME
     DESTINATION bin

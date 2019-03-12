@@ -2,6 +2,7 @@ find_package(Boost REQUIRED filesystem date_time)
 find_package(avformat REQUIRED)
 find_package(avutil REQUIRED)
 find_package(JPEG REQUIRED)
+find_package(Exiv2 REQUIRED)
 
 add_library(mediacopier SHARED)
 
@@ -9,6 +10,7 @@ target_include_directories(mediacopier PRIVATE ${BOOST_INCLUDE_DIRS})
 target_include_directories(mediacopier PRIVATE ${AVFORMAT_INCLUDE_DIR})
 target_include_directories(mediacopier PRIVATE ${AVUTIL_INCLUDE_DIR})
 target_include_directories(mediacopier PRIVATE ${JPEG_INCLUDE_DIRS})
+target_include_directories(mediacopier PRIVATE ${EXIV2_INCLUDE_DIR})
 
 target_include_directories(mediacopier PUBLIC "${CMAKE_SOURCE_DIR}/include/mediacopier")
 target_include_directories(mediacopier PRIVATE "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo")
@@ -28,8 +30,7 @@ target_link_libraries(mediacopier ${Boost_LIBRARIES})
 target_link_libraries(mediacopier ${AVFORMAT_LIBRARY})
 target_link_libraries(mediacopier ${AVUTIL_LIBRARY})
 target_link_libraries(mediacopier ${JPEG_LIBRARIES})
-
-target_link_options(mediacopier PRIVATE "-lexiv2")
+target_link_libraries(mediacopier ${EXIV2_LIBRARY})
 
 install(TARGETS mediacopier
     LIBRARY

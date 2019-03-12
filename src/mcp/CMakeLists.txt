@@ -11,8 +11,6 @@ target_sources(mcp PRIVATE
 target_link_libraries(mcp mediacopier)
 target_link_libraries(mcp OpenMP::OpenMP_CXX)
 
-target_link_options(mcp PRIVATE "-lexiv2")
-
 install(TARGETS mcp
     RUNTIME
     DESTINATION bin
