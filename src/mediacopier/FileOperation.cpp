@@ -32,8 +32,10 @@ const std::vector<std::string> keysSubSec = {
 };
 
 const std::vector<std::locale> formatsDateTime = {
-    std::locale(std::locale(""), new bt::time_input_facet("%Y-%m-%d %H:%M:%s")),
-    std::locale(std::locale(""), new bt::time_input_facet("%d-%m-%Y %H:%M:%s"))
+    std::locale(std::locale(""), new bt::time_input_facet("%Y:%m:%d %H:%M:%S")),
+    std::locale(std::locale(""), new bt::time_input_facet("%Y-%m-%d %H:%M:%S")),
+    std::locale(std::locale(""), new bt::time_input_facet("%d:%m:%Y %H:%M:%S")),
+    std::locale(std::locale(""), new bt::time_input_facet("%d-%m-%Y %H:%M:%S"))
 };
 
 inline bt::ptime parseDateStr(const std::string& strDateTime)
@@ -57,6 +59,11 @@ int FileOperation::readExif() // http://www.exiv2.org/examples.html
     Exiv2::ExifData exifData;
     std::unique_ptr<Exiv2::Image> image;
     std::string buf;
+
+    static bool exif2_init = [](){
+        Exiv2::XmpParser::initialize();
+        return true;
+    } ();
 
     try {
         image = Exiv2::ImageFactory::open(pathOld.string());
@@ -115,8 +122,12 @@ int FileOperation::readVideoMeta() // http://ffmpeg.org/doxygen/trunk/metadata_8
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionaryEntry* tag = nullptr;
 
+    static bool av_init = [](){
+        av_register_all();
+        return true;
+    } ();
+
     if (!avformat_open_input(&fmt_ctx, pathOld.c_str(), nullptr, nullptr)) {
-        // Key "creation_time" found out with 'ffprobe' command line tool
         if ((tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX))) {
             timestamp = parseDateStr(tag->value);
         }
@@ -142,7 +153,7 @@ void FileOperation::setPathFormat(const std::string& format)
 
 FileOperation::FileOperation(const boost::filesystem::path& file)
 {
-    pathOld = file;
+    pathOld = bf::absolute(file);
 
     if (readExif() && readVideoMeta()) {
         throw std::invalid_argument("No metadata found in " + file.string());

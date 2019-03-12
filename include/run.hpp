@@ -9,8 +9,6 @@
 #include <iostream>
 #include <chrono>
 
-#include <exiv2/exiv2.hpp>
-
 using operationType = enum {
 Copy,
 Move,
@@ -86,8 +84,6 @@ int run(int argc, char *argv[])
     FileOperation::setStrategy(strategy);
     FileOperation::setPathFormat(ConfigManager::instance().pathFormat);
     FileOperation::setPathPrefix(ConfigManager::instance().dirOutput);
-
-    Exiv2::XmpParser::initialize();
 
     tp = timer::now();
 
