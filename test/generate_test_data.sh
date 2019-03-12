@@ -52,6 +52,7 @@ IMG_64_ROT270_COPY="${DATA_PATH}"/lena64_rot270_copy.png
 IMG_50_ROT0="${DATA_PATH}"/lena50_rot0.jpg
 IMG_50_ROT90="${DATA_PATH}"/lena50_rot90.jpg
 
+VID_MP4="${DATA_PATH}"/roundhay_garden_scene.mp4
 VID_MOV="${DATA_PATH}"/roundhay_garden_scene.mov
 VID_MKV="${DATA_PATH}"/roundhay_garden_scene.webm
 
@@ -101,6 +102,7 @@ exiftool -overwrite_original -n -Orientation=8 "${IMG_50_ROT90}"
 
 # --- Create video files in various formats
 
-cp --no-preserve mode "${VID_ORIGINAL}" "${DATA_PATH}"
-ffmpeg -i "${VID_ORIGINAL}" -map_metadata 0 -metadata creation_time="2017-10-13 09:29:46" -codec copy "${VID_MOV}"
-ffmpeg -i "${VID_ORIGINAL}" -map_metadata 0 -metadata creation_time="2017-10-13 09:30:46" -codec vp9 -crf 63 "${VID_MKV}"
+cp --no-preserve mode "${VID_ORIGINAL}" "${VID_MP4}"
+exiftool -CreateDate="2018:01:01 01:01:01" "${VID_MP4}"
+ffmpeg -i "${VID_MP4}" -map_metadata 0 -codec copy "${VID_MOV}"
+ffmpeg -i "${VID_MP4}" -map_metadata 0 -codec vp9 -crf 63 "${VID_MKV}"

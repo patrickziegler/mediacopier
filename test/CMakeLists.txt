@@ -18,4 +18,5 @@ add_custom_target(
     DEPENDS "${CMAKE_BINARY_DIR}/test/data"
     )
 
+add_dependencies(test_FileOperation test_data)
 add_dependencies(test_FileOperationStrategy test_data)

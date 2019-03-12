@@ -124,7 +124,7 @@ BOOST_FIXTURE_TEST_CASE(move_override_video, FileOperationStrategyFixture)
     BOOST_CHECK_EQUAL(bf::exists(op2.getPathNew()), true);
 
     FileOperation op3(bf::path(op2.getPathNew()));
-    BOOST_WARN_EQUAL(op3.getPathOld(), op3.getPathNew());
+    BOOST_WARN_EQUAL(op3.getPathOld(), bf::absolute(op3.getPathNew()));
 
     BOOST_CHECK_EQUAL(op3.execute(), 1);
     FileOperation::setStrategy(strategy_ptr(new FileMoveOverwrite()));
@@ -149,7 +149,7 @@ BOOST_FIXTURE_TEST_CASE(move_override_rot270, FileOperationStrategyFixture)
     BOOST_CHECK_EQUAL(bf::exists(op2.getPathNew()), true);
 
     FileOperation op3(bf::path(op2.getPathNew()));
-    BOOST_WARN_EQUAL(op3.getPathOld(), op3.getPathNew());
+    BOOST_WARN_EQUAL(op3.getPathOld(), bf::absolute(op3.getPathNew()));
 
     BOOST_CHECK_EQUAL(op3.execute(), 1);
     FileOperation::setStrategy(strategy_ptr(new FileMoveOverwrite()));
