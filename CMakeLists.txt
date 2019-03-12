@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
-project(MediaCopier VERSION 0.9.0)
+project(MediaCopier VERSION 1.0.0)
 
 add_subdirectory(src/mediacopier)
 add_subdirectory(src/mcp)
@@ -16,7 +16,7 @@ set(CPACK_PACKAGE_VENDOR "Patrick Ziegler")
 set(CPACK_PACKAGE_CONTACT "https://github.com/patrickziegler")
 
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Very fast copying / moving and renaming media files according to the creation date found in their metadata")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Copying and renaming media files according to their original creation date with lossless jpeg rotation on the fly")
 
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
