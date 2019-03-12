@@ -85,21 +85,27 @@ int jpeg_copy_rotated(const FileOperation& request, const bf::copy_option& copy_
         return 3;
     }
 
-    if ((f_out = fopen(request.getPathNew().c_str(), "wb")) == nullptr) {
-        fclose(f_in);
-        return 4;
-    }
-
     jpeg_stdio_src(&c_info, f_in);
     jcopy_markers_setup(&c_info, JCOPYOPT_ALL);
     jpeg_read_header(&c_info, true);
     jtransform_request_workspace(&c_info, &trans);
+
+    if (c_info.image_width % 16 > 0 || c_info.image_height % 16 > 0) {
+        jpeg_destroy_decompress(&c_info);
+        jpeg_destroy_compress(&d_info);
+        return 7;
+    }
 
     c_coeff = jpeg_read_coefficients(&c_info);
     jpeg_copy_critical_parameters(&c_info, &d_info);
 
     d_info.write_JFIF_header = false;
     d_coeff = jtransform_adjust_parameters(&c_info, &d_info, c_coeff, &trans);
+
+    if ((f_out = fopen(request.getPathNew().c_str(), "wb")) == nullptr) {
+        fclose(f_in);
+        return 4;
+    }
 
     jpeg_stdio_dest(&d_info, f_out);
     jpeg_write_coefficients(&d_info, d_coeff);
