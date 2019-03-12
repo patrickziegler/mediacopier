@@ -1,55 +1,61 @@
 #  :camera: MediaCopier
 
+[![Build Status](https://api.travis-ci.com/patrickziegler/MediaCopier.svg?branch=master)](https://travis-ci.com/patrickziegler/MediaCopier)
+
 ### Features
-* using **Exiv2** to read fields `Exif.Image.DateTime*`, `Exif.Photo.DateTime*` and `Exif.Photo.SubSecTime*`
-* using **ffmpeg** to read `creation_time` in video files
-* ~~using **libjpeg** for automatic rotation of JPEG files according to EXIF image orientation~~ **(WIP)** 
-* support for **copying** and **moving** files
-* support for **simulation mode** to test operation before execution
-* providing **override flag** to force copying / moving of already existing files
-* providing **logfile export** for detailed analysis or postprocessing with other tools (i.E. `exiftran -ai ...`)
+This software searches for **tagged media files** in a given directory and copies or moves those files to a given destination while renaming them according to the specified format. The original creation date is used to **generate a folder structure** and unique filenames. Raw image files and videos are supported as well.
+
+This library supports **lossless auto-rotation of JPEG files with known orientation** (on the fly) when image dimension are appropriate (divisible by 16). If the orientation is unkown or the dimensions are inconvenient they will be copied as they are.
+
+The execution stage uses **parallelization via OpenMP** for better performance.
 
 ## Getting Started
 
 ### Prerequisites
 
-This software depends on the following librarys:
+This software needs on the following libraries at runtime:
 
-* [Boost](https://www.boost.org/) (`libboost_filesystem`, `libboost_date_time`) [[Boost License](https://www.boost.org/users/license.html)]
-* [ffmpeg](https://ffmpeg.org/) (`libavformat`, `libavutil`) [[LGPL](https://ffmpeg.org/legal.html)]
-* [Exiv2](http://exiv2.org/) [[GPL](https://github.com/Exiv2/exiv2/blob/master/license.txt)]
+* [Boost](https://www.boost.org/) (`filesystem`, `date_time`)
+* [ffmpeg](https://ffmpeg.org/) (`libavformat`, `libavutil`)
+* [libjpeg-turbo](https://www.libjpeg-turbo.org/)
+* [Exiv2](http://exiv2.org/)
 
-Additionally, you will need:
+Additionally, you will need the following libraries for building and testing:
 
+* [Boost](https://www.boost.org/) (`test`)
 * [OpenMP](https://www.openmp.org/)
 * [CMake](https://cmake.org/) >= 3.9
 * A recent C++ compiler, such as [Clang](https://clang.llvm.org/) or [GCC](https://gcc.gnu.org/)
 
 ### :hammer: Build and Install
 
-The build process consists of four simple steps:
+1. Clone this repository and create a build directory
+```bash
+git clone --recursive git@github.com:patrickziegler/MediaCopier.git
+cd MediaCopier && mkdir build && cd build
+```
 
-1. Define your preferred install location
+2a. Build and install to `/usr/local` (default)
+```bash
+cmake ..
+make && make install
+```
+
+2b. Build and install to another destination
 ```bash
 export INSTALL_PREFIX=~/.local
-```
-2. Build and install the package
-```bash
-mkdir build && cd build
+
 cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX ..
-make -j4 && make install
-```
-3. Make the package available with the following commands
-```bash
+make && make install
+
 export $PATH=$PATH:$INSTALL_PREFIX/bin
 export $LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALL_PREFIX/lib
 ```
-4. Build a RPM package to be used with your favorite package manager *(optional)*
+
+3. Build a RPM package to be used with your favorite package manager *(optional)*
 ```bash
 make package
 ```
-
-For global system integration, use `/usr/local` as `INSTALL_PREFIX` and `sudo make install && sudo ldconfig` for installation.
 
 ### Generated Files
 
@@ -59,16 +65,11 @@ After the installation is finished, you should find a file structure as seen bel
 ├── bin
 │   ├── mcp
 │   └── mmv
-├── include
-│   └── mediacopier
-│       ├── *.hpp
 ├── lib
 │   └── libmediacopier.so
 ```
 
 The binarys `mcp` and `mmv` provide the tools for copying or moving your files. They share some code in `libmediacopier.so`.
-
-The header files in `include/mediacopier` are only needed for linking your own software with `libmediacopier.so`. So you probably won't need them.
 
 ###  :rocket: Usage
 
@@ -88,31 +89,13 @@ Flag | Description
 `-f FORMAT` | format of new filenames
 `-l LOGFILE` | write log to LOGFILE
 
-The parameter `-f FORMAT` specifies how the filenames are derived from the information found in the input files. It could be something like `-f "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_%f"`. The replacement characters to be used for this are described in the boost [documentation](https://www.boost.org/doc/libs/1_69_0/doc/html/date_time/date_time_io.html). Please note that this parameter also allows to  specify the folder structure in the destination directory.
+The parameter `-f FORMAT` specifies how the filenames are derived from the information found in the input files. It could be something like `-f "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_%f"`.
 
-After all, calling `mcp ~/in ~/out` should result in some output similar to the following:
-
-```
-Input dir:      /home/user/in
-Output dir:     /home/user/out
-
-Searching for media files ...
-
-Found /home/user/in/IMG_2730.JPG: OK
-Found /home/user/in/DSC_4143.NEF: OK
-Found /home/user/in/MVI_3075.MOV: OK
-Found /home/user/in/DSC_4143.NEF.xmp: SKIPPED
-
--> 3 valid files (0.005 s)
-
-Copying files [========================================>] 100.00 %
-
-Operation took 0.054 s
-```
+The replacement characters to be used for this are described in the boost [documentation](https://www.boost.org/doc/libs/1_69_0/doc/html/date_time/date_time_io.html). Please note that this parameter also allows to  specify the folder structure in the destination directory.
 
 ## Authors
 
-*  Patrick Ziegler - *Initial work* - [Homepage](https://patrickziegler.github.io)
+*  Patrick Ziegler
 
 ## License
 
