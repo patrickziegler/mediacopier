@@ -6,7 +6,15 @@ addons:
   apt:
     update: true
     packages:
-      - libboost-filesystem-dev libboost-date-time-dev libboost-test-dev libexiv2-dev libjpeg-turbo-progs ffmpeg  libavformat-dev libavutil-dev exiftool
+      - libboost-filesystem-dev
+      - libboost-date-time-dev
+      - libboost-test-dev
+      - libexiv2-dev
+      - libavformat-dev
+      - libavutil-dev
+      - libjpeg-turbo-progs
+      - ffmpeg
+      - exiftool
 
 env:
   - OMP_NUM_THREADS=2
