@@ -13,7 +13,7 @@ The execution stage uses **parallelization via OpenMP** for better performance.
 
 ### Prerequisites
 
-This software needs on the following libraries at runtime:
+This software needs the following libraries at runtime:
 
 * [Boost](https://www.boost.org/) (`filesystem`, `date_time`)
 * [ffmpeg](https://ffmpeg.org/) (`libavformat`, `libavutil`)
