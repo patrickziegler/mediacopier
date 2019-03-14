@@ -1,10 +1,4 @@
-add_custom_target(test ALL)
-
-add_custom_command(
-    TARGET test
-    POST_BUILD
-    COMMAND ${CMAKE_CTEST_COMMAND}
-    )
+add_custom_target(all_tests)
 
 function(add_boost_test SOURCE_FILE_NAME DEPENDENCY_LIB)
 #
@@ -63,6 +57,6 @@ function(add_boost_test SOURCE_FILE_NAME DEPENDENCY_LIB)
                  --run_test=${TEST_NAME} --catch_system_error=yes)
     endforeach()
 
-    add_dependencies(test ${TEST_EXECUTABLE_NAME})
+    add_dependencies(all_tests ${TEST_EXECUTABLE_NAME})
 
 endfunction()

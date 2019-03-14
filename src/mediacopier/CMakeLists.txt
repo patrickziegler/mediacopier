@@ -42,3 +42,17 @@ install(TARGETS mediacopier
 #     DESTINATION include
 #     COMPONENT headers
 #     )
+
+add_custom_command(
+    TARGET mediacopier
+    POST_BUILD
+    COMMAND cmake --build . --target all_tests
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+
+add_custom_command(
+    TARGET mediacopier
+    POST_BUILD
+    COMMAND ${CMAKE_CTEST_COMMAND}
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test
+    )
