@@ -2,8 +2,6 @@ find_package(OpenMP REQUIRED)
 
 add_executable(mmv)
 
-target_include_directories(mmv PRIVATE "${CMAKE_SOURCE_DIR}/include")
-
 target_sources(mmv PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/mmv.cpp"
     )

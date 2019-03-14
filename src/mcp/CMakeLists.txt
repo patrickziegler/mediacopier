@@ -2,8 +2,6 @@ find_package(OpenMP REQUIRED)
 
 add_executable(mcp)
 
-target_include_directories(mcp PRIVATE "${CMAKE_SOURCE_DIR}/include")
-
 target_sources(mcp PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/mcp.cpp"
     )
