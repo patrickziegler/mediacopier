@@ -1,7 +1,7 @@
 add_executable(mcp)
 
 target_sources(mcp PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/mcp.cpp"
+    "mcp.cpp"
     )
 
 target_link_libraries(mcp mediacopier)

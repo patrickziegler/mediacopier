@@ -14,17 +14,23 @@ target_include_directories(mediacopier PRIVATE ${JPEG_INCLUDE_DIRS})
 target_include_directories(mediacopier PRIVATE ${EXIV2_INCLUDE_DIR})
 target_include_directories(mediacopier PUBLIC "${CMAKE_SOURCE_DIR}/include/mediacopier")
 target_include_directories(mediacopier PRIVATE "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo")
+target_include_directories(mediacopier PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 target_sources(mediacopier PRIVATE
     "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/transupp.c"
     )
 
 target_sources(mediacopier PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/ConfigManager.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/FileOperation.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/FileOperationStrategy.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ProgressBar.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/Run.cpp"
+    "ConfigManager.cpp"
+    "FileOperation.cpp"
+    "FileOperationStrategy.cpp"
+    "ProgressBar.cpp"
+    "Run.cpp"
+    )
+
+configure_file(
+    "Version.h.in"
+    "Version.h"
     )
 
 target_link_libraries(mediacopier OpenMP::OpenMP_CXX)

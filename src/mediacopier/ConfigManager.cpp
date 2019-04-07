@@ -15,6 +15,7 @@
 
 
 #include "ConfigManager.hpp"
+#include "Version.h"
 #include <iostream>
 
 namespace bf = boost::filesystem;
@@ -80,7 +81,7 @@ int ConfigManager::parseArgs(int argc, char *argv[])
     }
 
     if (pos.size() < 2) {
-        std::cout << "MediaCopier, Copyright (C) 2019 Patrick Ziegler" <<  std::endl
+        std::cout << "MediaCopier v" << PROJECT_VERSION << ", Copyright (C) 2019 Patrick Ziegler" <<  std::endl
                   << "Usage: [-h] [-o] [-s] [-f FORMAT] [-l LOGFILE] SOURCE DESTINATION" << std::endl;
 
         return 1;
