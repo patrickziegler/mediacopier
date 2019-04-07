@@ -1,3 +1,4 @@
+find_package(OpenMP REQUIRED)
 find_package(Boost REQUIRED filesystem date_time)
 find_package(avformat REQUIRED)
 find_package(avutil REQUIRED)
@@ -23,8 +24,10 @@ target_sources(mediacopier PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/FileOperation.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileOperationStrategy.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ProgressBar.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Run.cpp"
     )
 
+target_link_libraries(mediacopier OpenMP::OpenMP_CXX)
 target_link_libraries(mediacopier ${Boost_LIBRARIES})
 target_link_libraries(mediacopier ${AVFORMAT_LIBRARY})
 target_link_libraries(mediacopier ${AVUTIL_LIBRARY})

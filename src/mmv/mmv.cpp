@@ -18,5 +18,5 @@
 
 int main(int argc, char *argv[])
 {
-    return run<Move>(argc, argv);
+    return run(Move, argc, argv);
 }

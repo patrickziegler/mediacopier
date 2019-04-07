@@ -21,8 +21,11 @@
 
 class ProgressBar
 {
-    size_t n;
+public:
     size_t i = 0;
+
+private:
+    size_t n;
     size_t width = 50;
     size_t lastPos = 0;
     std::string prefix = "Running";
@@ -35,7 +38,8 @@ public:
     ProgressBar(size_t n, std::string prefix, size_t width) : n(n), width(width), prefix(prefix) { init(); }
     ProgressBar(size_t n, size_t width) : n(n), width(width) { init(); }
 
-    void update();
+    void showProgress();
+    bool hasFinished();
     void close();
 };
 

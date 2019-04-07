@@ -1,5 +1,3 @@
-find_package(OpenMP REQUIRED)
-
 add_executable(mcp)
 
 target_sources(mcp PRIVATE
@@ -7,7 +5,6 @@ target_sources(mcp PRIVATE
     )
 
 target_link_libraries(mcp mediacopier)
-target_link_libraries(mcp OpenMP::OpenMP_CXX)
 
 install(TARGETS mcp
     RUNTIME

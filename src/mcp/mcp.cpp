@@ -18,5 +18,5 @@
 
 int main(int argc, char *argv[])
 {
-    return run<Copy>(argc, argv);
+    return run(Copy, argc, argv);
 }
