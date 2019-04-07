@@ -11,7 +11,6 @@ target_include_directories(mediacopier PRIVATE ${AVFORMAT_INCLUDE_DIR})
 target_include_directories(mediacopier PRIVATE ${AVUTIL_INCLUDE_DIR})
 target_include_directories(mediacopier PRIVATE ${JPEG_INCLUDE_DIRS})
 target_include_directories(mediacopier PRIVATE ${EXIV2_INCLUDE_DIR})
-
 target_include_directories(mediacopier PUBLIC "${CMAKE_SOURCE_DIR}/include/mediacopier")
 target_include_directories(mediacopier PRIVATE "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo")
 
