@@ -80,7 +80,7 @@ int ConfigManager::parseArgs(int argc, char *argv[])
     }
 
     if (pos.size() < 2) {
-        std::cout << "MediaCopier, Copyright (C) 2019 Patrick Ziegler" <<  std::endl << std::endl
+        std::cout << "MediaCopier, Copyright (C) 2019 Patrick Ziegler" <<  std::endl
                   << "Usage: [-h] [-o] [-s] [-f FORMAT] [-l LOGFILE] SOURCE DESTINATION" << std::endl;
 
         return 1;

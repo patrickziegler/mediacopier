@@ -16,10 +16,10 @@
 
 #include "FileOperation.hpp"
 #include "FileOperationStrategy.hpp"
-#include <string>
+#include <exiv2/exiv2.hpp>
 #include <algorithm>
 #include <csetjmp>
-#include <exiv2/exiv2.hpp>
+#include <string>
 
 extern "C"
 {

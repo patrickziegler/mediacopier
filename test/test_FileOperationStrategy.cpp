@@ -1,9 +1,9 @@
 #define BOOST_TEST_MODULE test_FileOperationStrategy
 #define BOOST_TEST_DYN_LINK
 
-#include <boost/test/unit_test.hpp>
 #include "FileOperation.hpp"
 #include "FileOperationStrategy.hpp"
+#include <boost/test/unit_test.hpp>
 
 namespace bf = boost::filesystem;
 using strategy_ptr = std::shared_ptr<FileOperationStrategy>;
