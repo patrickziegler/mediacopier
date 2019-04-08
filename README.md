@@ -3,7 +3,7 @@
 [![Build Status](https://api.travis-ci.com/patrickziegler/MediaCopier.svg?branch=master)](https://travis-ci.com/patrickziegler/MediaCopier)
 
 ### Features
-This software searches for **tagged media files** in a given directory and copies or moves those files to a given destination while renaming them according to the specified format. The original creation date is used to **generate a folder structure** and unique filenames. Raw image files and videos are supported as well.
+This software searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format. The original creation date is used to **generate a folder structure** and unique filenames. Raw image files and videos are supported as well.
 
 This library supports **lossless auto-rotation of JPEG files with known orientation** (on the fly) when image dimensions are appropriate (divisible by 16). If the orientation is unkown or the dimensions are inconvenient they will be copied as they are.
 
