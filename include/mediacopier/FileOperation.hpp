@@ -17,10 +17,9 @@
 #ifndef FILEOPERATION_H
 #define FILEOPERATION_H
 
-#include <string>
-#include <memory>
-#include <boost/filesystem.hpp>
 #include <boost/date_time.hpp>
+#include <boost/filesystem.hpp>
+#include <string>
 
 class FileOperationStrategy;
 
@@ -36,7 +35,7 @@ class FileOperation
     std::string mimeType = "";
     int orientation = 0;
 
-    int readExif();
+    int readExifMeta();
     int readVideoMeta();
 
 public:
@@ -45,13 +44,10 @@ public:
     static void setPathFormat(const std::string&);
 
     FileOperation(const boost::filesystem::path&);
-
     boost::filesystem::path getPathOld() const;
     boost::filesystem::path getPathNew() const;
     std::string getMimeType() const;
     int getOrientation() const;
-
-    std::string getLogMessage(int) const;
     int execute();
 };
 

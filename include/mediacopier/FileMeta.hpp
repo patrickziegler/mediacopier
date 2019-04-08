@@ -14,32 +14,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-#ifndef CONFIGMANAGER_H
-#define CONFIGMANAGER_H
+#ifndef FILEMETA_H
+#define FILEMETA_H
 
+#include <boost/date_time.hpp>
 #include <boost/filesystem.hpp>
-#include <string>
+#include <tuple>
 
-class ConfigManager
-{
-    static ConfigManager* pInstance_;
+boost::posix_time::ptime
+read_video_meta(const boost::filesystem::path&);
 
-    ConfigManager() {}
-    ConfigManager(const ConfigManager&) {}
-    ConfigManager& operator=(const ConfigManager&);
-    ~ConfigManager() { pInstance_ = nullptr; }
+std::tuple<boost::posix_time::ptime, std::string, int>
+read_exif_meta(const boost::filesystem::path&);
 
-public:
-    static ConfigManager& instance();
-
-    std::string pathFormat = "%Y/%Y-%m/%Y-%m-%d/IMG_%Y%m%d_%H%M%S_%f";
-    std::string logfile = "";
-    bool flagOverride = false;
-    bool flagSimulate = false;
-    boost::filesystem::path dirInput;
-    boost::filesystem::path dirOutput;
-
-    int parseArgs(int argc, char *argv[]);
-};
+int reset_exif_orientation(const boost::filesystem::path&);
 
 #endif

@@ -12,9 +12,9 @@ target_include_directories(mediacopier PRIVATE ${AVFORMAT_INCLUDE_DIR})
 target_include_directories(mediacopier PRIVATE ${AVUTIL_INCLUDE_DIR})
 target_include_directories(mediacopier PRIVATE ${JPEG_INCLUDE_DIRS})
 target_include_directories(mediacopier PRIVATE ${EXIV2_INCLUDE_DIR})
-target_include_directories(mediacopier PUBLIC "${CMAKE_SOURCE_DIR}/include/mediacopier")
+target_include_directories(mediacopier PUBLIC  "${CMAKE_SOURCE_DIR}/include/mediacopier")
 target_include_directories(mediacopier PRIVATE "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo")
-target_include_directories(mediacopier PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+target_include_directories(mediacopier PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 target_sources(mediacopier PRIVATE
     "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/transupp.c"
@@ -22,6 +22,8 @@ target_sources(mediacopier PRIVATE
 
 target_sources(mediacopier PRIVATE
     "ConfigManager.cpp"
+    "FileJpeg.cpp"
+    "FileMeta.cpp"
     "FileOperation.cpp"
     "FileOperationStrategy.cpp"
     "ProgressBar.cpp"

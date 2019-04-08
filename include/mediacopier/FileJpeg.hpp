@@ -14,32 +14,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-#ifndef CONFIGMANAGER_H
-#define CONFIGMANAGER_H
+#ifndef FILEJPEG_H
+#define FILEJPEG_H
 
 #include <boost/filesystem.hpp>
-#include <string>
 
-class ConfigManager
-{
-    static ConfigManager* pInstance_;
+class FileOperation;
 
-    ConfigManager() {}
-    ConfigManager(const ConfigManager&) {}
-    ConfigManager& operator=(const ConfigManager&);
-    ~ConfigManager() { pInstance_ = nullptr; }
-
-public:
-    static ConfigManager& instance();
-
-    std::string pathFormat = "%Y/%Y-%m/%Y-%m-%d/IMG_%Y%m%d_%H%M%S_%f";
-    std::string logfile = "";
-    bool flagOverride = false;
-    bool flagSimulate = false;
-    boost::filesystem::path dirInput;
-    boost::filesystem::path dirOutput;
-
-    int parseArgs(int argc, char *argv[]);
-};
+int jpeg_copy_rotated(const FileOperation& request, const boost::filesystem::copy_option& copy_option);
 
 #endif

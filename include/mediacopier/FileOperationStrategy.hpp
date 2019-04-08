@@ -17,9 +17,9 @@
 #ifndef FILEOPERATIONSTRATEGY_H
 #define FILEOPERATIONSTRATEGY_H
 
-#include <vector>
-#include <mutex>
 #include <boost/filesystem.hpp>
+#include <mutex>
+#include <vector>
 
 class FileOperation;
 
@@ -29,6 +29,7 @@ struct FileOperationStrategy
     FileOperationStrategy(std::string description) : description(description) {}
     virtual ~FileOperationStrategy();
     virtual int execute(const FileOperation&) =0;
+    std::string getLogMessage(int) const;
 };
 
 struct FileCopyOverwrite : public FileOperationStrategy

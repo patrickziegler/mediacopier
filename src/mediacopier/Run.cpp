@@ -94,6 +94,7 @@ int run(int opType, int argc, char *argv[])
 
 #pragma omp parallel sections
         {
+
 #pragma omp section
             {
                 while (!bar->hasFinished()) {
@@ -102,41 +103,50 @@ int run(int opType, int argc, char *argv[])
                 }
                 bar->close();
             }
+
 #pragma omp section
             {
+
 #pragma omp parallel for shared(files)
                 for (size_t i = 0; i < files.size(); ++i) {
 
-                    std::string message;
+                    std::ostringstream message;
 
                     try {
 
                         FileOperation op(files[i]);
-                        message = op.getLogMessage(op.execute());
+
+                        message << strategy->getLogMessage(op.execute()) << std::endl
+                                << op.getPathOld() << std::endl
+                                << op.getPathNew() << std::endl
+                                << std::endl;
 
                     } catch (const std::invalid_argument& e) {
 
-                        std::ostringstream buf;
-                        buf << "File operation [" << strategy->description << "] SKIPPED: " << e.what() << std::endl
-                            << files[i].string() << std::endl << std::endl;
-                        message = buf.str();
+                        message << "File operation [" << strategy->description << "] SKIPPED: " << e.what() << std::endl
+                                << files[i].string() << std::endl
+                                << std::endl;
                     }
 
 #pragma omp critical
                     {
-                        log << message;
+                        log << message.str();
                         ++(bar->i);
                     }
+
                 }
 
                 log.close();
+
             }
+
         }
 
     } else {
 
 #pragma omp parallel sections
         {
+
 #pragma omp section
             {
                 while (!bar->hasFinished()) {
@@ -145,8 +155,10 @@ int run(int opType, int argc, char *argv[])
                 }
                 bar->close();
             }
+
 #pragma omp section
             {
+
 #pragma omp parallel for shared(files)
                 for (size_t i = 0; i < files.size(); ++i) {
 
@@ -157,12 +169,14 @@ int run(int opType, int argc, char *argv[])
                     } catch (const std::invalid_argument&) {
 
                     }
-
 #pragma omp atomic
                     ++(bar->i);
                 }
+
             }
+
         }
+
     }
 
     std::cout << std::endl << "Operation took " << get_duration(tp) << " s" << std::endl;
