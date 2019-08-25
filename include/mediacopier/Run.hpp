@@ -17,7 +17,7 @@
 #ifndef RUN_H
 #define RUN_H
 
-using operationType = enum {
+using opType = enum {
 Copy,
 Move,
 Simulate

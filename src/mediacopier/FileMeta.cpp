@@ -29,10 +29,10 @@ namespace bt = boost::posix_time;
 // list of available keys: http://www.exiv2.org/tags.html
 
 const std::vector<std::string> keysDateTime = {
-    "Exif.Image.DateTime",
-    "Exif.Image.DateTimeOriginal",
     "Exif.Photo.DateTimeOriginal",
-    "Exif.Photo.DateTimeDigitized"
+    "Exif.Image.DateTimeOriginal",
+    "Exif.Photo.DateTimeDigitized",
+    "Exif.Image.DateTime",
 };
 
 const std::vector<std::string> keysSubSec = {
@@ -78,9 +78,7 @@ bt::ptime read_video_meta(const bf::path& file) // http://ffmpeg.org/doxygen/tru
     } ();
 
     if (!avformat_open_input(&fmt_ctx, file.c_str(), nullptr, nullptr)) {
-
         if ((tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX))) {
-
             timestamp = parseDateStr(tag->value);
         }
     }
@@ -121,7 +119,6 @@ std::tuple<bt::ptime, std::string, int> read_exif_meta(const bf::path& file) // 
     for (const std::string& keyDateTime : keysDateTime) {
 
         try {
-
             timestamp = parseDateStr(exifData[keyDateTime].toString());
 
             if (!timestamp.is_not_a_date_time()) {
@@ -143,7 +140,6 @@ std::tuple<bt::ptime, std::string, int> read_exif_meta(const bf::path& file) // 
     for (const std::string& keySubSec : keysSubSec) {
 
         try {
-
             subsec_str = exifData[keySubSec].toString();
 
             if (subsec_str.length() < 1) {

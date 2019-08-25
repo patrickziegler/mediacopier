@@ -5,11 +5,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
-project(MediaCopier VERSION 1.2.0)
+project(MediaCopier VERSION 1.2.2)
 
 add_subdirectory(src/mediacopier)
-add_subdirectory(src/mcp)
-add_subdirectory(src/mmv)
+add_subdirectory(src/app)
 add_subdirectory(test)
 
 set(CPACK_PACKAGE_VENDOR "Patrick Ziegler")

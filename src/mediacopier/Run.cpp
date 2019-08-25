@@ -33,7 +33,7 @@ float get_duration(timer::time_point tp)
     return dt.count();
 }
 
-int run(int opType, int argc, char *argv[])
+int run(int op, int argc, char *argv[])
 {
     std::vector<boost::filesystem::path> files;
 
@@ -55,7 +55,7 @@ int run(int opType, int argc, char *argv[])
 
     strategy_ptr strategy;
 
-    if (ConfigManager::instance().flagSimulate || opType == Simulate) {
+    if (ConfigManager::instance().flagSimulate || op == Simulate) {
 
         if (ConfigManager::instance().flagOverride) {
             strategy = strategy_ptr(new FileSimulationOverwrite());
@@ -63,7 +63,7 @@ int run(int opType, int argc, char *argv[])
             strategy = strategy_ptr(new FileSimulation());
         }
 
-    } else if (opType == Move) {
+    } else if (op == Move) {
 
         if (ConfigManager::instance().flagOverride) {
             strategy = strategy_ptr(new FileMoveOverwrite());
