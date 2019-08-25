@@ -102,7 +102,6 @@ exiftool -overwrite_original -n -Orientation=8 "${IMG_50_ROT90}"
 
 # --- Create video files in various formats
 
-cp --no-preserve mode "${VID_ORIGINAL}" "${VID_MP4}"
-exiftool -CreateDate="2018:01:01 01:01:01" "${VID_MP4}"
+ffmpeg -i "${VID_ORIGINAL}" -metadata creation_time="2018-01-01 01:01:01Z" "${VID_MP4}"
 ffmpeg -i "${VID_MP4}" -map_metadata 0 -codec copy "${VID_MOV}"
 ffmpeg -i "${VID_MP4}" -map_metadata 0 -codec vp9 -crf 63 "${VID_MKV}"
