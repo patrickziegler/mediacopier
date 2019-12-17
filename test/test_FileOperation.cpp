@@ -24,7 +24,7 @@ BOOST_FIXTURE_TEST_CASE(rot0_datetime_microsec, FileOperationFixture)
     std::string pathNew("data/dst/2019/2019-02/2019-02-05/TEST_20190205_121032_123456.jpg");
     BOOST_CHECK_EQUAL(op.getMimeType(), "image/jpeg");
     BOOST_CHECK_EQUAL(op.getOrientation(), 1);
-    BOOST_CHECK_EQUAL(op.getPathOld(), bf::absolute(pathOld));
+    BOOST_CHECK_EQUAL(op.getPathOld(), pathOld);
     BOOST_CHECK_EQUAL(op.getPathNew().string(), pathNew);
 }
 

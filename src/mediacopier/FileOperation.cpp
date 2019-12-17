@@ -53,7 +53,7 @@ int FileOperation::readVideoMeta()
 
 FileOperation::FileOperation(const bf::path& file)
 {
-    pathOld = bf::absolute(file);
+    pathOld = file;
 
     if (readExifMeta() && readVideoMeta()) {
         throw std::invalid_argument("No metadata found in " + file.string());
