@@ -58,13 +58,23 @@ int jpeg_copy_rotated(const FileOperation& request, const bf::copy_option& copy_
     trans.crop = false;
     trans.force_grayscale = false;
 
+    /* There are 8 possible EXIF orientation values
+     * 1 - 0 degrees
+     * 2 - 0 degrees, mirrored
+     * 3 - 180 degrees
+     * 4 - 180 degrees, mirrored
+     * 5 - 90 degrees
+     * 6 - 90 degrees, mirrored
+     * 7 - 270 degrees
+     * 8 - 270 degrees, mirrored
+     * */
     switch (request.getOrientation())
     {
-    case 6:
-        trans.transform = JXFORM_ROT_90;
-        break;
     case 3:
         trans.transform = JXFORM_ROT_180;
+        break;
+    case 6:
+        trans.transform = JXFORM_ROT_90;
         break;
     case 8:
         trans.transform = JXFORM_ROT_270;
