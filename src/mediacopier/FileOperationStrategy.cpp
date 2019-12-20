@@ -21,43 +21,101 @@
 
 namespace bf = boost::filesystem;
 
-int copy_file(const FileOperation& request, const bf::copy_option& copy_option)
+int create_path_directories(const FileOperation& request)
 {
     bf::path pathNewDir(request.getPathNew());
     pathNewDir.remove_filename();
-
     try {
         bf::create_directories(pathNewDir);
-
+        return 0;
     } catch (const bf::filesystem_error&) {
-        return 4;
+        return 1;
     }
+}
 
-    if (request.getMimeType() != "image/jpeg"
-            || request.getOrientation() < 2
-            || jpeg_copy_rotated(request, copy_option)
-            || reset_exif_orientation(request.getPathNew())) {
+int compare_files(bf::path file1, bf::path file2)
+{
+    const std::streamsize buffer_size = 1024;
+    std::vector<char> buffer(buffer_size, '\0');
 
-        try {
-            bf::copy_file(request.getPathOld(), request.getPathNew(), copy_option);
+    std::ifstream input1(file1.string(),  std::ios::in | std::ios::binary);
+    std::ifstream input2(file2.string(),  std::ios::in | std::ios::binary);
 
-        } catch (const bf::filesystem_error&) {
+    std::string chunk1, chunk2;
+
+    while (!(input1.fail() || input2.fail())) {
+        input1.read(buffer.data(), buffer_size);
+        chunk1 = {buffer.begin(), buffer.begin() + input1.gcount()};
+
+        input2.read(buffer.data(), buffer_size);
+        chunk2 = {buffer.begin(), buffer.begin() + input2.gcount()};
+
+        if (chunk1 != chunk2) {
             return 1;
         }
     }
-
     return 0;
+}
+
+int copy_and_fix_jpeg_file(const FileOperation& request, const bf::copy_option& copy_option)
+{
+    if (jpeg_copy_rotated(request, copy_option) || reset_exif_orientation(request.getPathNew())) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int copy_file(const FileOperation& request, const bf::copy_option& copy_option)
+{
+    if (create_path_directories(request)) {
+        return 4;
+    }
+
+    if (request.getMimeType() == "image/jpeg" && request.getOrientation() > 2) {
+
+        if (bf::exists(request.getPathNew())) {
+
+            bf::path tmp = bf::unique_path();
+            int result;
+
+            FileOperation request_tmp = FileOperation(request.getPathOld(), tmp);
+
+            if (!copy_and_fix_jpeg_file(request_tmp, copy_option)) {
+                FileOperation request_new = FileOperation(tmp, request.getPathNew());
+                result = copy_file(request_new, copy_option);
+                bf::remove(tmp);
+                return result;
+            }
+
+        } else if (!copy_and_fix_jpeg_file(request, copy_option)) {
+            return 0;
+        }
+    }
+
+    if (bf::exists(request.getPathNew())) {
+        if (!compare_files(request.getPathOld(), request.getPathNew())) {
+            return -1;
+        } else if (copy_option == bf::copy_option::fail_if_exists) {
+            return 2;
+        }
+    }
+
+    try {
+        bf::copy_file(request.getPathOld(), request.getPathNew(), copy_option);
+        return 0;
+    } catch (const bf::filesystem_error&) {
+        return 1;
+    }
 }
 
 int move_file(const FileOperation& request, const bf::copy_option& copy_option)
 {
     int result = copy_file(request, copy_option);
 
-    if (!result) {
-
+    if (result <= 0) {
         try {
             bf::remove(request.getPathOld());
-
         } catch (const bf::filesystem_error&) {
             return 3;
         }
@@ -96,10 +154,16 @@ int FileSimulationOverwrite::execute(const FileOperation&)
 int FileSimulation::execute(const FileOperation& request)
 {
     std::lock_guard<std::mutex> lck(mtx);
-    bf::path path = request.getPathNew();
 
-    if (bf::exists(path) || (std::find(filesDone.begin(), filesDone.end(), path) != filesDone.end())) {
-        return 2;
+    if (bf::exists(request.getPathNew())) {
+        if (compare_files(request.getPathOld(), request.getPathNew())) {
+            return 2;
+        } else {
+            filesDone.push_back(request.getPathNew());
+            return -1;
+        }
+    } else if (std::find(filesDone.begin(), filesDone.end(), request.getPathNew()) != filesDone.end()) {
+        return -1;
     } else {
         filesDone.push_back(request.getPathNew());
         return 0;
@@ -114,6 +178,9 @@ std::string FileOperationStrategy::getLogMessage(int code) const
 
     switch (code)
     {
+    case -1:
+        buf << "IGNORED: Duplicate";
+        break;
     case 0:
         buf << "OK";
         break;
@@ -121,7 +188,7 @@ std::string FileOperationStrategy::getLogMessage(int code) const
         buf << "FAILED: Could not copy / override file";
         break;
     case 2:
-        buf << "FAILED: File already exists";
+        buf << "FAILED: Another file with the same name already exists";
         break;
     case 3:
         buf << "FAILED: File could not be deleted";

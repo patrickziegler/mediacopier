@@ -44,6 +44,7 @@ public:
     static void setPathFormat(const std::string&);
 
     FileOperation(const boost::filesystem::path&);
+    FileOperation(const boost::filesystem::path&, const boost::filesystem::path&);
     boost::filesystem::path getPathOld() const;
     boost::filesystem::path getPathNew() const;
     std::string getMimeType() const;

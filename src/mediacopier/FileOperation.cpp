@@ -24,9 +24,7 @@ namespace bt = boost::posix_time;
 using ret = std::tuple<bt::ptime, std::string, int>;
 
 std::shared_ptr<FileOperationStrategy> FileOperation::strategy;
-
-boost::filesystem::path FileOperation::pathPrefix;
-
+bf::path FileOperation::pathPrefix;
 std::locale FileOperation::pathFormat;
 
 int FileOperation::readExifMeta()
@@ -34,7 +32,6 @@ int FileOperation::readExifMeta()
     try {
         std::tie(timestamp, mimeType, orientation) = read_exif_meta(pathOld);
         return 0;
-
     } catch (std::invalid_argument&) {
         return 1;
     }
@@ -45,7 +42,6 @@ int FileOperation::readVideoMeta()
     try {
         timestamp = read_video_meta(pathOld);
         return 0;
-
     } catch (std::invalid_argument&) {
         return 1;
     }
@@ -66,6 +62,17 @@ FileOperation::FileOperation(const bf::path& file)
     pathNew = pathPrefix / bf::path(buf.str() + file.extension().string());
 }
 
+FileOperation::FileOperation(const bf::path& file_in, const bf::path& file_out)
+{
+    pathOld = file_in;
+
+    if (readExifMeta() && readVideoMeta()) {
+        throw std::invalid_argument("No metadata found in " + file_in.string());
+    }
+
+    pathNew = file_out;
+}
+
 void FileOperation::setStrategy(const std::shared_ptr<FileOperationStrategy>& strategy)
 {
     FileOperation::strategy = strategy;
@@ -81,19 +88,23 @@ void FileOperation::setPathFormat(const std::string& format)
     FileOperation::pathFormat = std::locale(std::locale(""), new bt::time_facet(format.c_str()));
 }
 
-boost::filesystem::path FileOperation::getPathOld() const {
+boost::filesystem::path FileOperation::getPathOld() const
+{
     return pathOld;
 }
 
-boost::filesystem::path FileOperation::getPathNew() const {
+boost::filesystem::path FileOperation::getPathNew() const
+{
     return pathNew;
 }
 
-std::string FileOperation::getMimeType() const {
+std::string FileOperation::getMimeType() const
+{
     return mimeType;
 }
 
-int FileOperation::getOrientation() const {
+int FileOperation::getOrientation() const
+{
     return orientation;
 }
 
