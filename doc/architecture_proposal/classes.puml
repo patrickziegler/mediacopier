@@ -1,0 +1,64 @@
+@startuml
+set namespaceSeparator ::
+skinparam shadowing false
+
+namespace mediacopier {
+    namespace core {
+        class AbstractFileFactory {
+        }
+
+        class FileFactory {
+        }
+
+        class AbstractFile {
+            +int execute(AbstractFileOperation operation)
+        }
+
+        class FileImage {
+        }
+
+        class FileVideo {
+        }
+
+        class AbstractFileOperation {
+            +int visit(AbstractFile file)
+        }
+
+        class FileOperationCopy {
+        }
+
+        class FileOperationMove {
+        }
+
+        class AbstractPathPattern {
+        }
+
+        class PathPattern {
+        }
+
+        AbstractFile <|-- FileImage
+        AbstractFile <|-- FileVideo
+        AbstractFileFactory <|-- FileFactory
+
+        AbstractFileOperation <|-- FileOperationCopy
+        FileOperationCopy <|-- FileOperationMove
+
+        AbstractPathPattern <|-- PathPattern
+    }
+
+    namespace jpegtran {
+        class FileImageJpeg {
+        }
+
+        class FileOperationCopyJpeg {
+        }
+
+        class FileOperationMoveJpeg {
+        }
+
+        mediacopier::core::FileImage <|-- FileImageJpeg
+        mediacopier::core::FileOperationCopy <|-- FileOperationCopyJpeg
+        mediacopier::core::FileOperationMove <|-- FileOperationMoveJpeg
+    }
+}
+@enduml
