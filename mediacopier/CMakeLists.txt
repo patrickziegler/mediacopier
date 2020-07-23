@@ -12,9 +12,10 @@ add_library(mediacopier SHARED
     )
 
 target_sources(mediacopier PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/jpegtran/FileImageJpeg.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/jpegtran/FileOperationCopyJpeg.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/jpegtran/FileOperationMoveJpeg.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jpegtran/FileFactory.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jpegtran/FileImage.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jpegtran/FileOperationCopy.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jpegtran/FileOperationMove.cpp"
     )
 
 target_include_directories(mediacopier PUBLIC

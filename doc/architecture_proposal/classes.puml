@@ -2,8 +2,8 @@
 set namespaceSeparator ::
 skinparam shadowing false
 
-namespace mediacopier {
-    namespace core {
+namespace MediaCopier {
+    namespace Core {
         class AbstractFileFactory {
         }
 
@@ -46,19 +46,20 @@ namespace mediacopier {
         AbstractPathPattern <|-- PathPattern
     }
 
-    namespace jpegtran {
-        class FileImageJpeg {
+    namespace JpegTran {
+        class FileImage {
         }
 
-        class FileOperationCopyJpeg {
+        class FileOperationCopy {
         }
 
-        class FileOperationMoveJpeg {
+        class FileOperationMove {
         }
 
-        mediacopier::core::FileImage <|-- FileImageJpeg
-        mediacopier::core::FileOperationCopy <|-- FileOperationCopyJpeg
-        mediacopier::core::FileOperationMove <|-- FileOperationMoveJpeg
+        MediaCopier::Core::FileFactory <|-- FileFactory
+        MediaCopier::Core::FileImage <|-- FileImage
+        MediaCopier::Core::FileOperationCopy <|-- FileOperationCopy
+        MediaCopier::Core::FileOperationMove <|-- FileOperationMove
     }
 }
 @enduml
