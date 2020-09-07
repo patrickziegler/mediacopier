@@ -1,3 +1,5 @@
+find_package(Exiv2)
+
 add_library(mediacopier SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/AbstractFile.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/AbstractFileFactory.cpp"
@@ -7,6 +9,7 @@ add_library(mediacopier SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/FileImage.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/FileOperationCopy.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/FileOperationMove.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/core/FileOperationShow.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/FileVideo.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core/PathPattern.cpp"
     )
@@ -21,6 +24,12 @@ target_sources(mediacopier PRIVATE
 target_include_directories(mediacopier PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     )
+
+target_include_directories(mediacopier PRIVATE
+    "${EXIV2_INCLUDE_DIR}"
+    "${CMAKE_SOURCE_DIR}/extern/date/include")
+
+target_link_libraries(mediacopier PRIVATE exiv2)
 
 if(${ENABLE_TEST})
     add_subdirectory(test)
