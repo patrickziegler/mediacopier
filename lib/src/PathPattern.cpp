@@ -14,16 +14,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/PathPattern.hpp>
 
-#include <mediacopier/core/AbstractFile.hpp>
+#include <mediacopier/AbstractFileInfo.hpp>
 
-namespace MediaCopier::Core {
+#include <sstream>
 
-class FileVideo : public AbstractFile {
-public:
-    using AbstractFile::AbstractFile;
-    int visit(const AbstractFileOperation& operation) const override;
-};
+namespace mc = MediaCopier;
 
+std::filesystem::path mc::PathPattern::createPathFrom(const mc::AbstractFileInfo &file) const
+{
+    auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
+
+    std::stringstream ss;
+    ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
+    ss << file.path().extension().string();
+
+    return {ss.str()};
 }

@@ -14,13 +14,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mediacopier/FileInfoImage.hpp>
+
+#include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/FileOperationPrint.hpp>
+
 #include <date/date.h>
 #include <exiv2/exiv2.hpp>
-#include <mediacopier/core/FileImage.hpp>
 
-namespace mcc = MediaCopier::Core;
+namespace mc = MediaCopier;
 
-mcc::FileImage::FileImage(std::filesystem::path path) : AbstractFile(path)
+mc::FileInfoImage::FileInfoImage(std::filesystem::path path) : AbstractFileInfo(path)
 {
     std::unique_ptr<Exiv2::Image> image;
 
@@ -43,7 +47,7 @@ mcc::FileImage::FileImage(std::filesystem::path path) : AbstractFile(path)
     }
 }
 
-int mcc::FileImage::visit(const AbstractFileOperation& operation) const
+int mc::FileInfoImage::accept(const AbstractFileOperation& operation) const
 {
-    return 0;
+    return operation.visit(*this);
 }

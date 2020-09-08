@@ -14,16 +14,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/core/AbstractFile.hpp>
+#include <mediacopier/FileInfoFactory.hpp>
 
-namespace mcc = MediaCopier::Core;
+#include <mediacopier/FileInfoImage.hpp>
+#include <mediacopier/FileInfoJpeg.hpp>
+#include <mediacopier/FileInfoVideo.hpp>
 
-std::filesystem::path mcc::AbstractFile::path() const
+namespace mc = MediaCopier;
+
+std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFileFrom(const std::filesystem::path &path) const
 {
-    return m_path;
-}
+    try {
+        return std::make_unique<FileInfoImage>(path);
+    }  catch (const std::runtime_error&) {
+        // this was not an image file
+    }
 
-std::chrono::system_clock::time_point mcc::AbstractFile::timestamp() const
-{
-    return m_timestamp;
+    try {
+        return std::make_unique<FileInfoVideo>(path);
+    }  catch (const std::runtime_error&) {
+        // this was not a video file
+    }
+
+    throw std::runtime_error("Unknown file type");
 }

@@ -14,19 +14,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/core/PathPattern.hpp>
-#include <mediacopier/core/AbstractFile.hpp>
-#include <sstream>
+#pragma once
 
-namespace mcc = MediaCopier::Core;
+#include <mediacopier/PathPattern.hpp>
 
-std::filesystem::path mcc::PathPattern::createPathFrom(const mcc::AbstractFile &file) const
-{
-    auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
+#include <memory>
+#include <utility>
 
-    std::stringstream ss;
-    ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
-    ss << file.path().extension().string();
+namespace MediaCopier {
 
-    return {ss.str()};
+class FileInfoImage;
+class FileInfoJpeg;
+class FileInfoVideo;
+
+class AbstractFileOperation {
+public:
+    explicit AbstractFileOperation(PathPattern pathPattern)
+        : m_pathPattern(std::move(pathPattern)) {}
+    virtual ~AbstractFileOperation() = default;
+    virtual int visit(const FileInfoImage &file) const = 0;
+    virtual int visit(const FileInfoJpeg &file) const = 0;
+    virtual int visit(const FileInfoVideo &file) const = 0;
+protected:
+    PathPattern m_pathPattern;
+};
+
 }

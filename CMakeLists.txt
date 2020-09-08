@@ -10,7 +10,7 @@ option(ENABLE_GUI "Include graphical user interface" ON)
 
 project(MediaCopier VERSION 2.0.0)
 
-add_subdirectory(mediacopier)
+add_subdirectory(lib)
 add_subdirectory(app)
 
 if(${ENABLE_TEST})

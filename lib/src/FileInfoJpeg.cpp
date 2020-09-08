@@ -14,11 +14,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/core/FileVideo.hpp>
+#include <mediacopier/FileInfoJpeg.hpp>
 
-namespace mcc = MediaCopier::Core;
+#include <mediacopier/AbstractFileOperation.hpp>
 
-int mcc::FileVideo::visit(const AbstractFileOperation& operation) const
+namespace mc = MediaCopier;
+
+mc::FileInfoJpeg::FileInfoJpeg(std::filesystem::path path) : AbstractFileInfo(path)
 {
-    return 0;
+
+}
+
+int mc::FileInfoJpeg::accept(const AbstractFileOperation& operation) const
+{
+    return operation.visit(*this);
 }

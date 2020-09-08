@@ -16,17 +16,24 @@
 
 #pragma once
 
-#include <mediacopier/core/FileOperationCopy.hpp>
+#include <chrono>
+#include <filesystem>
 
-namespace MediaCopier::JpegTran {
+namespace MediaCopier {
 
-class FileImage;
+class AbstractFileOperation;
 
-class FileOperationCopy : public Core::FileOperationCopy {
+class AbstractFileInfo {
 public:
-    using Core::FileOperationCopy::FileOperationCopy;
-    using Core::FileOperationCopy::accept;
-    int accept(const std::shared_ptr<const FileImage> &file) const;
+    AbstractFileInfo(std::filesystem::path path)
+        : m_path(std::move(path)) {}
+    virtual ~AbstractFileInfo() = default;
+    virtual int accept(const AbstractFileOperation& operation) const = 0;
+    std::filesystem::path path() const { return m_path; }
+    std::chrono::system_clock::time_point timestamp() const { return m_timestamp; }
+protected:
+    std::filesystem::path m_path;
+    std::chrono::system_clock::time_point m_timestamp;
 };
 
 }

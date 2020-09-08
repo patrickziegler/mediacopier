@@ -16,16 +16,16 @@
 
 #pragma once
 
-#include <filesystem>
-#include <memory>
+#include <mediacopier/FileOperationCopy.hpp>
 
-namespace MediaCopier::Core {
+namespace MediaCopier {
 
-class AbstractFile;
-
-class AbstractFileFactory {
+class FileOperationMove : public FileOperationCopy {
 public:
-    virtual std::unique_ptr<AbstractFile> createFileFrom(const std::filesystem::path &path) const = 0;
+    using FileOperationCopy::FileOperationCopy;
+    int visit(const FileInfoImage &file) const override;
+    int visit(const FileInfoJpeg &file) const override;
+    int visit(const FileInfoVideo &file) const override;
 };
 
 }

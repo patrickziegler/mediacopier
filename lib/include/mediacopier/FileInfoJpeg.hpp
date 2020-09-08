@@ -16,22 +16,14 @@
 
 #pragma once
 
-#include <filesystem>
-#include <string>
-#include <utility>
+#include <mediacopier/AbstractFileInfo.hpp>
 
-namespace MediaCopier::Core {
+namespace MediaCopier {
 
-class AbstractFile;
-
-class AbstractPathPattern {
+class FileInfoJpeg : public AbstractFileInfo {
 public:
-    explicit AbstractPathPattern(std::string pattern)
-        : m_pattern(std::move(pattern)) {}
-    virtual ~AbstractPathPattern() = default;
-    virtual std::filesystem::path createPathFrom(const AbstractFile &file) const = 0;
-protected:
-    std::string m_pattern;
+    FileInfoJpeg(std::filesystem::path path);
+    int accept(const AbstractFileOperation& operation) const override;
 };
 
 }

@@ -16,22 +16,14 @@
 
 #pragma once
 
-#include <mediacopier/core/AbstractPathPattern.hpp>
+#include <mediacopier/AbstractFileInfo.hpp>
 
-#include <memory>
-#include <utility>
+namespace MediaCopier {
 
-namespace MediaCopier::Core {
-
-class AbstractFile;
-
-class AbstractFileOperation {
-    std::unique_ptr<AbstractPathPattern> m_pathPattern;
+class FileInfoImage : public AbstractFileInfo {
 public:
-    explicit AbstractFileOperation(std::unique_ptr<AbstractPathPattern> pathPattern)
-        : m_pathPattern(std::move(pathPattern)) {}
-    virtual ~AbstractFileOperation() = default;
-    virtual int accept(const std::shared_ptr<const AbstractFile> &file) const = 0;
+    FileInfoImage(std::filesystem::path path);
+    int accept(const AbstractFileOperation& operation) const override;
 };
 
 }

@@ -16,16 +16,16 @@
 
 #pragma once
 
-#include <mediacopier/core/AbstractFileFactory.hpp>
-
 #include <filesystem>
 #include <memory>
 
-namespace MediaCopier::Core {
+namespace MediaCopier {
 
-class FileFactory : AbstractFileFactory {
+class AbstractFileInfo;
+
+class FileInfoFactory {
 public:
-    std::unique_ptr<AbstractFile> createFileFrom(const std::filesystem::path &path) const override;
+    std::unique_ptr<AbstractFileInfo> createFileFrom(const std::filesystem::path &path) const;
 };
 
 }

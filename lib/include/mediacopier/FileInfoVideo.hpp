@@ -16,14 +16,14 @@
 
 #pragma once
 
-#include <mediacopier/core/AbstractFile.hpp>
+#include <mediacopier/AbstractFileInfo.hpp>
 
-namespace MediaCopier::Core {
+namespace MediaCopier {
 
-class FileImage : public AbstractFile {
+class FileInfoVideo : public AbstractFileInfo {
 public:
-    FileImage(std::filesystem::path path);
-    int visit(const AbstractFileOperation& operation) const override;
+    FileInfoVideo(std::filesystem::path path);
+    int accept(const AbstractFileOperation& operation) const override;
 };
 
 }

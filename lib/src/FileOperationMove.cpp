@@ -14,16 +14,4 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <mediacopier/core/FileOperationCopy.hpp>
-
-namespace MediaCopier::Core {
-
-class FileOperationMove : public FileOperationCopy {
-public:
-    using FileOperationCopy::FileOperationCopy;
-    int accept(const std::shared_ptr<const AbstractFile> &file) const override;
-};
-
-}
+#include <mediacopier/FileOperationMove.hpp>

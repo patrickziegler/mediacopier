@@ -14,32 +14,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileOperationPrint.hpp>
-#include <mediacopier/PathPattern.hpp>
 
-#include <filesystem>
+#include <mediacopier/AbstractFileInfo.hpp>
+#include <mediacopier/FileInfoImage.hpp>
+#include <mediacopier/FileInfoJpeg.hpp>
+#include <mediacopier/FileInfoVideo.hpp>
+
 #include <iostream>
-#include <memory>
 
-namespace fs = std::filesystem;
 namespace mc = MediaCopier;
 
-int main(int argc, char *argv[])
+int mc::FileOperationPrint::visit(const mc::FileInfoImage &file) const
 {
-    fs::path root("/home/patrick/Bilder/Wallpaper/");
+    std::cout << file.path().string() << std::endl;
+    std::cout << m_pathPattern.createPathFrom(file).string() << std::endl;
+    return 0;
+}
 
-    mc::PathPattern pathPattern("%Y/%m/%d/IMG_%Y%m%d_%H%M%S");
-    mc::FileOperationPrint print(pathPattern);
-    mc::FileInfoFactory fileInfoFactory;
-
-    for (const auto& path : fs::recursive_directory_iterator(root)) {
-        if (path.is_regular_file()) {
-            auto file = fileInfoFactory.createFileFrom(path);
-            file->accept(print);
-        }
-    }
-
+int mc::FileOperationPrint::visit(const mc::FileInfoJpeg &file) const
+{
+    std::cout << "this was a jpeg" << std::endl;
+    return 0;
+}
+int mc::FileOperationPrint::visit(const mc::FileInfoVideo &file) const
+{
+    std::cout << "this was a video" << std::endl;
     return 0;
 }

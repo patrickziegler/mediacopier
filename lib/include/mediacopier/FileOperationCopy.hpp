@@ -16,24 +16,16 @@
 
 #pragma once
 
-#include <chrono>
-#include <filesystem>
+#include <mediacopier/AbstractFileOperation.hpp>
 
-namespace MediaCopier::Core {
+namespace MediaCopier {
 
-class AbstractFileOperation;
-
-class AbstractFile {
+class FileOperationCopy : public AbstractFileOperation {
 public:
-    AbstractFile(std::filesystem::path path)
-        : m_path(std::move(path)) {}
-    virtual ~AbstractFile() = default;
-    virtual int visit(const AbstractFileOperation& operation) const = 0;
-    std::filesystem::path path() const;
-    std::chrono::system_clock::time_point timestamp() const;
-protected:
-    std::filesystem::path m_path;
-    std::chrono::system_clock::time_point m_timestamp;
+    using AbstractFileOperation::AbstractFileOperation;
+    int visit(const FileInfoImage &file) const override;
+    int visit(const FileInfoJpeg &file) const override;
+    int visit(const FileInfoVideo &file) const override;
 };
 
 }

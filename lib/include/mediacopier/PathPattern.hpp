@@ -16,16 +16,19 @@
 
 #pragma once
 
-#include <mediacopier/core/FileFactory.hpp>
-
 #include <filesystem>
-#include <memory>
 
-namespace MediaCopier::JpegTran {
+namespace MediaCopier {
 
-class FileFactory : MediaCopier::Core::FileFactory {
+class AbstractFileInfo;
+
+class PathPattern {
 public:
-    std::unique_ptr<Core::AbstractFile> createFileFrom(const std::filesystem::path &path) const override;
+    explicit PathPattern(std::string pattern)
+        : m_pattern(std::move(pattern)) {}
+    std::filesystem::path createPathFrom(const AbstractFileInfo &file) const;
+private:
+    std::string m_pattern;
 };
 
 }

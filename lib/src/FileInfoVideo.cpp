@@ -14,16 +14,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/FileInfoVideo.hpp>
 
-#include <mediacopier/core/FileImage.hpp>
+#include <mediacopier/AbstractFileOperation.hpp>
 
-namespace MediaCopier::JpegTran {
+namespace mc = MediaCopier;
 
-class FileImage : public Core::FileImage {
-public:
-    using Core::FileImage::FileImage;
-    int visit(const Core::AbstractFileOperation& operation) const override;
-};
+mc::FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo(path)
+{
 
+}
+
+int mc::FileInfoVideo::accept(const AbstractFileOperation& operation) const
+{
+    return operation.visit(*this);
 }
