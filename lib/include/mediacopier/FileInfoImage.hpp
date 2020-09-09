@@ -16,13 +16,14 @@
 
 #pragma once
 
+#include <exiv2/exiv2.hpp>
 #include <mediacopier/AbstractFileInfo.hpp>
 
 namespace MediaCopier {
 
 class FileInfoImage : public AbstractFileInfo {
 public:
-    FileInfoImage(std::filesystem::path path);
+    FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif);
     int accept(const AbstractFileOperation& operation) const override;
 };
 

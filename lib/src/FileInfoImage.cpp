@@ -14,36 +14,48 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/FileInfoImage.hpp>
-
-#include <mediacopier/AbstractFileOperation.hpp>
-#include <mediacopier/FileOperationPrint.hpp>
-
 #include <date/date.h>
-#include <exiv2/exiv2.hpp>
+#include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/FileInfoImage.hpp>
 
 namespace mc = MediaCopier;
 
-mc::FileInfoImage::FileInfoImage(std::filesystem::path path) : AbstractFileInfo(path)
+static constexpr const std::array<char[29], 4> keysDateTime = {
+    "Exif.Photo.DateTimeOriginal",
+    "Exif.Image.DateTimeOriginal",
+    "Exif.Photo.DateTimeDigitized",
+    "Exif.Image.DateTime",
+};
+
+static constexpr const std::array<char[31], 3> keysSubSec = {
+    "Exif.Photo.SubSecTimeOriginal",
+    "Exif.Photo.SubSecTimeDigitized",
+    "Exif.Photo.SubSecTime"
+};
+
+mc::FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif) : AbstractFileInfo(path)
 {
-    std::unique_ptr<Exiv2::Image> image;
-
-    try {
-        image = Exiv2::ImageFactory::open(path.string());
-    }  catch (const Exiv2::Error&) {
-        throw std::runtime_error("Wrong filetype");
-    }
-
-    if (!image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
-        throw std::runtime_error("No Exif metadata found");
-    }
-
-    try {
-        image->readMetadata();
-        std::istringstream ss{image->exifData()["Exif.Image.DateTime"].toString()};
+    for (const std::string& key : keysDateTime) {
+        if (exif.findKey(std::move(Exiv2::ExifKey{key})) == exif.end()) {
+            continue;
+        }
+        std::istringstream ss{exif[key].toString()};
         ss >> date::parse("%Y:%m:%d %H:%M:%S", m_timestamp);
-    } catch (const Exiv2::Error&) {
-        throw std::runtime_error("Error while parsing metadata");
+        break;
+    }
+    for (const std::string& key : keysSubSec) {
+        if (exif.findKey(std::move(Exiv2::ExifKey{key})) == exif.end()) {
+            continue;
+        }
+        std::string subsec = exif[key].toString();
+        if (subsec.length() < 1) {
+            continue;
+        } else if (subsec.length() < 4) {
+            m_timestamp += std::chrono::milliseconds{exif[key].toLong()};
+        } else {
+            m_timestamp += std::chrono::microseconds{exif[key].toLong()};
+        }
+        break;
     }
 }
 

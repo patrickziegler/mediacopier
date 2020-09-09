@@ -14,9 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/PathPattern.hpp>
-
 #include <mediacopier/AbstractFileInfo.hpp>
+#include <mediacopier/PathPattern.hpp>
 
 #include <sstream>
 
@@ -25,9 +24,11 @@ namespace mc = MediaCopier;
 std::filesystem::path mc::PathPattern::createPathFrom(const mc::AbstractFileInfo &file) const
 {
     auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
+    auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
 
     std::stringstream ss;
     ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
+    ss << "_" << std::setfill('0') << std::setw(6) << us.count();
     ss << file.path().extension().string();
 
     return {ss.str()};

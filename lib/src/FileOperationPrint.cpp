@@ -14,12 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/FileOperationPrint.hpp>
-
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/FileInfoImage.hpp>
 #include <mediacopier/FileInfoJpeg.hpp>
 #include <mediacopier/FileInfoVideo.hpp>
+#include <mediacopier/FileOperationPrint.hpp>
 
 #include <iostream>
 
@@ -28,17 +27,19 @@ namespace mc = MediaCopier;
 int mc::FileOperationPrint::visit(const mc::FileInfoImage &file) const
 {
     std::cout << file.path().string() << std::endl;
-    std::cout << m_pathPattern.createPathFrom(file).string() << std::endl;
+    std::cout << "this was an image" << std::endl;
     return 0;
 }
 
 int mc::FileOperationPrint::visit(const mc::FileInfoJpeg &file) const
 {
-    std::cout << "this was a jpeg" << std::endl;
+    std::cout << file.path().string() << std::endl;
+    std::cout << m_pathPattern.createPathFrom(file).string() << std::endl;
     return 0;
 }
 int mc::FileOperationPrint::visit(const mc::FileInfoVideo &file) const
 {
+    std::cout << file.path().string() << std::endl;
     std::cout << "this was a video" << std::endl;
     return 0;
 }

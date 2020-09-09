@@ -14,9 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/FileInfoVideo.hpp>
-
 #include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/FileInfoVideo.hpp>
 
 namespace mc = MediaCopier;
 

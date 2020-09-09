@@ -16,14 +16,17 @@
 
 #pragma once
 
-#include <mediacopier/AbstractFileInfo.hpp>
+#include <mediacopier/FileInfoImage.hpp>
 
 namespace MediaCopier {
 
-class FileInfoJpeg : public AbstractFileInfo {
+class FileInfoJpeg : public FileInfoImage {
 public:
-    FileInfoJpeg(std::filesystem::path path);
+    FileInfoJpeg(std::filesystem::path path, Exiv2::ExifData exif);
     int accept(const AbstractFileOperation& operation) const override;
+    int orientation() const { return m_orientation; }
+private:
+    int m_orientation;
 };
 
 }
