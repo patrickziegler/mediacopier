@@ -16,11 +16,6 @@
 
 #pragma once
 
-#include <mediacopier/PathPattern.hpp>
-
-#include <memory>
-#include <utility>
-
 namespace MediaCopier {
 
 class FileInfoImage;
@@ -29,14 +24,10 @@ class FileInfoVideo;
 
 class AbstractFileOperation {
 public:
-    explicit AbstractFileOperation(PathPattern pathPattern)
-        : m_pathPattern(std::move(pathPattern)) {}
     virtual ~AbstractFileOperation() = default;
     virtual int visit(const FileInfoImage &file) const = 0;
     virtual int visit(const FileInfoJpeg &file) const = 0;
     virtual int visit(const FileInfoVideo &file) const = 0;
-protected:
-    PathPattern m_pathPattern;
 };
 
 }

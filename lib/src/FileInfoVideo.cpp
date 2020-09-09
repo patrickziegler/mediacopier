@@ -19,7 +19,7 @@
 
 namespace mc = MediaCopier;
 
-mc::FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo(path)
+mc::FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo(std::move(path))
 {
 
 }

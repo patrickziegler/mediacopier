@@ -33,7 +33,7 @@ static constexpr const std::array<char[31], 3> keysSubSec = {
     "Exif.Photo.SubSecTime"
 };
 
-mc::FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif) : AbstractFileInfo(path)
+mc::FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif) : AbstractFileInfo(std::move(path))
 {
     for (const std::string& key : keysDateTime) {
         if (exif.findKey(std::move(Exiv2::ExifKey{key})) == exif.end()) {

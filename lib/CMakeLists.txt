@@ -8,7 +8,7 @@ add_library(mediacopier SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationCopy.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationMove.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationPrint.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/PathPattern.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/FilePathFormat.cpp"
     )
 
 target_include_directories(mediacopier PUBLIC

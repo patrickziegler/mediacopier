@@ -17,7 +17,7 @@
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileOperationPrint.hpp>
-#include <mediacopier/PathPattern.hpp>
+#include <mediacopier/FilePathFormat.hpp>
 
 #include <filesystem>
 #include <iostream>
@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
 {
     fs::path root("/home/patrick/Bilder/Wallpaper/");
 
-    mc::PathPattern pathPattern("%Y/%m/%d/IMG_%Y%m%d_%H%M%S");
-    mc::FileOperationPrint print(pathPattern);
+    mc::FilePathFormat filePathFormat("%Y/%m/%d/IMG_%Y%m%d_%H%M%S");
+    mc::FileOperationPrint print(std::move(filePathFormat));
     mc::FileInfoFactory fileInfoFactory;
 
     for (const auto& path : fs::recursive_directory_iterator(root)) {

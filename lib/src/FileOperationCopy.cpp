@@ -15,3 +15,19 @@
  */
 
 #include <mediacopier/FileOperationCopy.hpp>
+
+namespace mc = MediaCopier;
+
+int mc::FileOperationCopy::visit(const mc::FileInfoImage &file) const
+{
+    return 0;
+}
+
+int mc::FileOperationCopy::visit(const mc::FileInfoJpeg &file) const
+{
+    return 0;
+}
+int mc::FileOperationCopy::visit(const mc::FileInfoVideo &file) const
+{
+    return 0;
+}

@@ -22,9 +22,9 @@ namespace MediaCopier {
 
 class AbstractFileInfo;
 
-class PathPattern {
+class FilePathFormat {
 public:
-    explicit PathPattern(std::string pattern)
+    explicit FilePathFormat(std::string pattern)
         : m_pattern(std::move(pattern)) {}
     std::filesystem::path createPathFrom(const AbstractFileInfo &file) const;
 private:

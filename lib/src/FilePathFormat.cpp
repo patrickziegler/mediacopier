@@ -15,13 +15,13 @@
  */
 
 #include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/PathPattern.hpp>
+#include <mediacopier/FilePathFormat.hpp>
 
 #include <sstream>
 
 namespace mc = MediaCopier;
 
-std::filesystem::path mc::PathPattern::createPathFrom(const mc::AbstractFileInfo &file) const
+std::filesystem::path mc::FilePathFormat::createPathFrom(const mc::AbstractFileInfo &file) const
 {
     auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
     auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
