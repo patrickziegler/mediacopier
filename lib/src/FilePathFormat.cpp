@@ -21,14 +21,28 @@
 
 namespace mc = MediaCopier;
 
+mc::FilePathFormat::FilePathFormat(std::filesystem::path destination) : m_destination{std::move(destination)}
+{
+    m_destination /= ""; // this will append a trailing directory separator when necessary
+}
+
 std::filesystem::path mc::FilePathFormat::createPathFrom(const mc::AbstractFileInfo &file) const
 {
-    auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
-    auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
+    // TODO: make these fields configurable
+    std::string pattern{"IMG_%Y%m%d_%H%M%S_"};
+    bool subsec = true;
 
     std::stringstream ss;
-    ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
-    ss << "_" << std::setfill('0') << std::setw(6) << us.count();
+    ss << m_destination.string();
+
+    auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
+    ss << std::put_time(std::gmtime(&ts), pattern.c_str());
+
+    if (subsec) {
+        auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
+        ss << std::setfill('0') << std::setw(6) << us.count();
+    }
+
     ss << file.path().extension().string();
 
     return {ss.str()};

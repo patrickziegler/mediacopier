@@ -19,10 +19,10 @@
 
 namespace mc = MediaCopier;
 
-mc::FileInfoJpeg::FileInfoJpeg(std::filesystem::path path, Exiv2::ExifData exif) : FileInfoImage(std::move(path), std::move(exif))
+mc::FileInfoJpeg::FileInfoJpeg(std::filesystem::path path, Exiv2::ExifData exif) : FileInfoImage{std::move(path), exif}
 {
     std::string key{"Exif.Image.Orientation"};
-    if (exif.findKey(std::move(Exiv2::ExifKey{key})) != exif.end()) {
+    if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
         m_orientation = exif[key].toLong();
     }
 }

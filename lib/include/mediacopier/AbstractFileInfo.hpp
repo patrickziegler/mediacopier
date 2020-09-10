@@ -26,7 +26,7 @@ class AbstractFileOperation;
 class AbstractFileInfo {
 public:
     AbstractFileInfo(std::filesystem::path path)
-        : m_path(std::move(path)) {}
+        : m_path{std::move(path)} {}
     virtual ~AbstractFileInfo() = default;
     virtual int accept(const AbstractFileOperation& operation) const = 0;
     std::filesystem::path path() const { return m_path; }

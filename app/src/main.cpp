@@ -16,7 +16,7 @@
 
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
-#include <mediacopier/FileOperationPrint.hpp>
+#include <mediacopier/FileOperationCopy.hpp>
 #include <mediacopier/FilePathFormat.hpp>
 
 #include <filesystem>
@@ -28,16 +28,20 @@ namespace mc = MediaCopier;
 
 int main(int argc, char *argv[])
 {
-    fs::path root("/home/patrick/Bilder/Wallpaper/");
+    fs::path src{"/home/patrick/workspace/repos/tmp/"};
+    fs::path dst{"/home/patrick/workspace/repos/tmp_out/"};
 
-    mc::FilePathFormat filePathFormat("%Y/%m/%d/IMG_%Y%m%d_%H%M%S");
-    mc::FileOperationPrint print(std::move(filePathFormat));
-    mc::FileInfoFactory fileInfoFactory;
+    mc::FilePathFormat format{dst};
+    mc::FileOperationCopy op{format};
+    mc::FileInfoFactory factory;
 
-    for (const auto& path : fs::recursive_directory_iterator(root)) {
+    for (const auto& path : fs::recursive_directory_iterator(src)) {
         if (path.is_regular_file()) {
-            auto file = fileInfoFactory.createFileFrom(path);
-            file->accept(print);
+            auto file = factory.createFileFrom(path);
+            file->accept(op);
+            std::cout << file->path().string() << std::endl
+                      << " --> " << format.createPathFrom(*file).string()
+                      << std::endl;
         }
     }
 

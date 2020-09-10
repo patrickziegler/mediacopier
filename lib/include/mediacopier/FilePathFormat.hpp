@@ -24,11 +24,10 @@ class AbstractFileInfo;
 
 class FilePathFormat {
 public:
-    explicit FilePathFormat(std::string pattern)
-        : m_pattern(std::move(pattern)) {}
+    explicit FilePathFormat(std::filesystem::path destination);
     std::filesystem::path createPathFrom(const AbstractFileInfo &file) const;
 private:
-    std::string m_pattern;
+    std::filesystem::path m_destination;
 };
 
 }

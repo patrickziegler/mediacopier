@@ -22,6 +22,16 @@ namespace MediaCopier {
 
 class FileInfoJpeg : public FileInfoImage {
 public:
+    enum Orientation {
+        ROT_0 = 1,
+        ROT_0_MIRRORED,
+        ROT_180,
+        ROT_180_MIRRORED,
+        ROT_90_MIRRORED,
+        ROT_90,
+        ROT_270_MIRRORED,
+        ROT_270,
+    };
     FileInfoJpeg(std::filesystem::path path, Exiv2::ExifData exif);
     int accept(const AbstractFileOperation& operation) const override;
     int orientation() const { return m_orientation; }
