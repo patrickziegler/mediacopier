@@ -17,23 +17,39 @@
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/FilePathFormat.hpp>
 
+#include <random>
 #include <sstream>
 
+namespace fs = std::filesystem;
 namespace mc = MediaCopier;
 
-mc::FilePathFormat::FilePathFormat(std::filesystem::path destination) : m_destination{std::move(destination)}
-{
-    m_destination /= ""; // this will append a trailing directory separator when necessary
+static fs::path create_unique_path(const std::string prefix = "MediaCopier-", const unsigned int len = 12) {
+    std::random_device device;
+    std::mt19937 generator{device()};
+    std::uniform_int_distribution<> distribution{0, 255};
+
+    std::ostringstream unique_identifier;
+    unique_identifier << prefix << std::hex;
+
+    for (unsigned int i = 0; i < len; ++i) {
+        unique_identifier << distribution(generator);
+    }
+
+    fs::path unique_path = fs::temp_directory_path();
+    unique_path /= unique_identifier.str();
+    unique_path /= "";
+
+    return unique_path;
 }
 
-std::filesystem::path mc::FilePathFormat::createPathFrom(const mc::AbstractFileInfo &file) const
+fs::path createPath(const mc::AbstractFileInfo &file, fs::path destination)
 {
     // TODO: make these fields configurable
     std::string pattern{"IMG_%Y%m%d_%H%M%S_"};
     bool subsec = true;
 
     std::stringstream ss;
-    ss << m_destination.string();
+    ss << destination.string();
 
     auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
     ss << std::put_time(std::gmtime(&ts), pattern.c_str());
@@ -46,4 +62,27 @@ std::filesystem::path mc::FilePathFormat::createPathFrom(const mc::AbstractFileI
     ss << file.path().extension().string();
 
     return {ss.str()};
+}
+
+mc::FilePathFormat::FilePathFormat(fs::path destination) : m_destination{std::move(destination)}
+{
+    m_destination /= ""; // this will append a trailing directory separator when necessary
+    m_tempdir = create_unique_path();
+}
+
+mc::FilePathFormat::~FilePathFormat()
+{
+    if (fs::exists(m_tempdir)) {
+        fs::remove_all(m_tempdir);
+    }
+}
+
+fs::path mc::FilePathFormat::createPathFrom(const mc::AbstractFileInfo &file) const
+{
+    return createPath(file, m_destination);
+}
+
+fs::path mc::FilePathFormat::createTemporaryPathFrom(const AbstractFileInfo &file) const
+{
+    return createPath(file, m_tempdir);
 }

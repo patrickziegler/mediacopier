@@ -143,7 +143,7 @@ int mc::FileOperationCopy::copyJpeg(const mc::FileInfoJpeg &file) const
         return copyFile(file);
     }
 
-    auto dst = m_filePathFormat.createPathFrom(file);
+    auto dst = m_filePathFormat.createTemporaryPathFrom(file);
     fs::create_directories(dst.parent_path());
     auto ret = jpeg_copy_rotated(file, dst);
 
@@ -157,6 +157,10 @@ int mc::FileOperationCopy::copyJpeg(const mc::FileInfoJpeg &file) const
 
         image->setExifData(exif);
         image->writeMetadata();
+
+        FileInfoImage tmp(dst, exif);
+        copyFile(tmp);
+        fs::remove(dst);
 
     }  catch (const Exiv2::Error&) {
         return 1;
