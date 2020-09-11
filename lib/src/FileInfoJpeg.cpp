@@ -27,7 +27,7 @@ mc::FileInfoJpeg::FileInfoJpeg(std::filesystem::path path, Exiv2::ExifData exif)
     }
 }
 
-int mc::FileInfoJpeg::accept(const AbstractFileOperation& operation) const
+void mc::FileInfoJpeg::accept(const AbstractFileOperation& operation) const
 {
-    return operation.visit(*this);
+    operation.visit(*this);
 }

@@ -15,6 +15,7 @@
  */
 
 #include <mediacopier/AbstractFileInfo.hpp>
+#include <mediacopier/Exceptions.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileOperationCopy.hpp>
 #include <mediacopier/FilePathFormat.hpp>
@@ -31,17 +32,17 @@ int main(int argc, char *argv[])
     fs::path src{"/home/patrick/workspace/repos/tmp/"};
     fs::path dst{"/home/patrick/workspace/repos/tmp_out/"};
 
-    mc::FilePathFormat format{dst};
-    mc::FileOperationCopy op{format};
+    mc::FileOperationCopy op{mc::FilePathFormat{dst}};
     mc::FileInfoFactory factory;
 
     for (const auto& path : fs::recursive_directory_iterator(src)) {
-        if (path.is_regular_file()) {
-            auto file = factory.createFileFrom(path);
-            file->accept(op);
-            std::cout << file->path().string() << std::endl
-                      << " --> " << format.createPathFrom(*file).string()
-                      << std::endl;
+        try {
+            if (path.is_regular_file()) {
+                auto file = factory.createFileFrom(path);
+                file->accept(op);
+            }
+        }  catch (const mc::FileInfoError& err) {
+            std::cout << err.what() << " (" << path << ")" << std::endl;
         }
     }
 

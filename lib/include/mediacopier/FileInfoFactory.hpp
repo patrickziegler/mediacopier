@@ -17,7 +17,6 @@
 #pragma once
 
 #include <filesystem>
-#include <memory>
 
 namespace MediaCopier {
 

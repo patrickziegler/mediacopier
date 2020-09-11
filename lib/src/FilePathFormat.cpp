@@ -42,7 +42,7 @@ static fs::path create_unique_path(const std::string prefix = "MediaCopier-", co
     return unique_path;
 }
 
-fs::path createPath(const mc::AbstractFileInfo &file, fs::path destination)
+fs::path createPath(const mc::AbstractFileInfo &file, fs::path destination, unsigned int id = 0)
 {
     // TODO: make these fields configurable
     std::string pattern{"IMG_%Y%m%d_%H%M%S_"};
@@ -57,6 +57,10 @@ fs::path createPath(const mc::AbstractFileInfo &file, fs::path destination)
     if (subsec) {
         auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
         ss << std::setfill('0') << std::setw(6) << us.count();
+    }
+
+    if (id > 0) {
+        ss << "_" << id;
     }
 
     ss << file.path().extension().string();
@@ -77,9 +81,9 @@ mc::FilePathFormat::~FilePathFormat()
     }
 }
 
-fs::path mc::FilePathFormat::createPathFrom(const mc::AbstractFileInfo &file) const
+fs::path mc::FilePathFormat::createPathFrom(const mc::AbstractFileInfo &file, unsigned int id) const
 {
-    return createPath(file, m_destination);
+    return createPath(file, m_destination, std::move(id));
 }
 
 fs::path mc::FilePathFormat::createTemporaryPathFrom(const AbstractFileInfo &file) const

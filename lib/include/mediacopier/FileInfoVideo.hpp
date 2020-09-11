@@ -23,7 +23,7 @@ namespace MediaCopier {
 class FileInfoVideo : public AbstractFileInfo {
 public:
     FileInfoVideo(std::filesystem::path path);
-    int accept(const AbstractFileOperation& operation) const override;
+    void accept(const AbstractFileOperation& operation) const override;
 };
 
 }

@@ -14,6 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mediacopier/Exceptions.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileInfoImage.hpp>
 #include <mediacopier/FileInfoJpeg.hpp>
@@ -44,9 +45,9 @@ std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFileFrom(const 
 
     try {
         return std::make_unique<FileInfoVideo>(path);
-    }  catch (const std::runtime_error&) {
+    }  catch (const mc::FileInfoError&) {
         // this was not a video file
     }
 
-    throw std::runtime_error("Unknown file type");
+    throw mc::FileInfoError{"Unknown file type"};
 }

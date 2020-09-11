@@ -15,6 +15,7 @@
  */
 
 #include <date/date.h>
+#include <mediacopier/Exceptions.hpp>
 #include <mediacopier/AbstractFileOperation.hpp>
 #include <mediacopier/FileInfoVideo.hpp>
 
@@ -32,24 +33,33 @@ mc::FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionaryEntry* tag = nullptr;
 
-    if (!avformat_open_input(&fmt_ctx, path.c_str(), nullptr, nullptr)) {
-        if ((tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX))) {
-
-            // magic numbers assume the following format: 2018-01-01T01:01:01.000000Z
-            std::string datetime{tag->value};
-
-            std::istringstream ss{datetime.substr(0, 19)};
-            ss >> date::parse("%Y-%m-%dT%H:%M:%S", m_timestamp);
-
-            auto us = std::stol(datetime.substr(20, 6));
-            m_timestamp += std::chrono::microseconds{us};
-        }
+    if (avformat_open_input(&fmt_ctx, path.c_str(), nullptr, nullptr)) {
+        throw mc::FileInfoError{"Could not read video metadata"};
     }
 
+    tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX);
+
+    if (!tag) {
+        avformat_close_input(&fmt_ctx);
+        throw mc::FileInfoError{"'creation_time' not found in video metadata"};
+    }
+
+    // magic numbers assume the following format: 2018-01-01T01:01:01.000000Z
+    std::string datetime{tag->value};
+    std::istringstream ss{datetime.substr(0, 19)};
+    ss >> date::parse("%Y-%m-%dT%H:%M:%S", m_timestamp);
+
+    auto us = std::stol(datetime.substr(20, 6));
+    m_timestamp += std::chrono::microseconds{us};
+
     avformat_close_input(&fmt_ctx);
+
+    if (m_timestamp == std::chrono::system_clock::time_point{}) {
+        throw mc::FileInfoError{"No date information found"};
+    }
 }
 
-int mc::FileInfoVideo::accept(const AbstractFileOperation& operation) const
+void mc::FileInfoVideo::accept(const AbstractFileOperation& operation) const
 {
-    return operation.visit(*this);
+    operation.visit(*this);
 }

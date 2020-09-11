@@ -26,7 +26,7 @@ class FilePathFormat {
 public:
     explicit FilePathFormat(std::filesystem::path destination);
     ~FilePathFormat();
-    std::filesystem::path createPathFrom(const AbstractFileInfo &file) const;
+    std::filesystem::path createPathFrom(const AbstractFileInfo &file, unsigned int id = 0) const;
     std::filesystem::path createTemporaryPathFrom(const AbstractFileInfo &file) const;
 private:
     std::filesystem::path m_destination;

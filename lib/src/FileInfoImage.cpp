@@ -15,6 +15,7 @@
  */
 
 #include <date/date.h>
+#include <mediacopier/Exceptions.hpp>
 #include <mediacopier/AbstractFileOperation.hpp>
 #include <mediacopier/FileInfoImage.hpp>
 
@@ -43,6 +44,7 @@ mc::FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exi
         ss >> date::parse("%Y:%m:%d %H:%M:%S", m_timestamp);
         break;
     }
+
     for (const std::string& key : keysSubSec) {
         if (exif.findKey(std::move(Exiv2::ExifKey{key})) == exif.end()) {
             continue;
@@ -57,9 +59,13 @@ mc::FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exi
         }
         break;
     }
+
+    if (m_timestamp == std::chrono::system_clock::time_point{}) {
+        throw mc::FileInfoError{"No date information found"};
+    }
 }
 
-int mc::FileInfoImage::accept(const AbstractFileOperation& operation) const
+void mc::FileInfoImage::accept(const AbstractFileOperation& operation) const
 {
-    return operation.visit(*this);
+    operation.visit(*this);
 }

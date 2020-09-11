@@ -24,11 +24,11 @@ namespace MediaCopier {
 class FileOperationCopy : public AbstractFileOperation {
 public:
     FileOperationCopy(FilePathFormat filePathFormat) : m_filePathFormat{std::move(filePathFormat)} {}
-    int visit(const FileInfoImage &file) const override;
-    int visit(const FileInfoJpeg &file) const override;
-    int visit(const FileInfoVideo &file) const override;
-    int copyFile(const AbstractFileInfo &file) const;
-    int copyJpeg(const FileInfoJpeg &file) const;
+    void visit(const FileInfoImage &file) const override;
+    void visit(const FileInfoJpeg &file) const override;
+    void visit(const FileInfoVideo &file) const override;
+    void copyFile(const AbstractFileInfo &file) const;
+    void copyJpeg(const FileInfoJpeg &file) const;
 protected:
     FilePathFormat m_filePathFormat;
 };

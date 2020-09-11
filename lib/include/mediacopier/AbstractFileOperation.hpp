@@ -25,9 +25,9 @@ class FileInfoVideo;
 class AbstractFileOperation {
 public:
     virtual ~AbstractFileOperation() = default;
-    virtual int visit(const FileInfoImage &file) const = 0;
-    virtual int visit(const FileInfoJpeg &file) const = 0;
-    virtual int visit(const FileInfoVideo &file) const = 0;
+    virtual void visit(const FileInfoImage &file) const = 0;
+    virtual void visit(const FileInfoJpeg &file) const = 0;
+    virtual void visit(const FileInfoVideo &file) const = 0;
 };
 
 }
