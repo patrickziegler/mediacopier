@@ -17,7 +17,7 @@
 #include <mediacopier/Exceptions.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileInfoImage.hpp>
-#include <mediacopier/FileInfoJpeg.hpp>
+#include <mediacopier/FileInfoImageJpeg.hpp>
 #include <mediacopier/FileInfoVideo.hpp>
 
 namespace mc = MediaCopier;
@@ -34,7 +34,7 @@ std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFileFrom(const 
             auto exif = image->exifData();
 
             if (image->mimeType() == "image/jpeg") {
-                return std::make_unique<FileInfoJpeg>(path, exif);
+                return std::make_unique<FileInfoImageJpeg>(path, exif);
             } else {
                 return std::make_unique<FileInfoImage>(path, exif);
             }

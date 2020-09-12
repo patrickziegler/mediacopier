@@ -19,14 +19,14 @@
 namespace MediaCopier {
 
 class FileInfoImage;
-class FileInfoJpeg;
+class FileInfoImageJpeg;
 class FileInfoVideo;
 
 class AbstractFileOperation {
 public:
     virtual ~AbstractFileOperation() = default;
     virtual void visit(const FileInfoImage &file) const = 0;
-    virtual void visit(const FileInfoJpeg &file) const = 0;
+    virtual void visit(const FileInfoImageJpeg &file) const = 0;
     virtual void visit(const FileInfoVideo &file) const = 0;
 };
 

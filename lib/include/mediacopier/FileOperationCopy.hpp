@@ -25,10 +25,9 @@ class FileOperationCopy : public AbstractFileOperation {
 public:
     FileOperationCopy(FilePathFormat filePathFormat) : m_filePathFormat{std::move(filePathFormat)} {}
     void visit(const FileInfoImage &file) const override;
-    void visit(const FileInfoJpeg &file) const override;
+    void visit(const FileInfoImageJpeg &file) const override;
     void visit(const FileInfoVideo &file) const override;
     void copyFile(const AbstractFileInfo &file) const;
-    void copyJpeg(const FileInfoJpeg &file) const;
 protected:
     FilePathFormat m_filePathFormat;
 };

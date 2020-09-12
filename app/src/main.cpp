@@ -17,7 +17,7 @@
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/Exceptions.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
-#include <mediacopier/FileOperationCopy.hpp>
+#include <mediacopier/FileOperationCopyJpeg.hpp>
 #include <mediacopier/FilePathFormat.hpp>
 
 #include <filesystem>
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     fs::path src{"/home/patrick/workspace/repos/tmp/"};
     fs::path dst{"/home/patrick/workspace/repos/tmp_out/"};
 
-    mc::FileOperationCopy op{mc::FilePathFormat{dst}};
+    mc::FileOperationCopyJpeg op{mc::FilePathFormat{dst}};
     mc::FileInfoFactory factory;
 
     for (const auto& path : fs::recursive_directory_iterator(src)) {
