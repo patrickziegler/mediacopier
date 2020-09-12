@@ -20,15 +20,13 @@
 #include <mediacopier/FileInfoVideo.hpp>
 #include <mediacopier/FileOperationCopyJpeg.hpp>
 
+#include <csetjmp>
+
 extern "C"
 {
 #include <jpeglib.h>
 #include "transupp.h"
 }
-
-#include <csetjmp>
-#include <iostream>
-#include <fstream>
 
 namespace fs = std::filesystem;
 namespace mc = MediaCopier;
@@ -44,23 +42,22 @@ struct JpegErrorCategory : public std::error_category
 {
     const char* name() const noexcept override
     {
-        return "JpegTransformation";
+        return "JpegError";
     }
 
     std::string message(int ev) const override
     {
-        // TODO: fix descriptions
         switch (static_cast<JpegErrorValue>(ev)) {
         case JpegErrorValue::UnknownTransformation:
-            return "nonexistent airport name in request";
+            return "Unknown jpeg transformation";
         case JpegErrorValue::ImageSizeError:
-            return "request for a date from the past";
+            return "Image size not fit for transformation";
         case JpegErrorValue::JpegError:
-            return "request for a date from the past";
+            return "Error reading / writing jpeg coefficients";
         case JpegErrorValue::FileError:
-            return "request for a date from the past";
+            return "Error reading / writing image file";
         default:
-            return "unrecognized error";
+            return "Unknown error";
         }
     }
 };
@@ -94,7 +91,7 @@ static std::error_code jpeg_copy_rotated(const mc::FileInfoImageJpeg& file, cons
     trans.crop = false;
     trans.force_grayscale = false;
 
-    switch (file.orientation())
+    switch (static_cast<mc::FileInfoImageJpeg::Orientation>(file.orientation()))
     {
     case mc::FileInfoImageJpeg::Orientation::ROT_180:
         trans.transform = JXFORM_ROT_180;
@@ -174,7 +171,9 @@ static std::error_code jpeg_copy_rotated(const mc::FileInfoImageJpeg& file, cons
 
 void mc::FileOperationCopyJpeg::copyJpeg(const mc::FileInfoImageJpeg &file) const
 {
-    if (file.orientation() == mc::FileInfoImageJpeg::Orientation::ROT_0) {
+    static auto default_orientation = static_cast<int>(mc::FileInfoImageJpeg::Orientation::ROT_0);
+
+    if (file.orientation() == default_orientation) {
         return copyFile(file);
     }
 
@@ -196,7 +195,7 @@ void mc::FileOperationCopyJpeg::copyJpeg(const mc::FileInfoImageJpeg &file) cons
         image->readMetadata();
 
         auto exif = image->exifData();
-        exif["Exif.Image.Orientation"] = mc::FileInfoImageJpeg::Orientation::ROT_0;
+        exif["Exif.Image.Orientation"] = default_orientation;
 
         image->setExifData(exif);
         image->writeMetadata();

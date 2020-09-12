@@ -22,7 +22,7 @@ namespace MediaCopier {
 
 class FileInfoImageJpeg : public FileInfoImage {
 public:
-    enum Orientation {
+    enum class Orientation {
         ROT_0 = 1,
         ROT_0_MIRRORED,
         ROT_180,
