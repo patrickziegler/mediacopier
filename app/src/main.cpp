@@ -18,11 +18,11 @@
 #include <mediacopier/Exceptions.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileOperationCopyJpeg.hpp>
+#include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FilePathFormat.hpp>
 
 #include <filesystem>
 #include <iostream>
-#include <memory>
 
 namespace fs = std::filesystem;
 namespace mc = MediaCopier;
@@ -32,14 +32,24 @@ int main(int argc, char *argv[])
     fs::path src{"/home/patrick/workspace/repos/tmp/"};
     fs::path dst{"/home/patrick/workspace/repos/tmp_out/"};
 
-    mc::FileOperationCopyJpeg op{mc::FilePathFormat{dst}};
+    mc::FilePathFormat fmt{dst, "TEST_%Y%m%d_%H%M%S_"};
+    std::unique_ptr<mc::AbstractFileOperation> op;
+
+    bool move = false;
+
+    if (move) {
+        op = std::make_unique<mc::FileOperationMoveJpeg>(fmt);
+    } else {
+        op = std::make_unique<mc::FileOperationCopyJpeg>(fmt);
+    }
+
     mc::FileInfoFactory factory;
 
     for (const auto& path : fs::recursive_directory_iterator(src)) {
         try {
             if (path.is_regular_file()) {
                 auto file = factory.createFileFrom(path);
-                file->accept(op);
+                file->accept(*op);
             }
         }  catch (const mc::FileInfoError& err) {
             std::cout << err.what() << " (" << path << ")" << std::endl;

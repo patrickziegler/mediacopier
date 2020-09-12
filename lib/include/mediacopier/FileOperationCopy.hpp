@@ -27,8 +27,8 @@ public:
     void visit(const FileInfoImage &file) const override;
     void visit(const FileInfoImageJpeg &file) const override;
     void visit(const FileInfoVideo &file) const override;
-    void copyFile(const AbstractFileInfo &file) const;
 protected:
+    void copyFile(const AbstractFileInfo &file) const;
     FilePathFormat m_filePathFormat;
 };
 

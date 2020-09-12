@@ -27,6 +27,7 @@ public:
     void visit(const FileInfoImage &file) const override;
     void visit(const FileInfoImageJpeg &file) const override;
     void visit(const FileInfoVideo &file) const override;
+protected:
     void copyJpeg(const FileInfoImageJpeg &file) const;
 };
 

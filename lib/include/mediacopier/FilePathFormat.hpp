@@ -24,13 +24,16 @@ class AbstractFileInfo;
 
 class FilePathFormat {
 public:
-    explicit FilePathFormat(std::filesystem::path destination);
+    explicit FilePathFormat(std::filesystem::path destination, std::string pattern, bool useSubsec = true);
     ~FilePathFormat();
     std::filesystem::path createPathFrom(const AbstractFileInfo &file, unsigned int id = 0) const;
     std::filesystem::path createTemporaryPathFrom(const AbstractFileInfo &file) const;
 private:
+    std::filesystem::path createPath(const AbstractFileInfo &file, std::filesystem::path destination, unsigned int id = 0) const;
     std::filesystem::path m_destination;
     std::filesystem::path m_tempdir;
+    std::string m_pattern;
+    bool m_useSubsec;
 };
 
 }

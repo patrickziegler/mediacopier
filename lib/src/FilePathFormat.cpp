@@ -42,19 +42,15 @@ static fs::path create_unique_path(const std::string prefix = "MediaCopier-", co
     return unique_path;
 }
 
-fs::path createPath(const mc::AbstractFileInfo &file, fs::path destination, unsigned int id = 0)
+fs::path mc::FilePathFormat::createPath(const mc::AbstractFileInfo &file, fs::path destination, unsigned int id) const
 {
-    // TODO: make these fields configurable
-    std::string pattern{"IMG_%Y%m%d_%H%M%S_"};
-    bool subsec = true;
-
     std::stringstream ss;
     ss << destination.string();
 
     auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
-    ss << std::put_time(std::gmtime(&ts), pattern.c_str());
+    ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
 
-    if (subsec) {
+    if (m_useSubsec) {
         auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
         ss << std::setfill('0') << std::setw(6) << us.count();
     }
@@ -68,7 +64,7 @@ fs::path createPath(const mc::AbstractFileInfo &file, fs::path destination, unsi
     return {ss.str()};
 }
 
-mc::FilePathFormat::FilePathFormat(fs::path destination) : m_destination{std::move(destination)}
+mc::FilePathFormat::FilePathFormat(fs::path destination, std::string pattern, bool useSubsec) : m_destination{std::move(destination)}, m_pattern{std::move(pattern)}, m_useSubsec{useSubsec}
 {
     m_destination /= ""; // this will append a trailing directory separator when necessary
     m_tempdir = create_unique_path();
