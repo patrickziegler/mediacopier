@@ -14,4 +14,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mediacopier/FileInfoImage.hpp>
+#include <mediacopier/FileInfoImageJpeg.hpp>
+#include <mediacopier/FileInfoVideo.hpp>
 #include <mediacopier/FileOperationMove.hpp>
+
+namespace fs = std::filesystem;
+namespace mc = MediaCopier;
+
+void mc::FileOperationMove::visit(const mc::FileInfoImage &file) const
+{
+    copyFile(file);
+    fs::remove(file.path());
+}
+
+void mc::FileOperationMove::visit(const mc::FileInfoImageJpeg &file) const
+{
+    copyFile(file);
+    fs::remove(file.path());
+}
+
+void mc::FileOperationMove::visit(const mc::FileInfoVideo &file) const
+{
+    copyFile(file);
+    fs::remove(file.path());
+}
