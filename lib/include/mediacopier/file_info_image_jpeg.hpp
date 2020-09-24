@@ -16,14 +16,27 @@
 
 #pragma once
 
-#include <mediacopier/AbstractFileInfo.hpp>
+#include <mediacopier/file_info_image.hpp>
 
 namespace MediaCopier {
 
-class FileInfoVideo : public AbstractFileInfo {
+class FileInfoImageJpeg : public FileInfoImage {
 public:
-    FileInfoVideo(std::filesystem::path path);
+    enum class Orientation {
+        ROT_0 = 1,
+        ROT_0_MIRRORED,
+        ROT_180,
+        ROT_180_MIRRORED,
+        ROT_90_MIRRORED,
+        ROT_90,
+        ROT_270_MIRRORED,
+        ROT_270,
+    };
+    FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData exif);
     void accept(const AbstractFileOperation& operation) const override;
+    int orientation() const { return m_orientation; }
+private:
+    int m_orientation;
 };
 
 }

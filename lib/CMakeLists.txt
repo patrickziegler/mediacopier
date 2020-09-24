@@ -3,15 +3,15 @@ find_package(Exiv2)
 find_package(JPEG)
 
 add_library(mediacopier SHARED
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FileInfoFactory.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FileInfoImage.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FileInfoImageJpeg.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FileInfoVideo.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationCopy.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationCopyJpeg.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationMove.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationMoveJpeg.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FilePathFormat.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_info_factory.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_info_image.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_info_image_jpeg.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_info_video.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_operation_copy.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_operation_copy_jpeg.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_operation_move.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_operation_move_jpeg.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/file_path_format.cpp"
     "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/transupp.c"
     )
 

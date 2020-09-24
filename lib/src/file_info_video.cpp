@@ -15,9 +15,9 @@
  */
 
 #include <date/date.h>
-#include <mediacopier/Exceptions.hpp>
-#include <mediacopier/AbstractFileOperation.hpp>
-#include <mediacopier/FileInfoVideo.hpp>
+#include <mediacopier/exceptions.hpp>
+#include <mediacopier/abstract_file_operation.hpp>
+#include <mediacopier/file_info_video.hpp>
 
 extern "C"
 {

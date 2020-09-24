@@ -14,11 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/Exceptions.hpp>
-#include <mediacopier/FileInfoImage.hpp>
-#include <mediacopier/FileInfoImageJpeg.hpp>
-#include <mediacopier/FileInfoVideo.hpp>
-#include <mediacopier/FileOperationCopy.hpp>
+#include <mediacopier/exceptions.hpp>
+#include <mediacopier/file_info_image.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
+#include <mediacopier/file_info_video.hpp>
+#include <mediacopier/file_operation_copy.hpp>
 
 #include <fstream>
 

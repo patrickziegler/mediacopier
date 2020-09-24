@@ -14,8 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/FilePathFormat.hpp>
+#include <mediacopier/abstract_file_info.hpp>
+#include <mediacopier/file_path_format.hpp>
 
 #include <random>
 #include <sstream>

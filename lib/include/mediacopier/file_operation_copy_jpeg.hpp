@@ -16,15 +16,19 @@
 
 #pragma once
 
-#include <exiv2/exiv2.hpp>
-#include <mediacopier/AbstractFileInfo.hpp>
+#include <mediacopier/file_operation_copy.hpp>
+#include <mediacopier/file_path_format.hpp>
 
 namespace MediaCopier {
 
-class FileInfoImage : public AbstractFileInfo {
+class FileOperationCopyJpeg : public FileOperationCopy {
 public:
-    FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif);
-    void accept(const AbstractFileOperation& operation) const override;
+    using FileOperationCopy::FileOperationCopy;
+    void visit(const FileInfoImage &file) const override;
+    void visit(const FileInfoImageJpeg &file) const override;
+    void visit(const FileInfoVideo &file) const override;
+protected:
+    void copyJpeg(const FileInfoImageJpeg &file) const;
 };
 
 }

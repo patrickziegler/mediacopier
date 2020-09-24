@@ -14,29 +14,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/file_info_image.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
+#include <mediacopier/file_info_video.hpp>
+#include <mediacopier/file_operation_move_jpeg.hpp>
 
-#include <mediacopier/FileInfoImage.hpp>
+namespace fs = std::filesystem;
+namespace mc = MediaCopier;
 
-namespace MediaCopier {
+void mc::FileOperationMoveJpeg::visit(const mc::FileInfoImage &file) const
+{
+    copyFile(file);
+    fs::remove(file.path());
+}
 
-class FileInfoImageJpeg : public FileInfoImage {
-public:
-    enum class Orientation {
-        ROT_0 = 1,
-        ROT_0_MIRRORED,
-        ROT_180,
-        ROT_180_MIRRORED,
-        ROT_90_MIRRORED,
-        ROT_90,
-        ROT_270_MIRRORED,
-        ROT_270,
-    };
-    FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData exif);
-    void accept(const AbstractFileOperation& operation) const override;
-    int orientation() const { return m_orientation; }
-private:
-    int m_orientation;
-};
+void mc::FileOperationMoveJpeg::visit(const mc::FileInfoImageJpeg &file) const
+{
+    copyJpeg(file);
+    fs::remove(file.path());
+}
 
+void mc::FileOperationMoveJpeg::visit(const mc::FileInfoVideo &file) const
+{
+    copyFile(file);
+    fs::remove(file.path());
 }

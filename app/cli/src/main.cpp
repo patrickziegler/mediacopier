@@ -14,12 +14,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/Exceptions.hpp>
-#include <mediacopier/FileInfoFactory.hpp>
-#include <mediacopier/FileOperationCopyJpeg.hpp>
-#include <mediacopier/FileOperationMoveJpeg.hpp>
-#include <mediacopier/FilePathFormat.hpp>
+#include <mediacopier/abstract_file_info.hpp>
+#include <mediacopier/exceptions.hpp>
+#include <mediacopier/file_info_factory.hpp>
+#include <mediacopier/file_operation_copy_jpeg.hpp>
+#include <mediacopier/file_operation_move_jpeg.hpp>
+#include <mediacopier/file_path_format.hpp>
 
 #include <mediacopier/gui/mediacopierdialog.hpp>
 #include <QApplication>
