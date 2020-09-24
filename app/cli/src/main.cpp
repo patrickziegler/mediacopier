@@ -21,7 +21,7 @@
 #include <mediacopier/file_operation_move_jpeg.hpp>
 #include <mediacopier/file_path_format.hpp>
 
-#include <mediacopier/gui/mediacopierdialog.hpp>
+#include <mediacopier/gui/dialog.hpp>
 #include <QApplication>
 
 #include <filesystem>
