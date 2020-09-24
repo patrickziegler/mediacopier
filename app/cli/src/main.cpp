@@ -21,13 +21,16 @@
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FilePathFormat.hpp>
 
+#include <mediacopier/gui/mediacopierdialog.hpp>
+#include <QApplication>
+
 #include <filesystem>
 #include <iostream>
 
 namespace fs = std::filesystem;
 namespace mc = MediaCopier;
 
-int main(int argc, char *argv[])
+int demo_test()
 {
     fs::path src{"/home/patrick/workspace/repos/tmp/"};
     fs::path dst{"/home/patrick/workspace/repos/tmp_out/"};
@@ -57,4 +60,12 @@ int main(int argc, char *argv[])
     }
 
     return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    MediaCopierDialog dialog;
+    dialog.show();
+    return app.exec();
 }
