@@ -26,7 +26,7 @@ extern "C"
 
 #include <sstream>
 
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 mc::FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path}
 {

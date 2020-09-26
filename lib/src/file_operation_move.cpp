@@ -20,7 +20,7 @@
 #include <mediacopier/file_operation_move.hpp>
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 void mc::FileOperationMove::visit(const mc::FileInfoImage &file) const
 {

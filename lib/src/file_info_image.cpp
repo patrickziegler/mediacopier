@@ -19,7 +19,7 @@
 #include <mediacopier/abstract_file_operation.hpp>
 #include <mediacopier/file_info_image.hpp>
 
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 static constexpr const std::array<char[29], 4> keysDateTime = {
     "Exif.Photo.DateTimeOriginal",

@@ -19,11 +19,11 @@
 #include <mediacopier/abstract_file_operation.hpp>
 #include <mediacopier/file_path_format.hpp>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class FileOperationCopy : public AbstractFileOperation {
 public:
-    FileOperationCopy(FilePathFormat filePathFormat) : m_filePathFormat{std::move(filePathFormat)} {}
+    explicit FileOperationCopy(FilePathFormat filePathFormat) : m_filePathFormat{std::move(filePathFormat)} {}
     void visit(const FileInfoImage &file) const override;
     void visit(const FileInfoImageJpeg &file) const override;
     void visit(const FileInfoVideo &file) const override;

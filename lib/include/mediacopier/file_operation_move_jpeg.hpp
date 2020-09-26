@@ -18,7 +18,7 @@
 
 #include <mediacopier/file_operation_copy_jpeg.hpp>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class FileOperationMoveJpeg : public FileOperationCopyJpeg {
 public:

@@ -23,7 +23,7 @@
 #include <fstream>
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 static bool check_equal(fs::path file1, fs::path file2)
 {

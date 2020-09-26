@@ -16,7 +16,7 @@
 
 #pragma once
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class FileInfoImage;
 class FileInfoImageJpeg;

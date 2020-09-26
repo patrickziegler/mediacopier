@@ -29,7 +29,7 @@ extern "C"
 }
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 enum class JpegErrorValue {
     UnknownTransformation,

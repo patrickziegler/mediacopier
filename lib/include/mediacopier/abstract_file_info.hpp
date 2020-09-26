@@ -19,7 +19,7 @@
 #include <chrono>
 #include <filesystem>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class AbstractFileOperation;
 

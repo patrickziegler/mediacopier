@@ -18,7 +18,7 @@
 
 #include <mediacopier/file_info_image.hpp>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class FileInfoImageJpeg : public FileInfoImage {
 public:

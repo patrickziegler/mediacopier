@@ -18,11 +18,11 @@
 
 #include <mediacopier/abstract_file_info.hpp>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class FileInfoVideo : public AbstractFileInfo {
 public:
-    FileInfoVideo(std::filesystem::path path);
+    explicit FileInfoVideo(std::filesystem::path path);
     void accept(const AbstractFileOperation& operation) const override;
 };
 

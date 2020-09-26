@@ -18,7 +18,7 @@
 
 #include <mediacopier/file_operation_copy.hpp>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class FileOperationMove : public FileOperationCopy {
 public:

@@ -1,0 +1,1 @@
+constexpr const char* MEDIACOPIER_VERSION = "${PROJECT_VERSION}";

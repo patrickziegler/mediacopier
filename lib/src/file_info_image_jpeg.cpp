@@ -17,7 +17,7 @@
 #include <mediacopier/abstract_file_operation.hpp>
 #include <mediacopier/file_info_image_jpeg.hpp>
 
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 mc::FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData exif) : FileInfoImage{std::move(path), exif}
 {

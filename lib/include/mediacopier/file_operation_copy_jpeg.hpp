@@ -19,7 +19,7 @@
 #include <mediacopier/file_operation_copy.hpp>
 #include <mediacopier/file_path_format.hpp>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class FileOperationCopyJpeg : public FileOperationCopy {
 public:

@@ -14,6 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "config.hpp"
+
 #include <mediacopier/abstract_file_info.hpp>
 #include <mediacopier/exceptions.hpp>
 #include <mediacopier/file_info_factory.hpp>
@@ -21,34 +23,42 @@
 #include <mediacopier/file_operation_move_jpeg.hpp>
 #include <mediacopier/file_path_format.hpp>
 
+#ifdef ENABLE_GUI
 #include <mediacopier/gui/dialog.hpp>
 #include <QApplication>
+#endif
 
 #include <filesystem>
 #include <iostream>
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
-int demo_test()
+using namespace mc::cli;
+
+int run_cli(const Config& config)
 {
-    fs::path src{"/home/patrick/workspace/repos/tmp/"};
-    fs::path dst{"/home/patrick/workspace/repos/tmp_out/"};
+    mc::FilePathFormat format{config.outputDir(), config.baseFormat()};
 
-    mc::FilePathFormat fmt{dst, "TEST_%Y%m%d_%H%M%S_"};
     std::unique_ptr<mc::AbstractFileOperation> op;
 
-    bool move = false;
+    switch (config.command()) {
+    case Config::Command::COPY:
+        op = std::make_unique<mc::FileOperationCopyJpeg>(format);
+        break;
 
-    if (move) {
-        op = std::make_unique<mc::FileOperationMoveJpeg>(fmt);
-    } else {
-        op = std::make_unique<mc::FileOperationCopyJpeg>(fmt);
+    case Config::Command::MOVE:
+        op = std::make_unique<mc::FileOperationMoveJpeg>(format);
+        break;
+
+    default:
+        // TODO: report this
+        return 0;
     }
 
     mc::FileInfoFactory factory;
 
-    for (const auto& path : fs::recursive_directory_iterator(src)) {
+    for (const auto& path : fs::recursive_directory_iterator(config.inputDir())) {
         try {
             if (path.is_regular_file()) {
                 auto file = factory.createFileFrom(path);
@@ -64,8 +74,16 @@ int demo_test()
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    MediaCopierDialog dialog;
-    dialog.show();
-    return app.exec();
+    Config config;
+    config.parseArgs(argc, argv);
+
+#ifdef ENABLE_GUI
+    if (config.command() == Config::Command::GUI) {
+        QApplication app(argc, argv);
+        MediaCopierDialog dialog;
+        dialog.show();
+        return app.exec();
+    }
+#endif
+    return run_cli(config);
 }

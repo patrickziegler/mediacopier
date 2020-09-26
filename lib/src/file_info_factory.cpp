@@ -20,7 +20,7 @@
 #include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/file_info_video.hpp>
 
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFileFrom(const std::filesystem::path &path) const
 {

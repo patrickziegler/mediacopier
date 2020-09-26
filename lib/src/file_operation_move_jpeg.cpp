@@ -20,7 +20,7 @@
 #include <mediacopier/file_operation_move_jpeg.hpp>
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 void mc::FileOperationMoveJpeg::visit(const mc::FileInfoImage &file) const
 {

@@ -18,7 +18,7 @@
 
 #include <filesystem>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class AbstractFileInfo;
 

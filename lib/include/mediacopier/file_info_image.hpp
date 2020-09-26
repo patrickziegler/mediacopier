@@ -19,7 +19,7 @@
 #include <exiv2/exiv2.hpp>
 #include <mediacopier/abstract_file_info.hpp>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class FileInfoImage : public AbstractFileInfo {
 public:

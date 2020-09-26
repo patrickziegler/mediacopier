@@ -21,7 +21,7 @@
 #include <sstream>
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
+namespace mc = mediacopier;
 
 static fs::path create_unique_path(const std::string prefix = "MediaCopier-", const unsigned int len = 12) {
     std::random_device device;
