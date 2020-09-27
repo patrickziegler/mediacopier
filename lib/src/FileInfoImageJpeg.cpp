@@ -14,22 +14,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/FileInfoImageJpeg.hpp>
 
-#include <stdexcept>
+namespace mc = MediaCopier;
 
-namespace MediaCopier {
+mc::FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData exif) : FileInfoImage{std::move(path), exif}
+{
+    std::string key{"Exif.Image.Orientation"};
+    if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
+        m_orientation = exif[key].toLong();
+    }
+}
 
-class MediaCopierError : public std::runtime_error {
-    using std::runtime_error::runtime_error;
-};
-
-class FileInfoError : public MediaCopierError {
-    using MediaCopierError::MediaCopierError;
-};
-
-class FileOperationError : public MediaCopierError {
-    using MediaCopierError::MediaCopierError;
-};
-
+void mc::FileInfoImageJpeg::accept(const AbstractFileOperation& operation) const
+{
+    operation.visit(*this);
 }

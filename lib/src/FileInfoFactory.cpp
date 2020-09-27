@@ -15,12 +15,12 @@
  */
 
 #include <mediacopier/exceptions.hpp>
-#include <mediacopier/file_info_factory.hpp>
-#include <mediacopier/file_info_image.hpp>
-#include <mediacopier/file_info_image_jpeg.hpp>
-#include <mediacopier/file_info_video.hpp>
+#include <mediacopier/FileInfoFactory.hpp>
+#include <mediacopier/FileInfoImage.hpp>
+#include <mediacopier/FileInfoImageJpeg.hpp>
+#include <mediacopier/FileInfoVideo.hpp>
 
-namespace mc = mediacopier;
+namespace mc = MediaCopier;
 
 std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFileFrom(const std::filesystem::path &path) const
 {

@@ -16,20 +16,16 @@
 
 #pragma once
 
-#include <mediacopier/abstract_file_operation.hpp>
-#include <mediacopier/file_path_format.hpp>
+#include <mediacopier/FileOperationCopy.hpp>
 
-namespace mediacopier {
+namespace MediaCopier {
 
-class FileOperationCopy : public AbstractFileOperation {
+class FileOperationMove : public FileOperationCopy {
 public:
-    explicit FileOperationCopy(FilePathFormat filePathFormat) : m_filePathFormat{std::move(filePathFormat)} {}
+    using FileOperationCopy::FileOperationCopy;
     void visit(const FileInfoImage &file) const override;
     void visit(const FileInfoImageJpeg &file) const override;
     void visit(const FileInfoVideo &file) const override;
-protected:
-    void copyFile(const AbstractFileInfo &file) const;
-    FilePathFormat m_filePathFormat;
 };
 
 }

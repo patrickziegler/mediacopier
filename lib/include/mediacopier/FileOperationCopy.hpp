@@ -16,24 +16,20 @@
 
 #pragma once
 
-#include <filesystem>
+#include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/FilePathFactory.hpp>
 
-namespace mediacopier {
+namespace MediaCopier {
 
-class AbstractFileInfo;
-
-class FilePathFormat {
+class FileOperationCopy : public AbstractFileOperation {
 public:
-    explicit FilePathFormat(std::filesystem::path destination, std::string pattern, bool useSubsec = true);
-    ~FilePathFormat();
-    std::filesystem::path createPathFrom(const AbstractFileInfo &file, unsigned int id = 0) const;
-    std::filesystem::path createTemporaryPathFrom(const AbstractFileInfo &file) const;
-private:
-    std::filesystem::path createPath(const AbstractFileInfo &file, std::filesystem::path destination, unsigned int id = 0) const;
-    std::filesystem::path m_destination;
-    std::filesystem::path m_tempdir;
-    std::string m_pattern;
-    bool m_useSubsec;
+    explicit FileOperationCopy(FilePathFactory filePathFormat) : m_filePathFormat{std::move(filePathFormat)} {}
+    void visit(const FileInfoImage &file) const override;
+    void visit(const FileInfoImageJpeg &file) const override;
+    void visit(const FileInfoVideo &file) const override;
+protected:
+    void copyFile(const AbstractFileInfo &file) const;
+    FilePathFactory m_filePathFormat;
 };
 
 }

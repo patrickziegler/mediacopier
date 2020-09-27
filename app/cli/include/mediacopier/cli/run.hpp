@@ -14,16 +14,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+namespace MediaCopier::CLI {
 
-#include <mediacopier/abstract_file_info.hpp>
+class ConfigStore;
 
-namespace mediacopier {
-
-class FileInfoVideo : public AbstractFileInfo {
-public:
-    explicit FileInfoVideo(std::filesystem::path path);
-    void accept(const AbstractFileOperation& operation) const override;
-};
+int run(const ConfigStore& config);
 
 }

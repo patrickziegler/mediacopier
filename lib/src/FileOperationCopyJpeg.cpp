@@ -15,10 +15,10 @@
  */
 
 #include <mediacopier/exceptions.hpp>
-#include <mediacopier/file_info_image.hpp>
-#include <mediacopier/file_info_image_jpeg.hpp>
-#include <mediacopier/file_info_video.hpp>
-#include <mediacopier/file_operation_copy_jpeg.hpp>
+#include <mediacopier/FileInfoImage.hpp>
+#include <mediacopier/FileInfoImageJpeg.hpp>
+#include <mediacopier/FileInfoVideo.hpp>
+#include <mediacopier/FileOperationCopyJpeg.hpp>
 
 #include <csetjmp>
 
@@ -29,7 +29,7 @@ extern "C"
 }
 
 namespace fs = std::filesystem;
-namespace mc = mediacopier;
+namespace mc = MediaCopier;
 
 enum class JpegErrorValue {
     UnknownTransformation,

@@ -16,20 +16,14 @@
 
 #pragma once
 
-#include <stdexcept>
+#include <mediacopier/AbstractFileInfo.hpp>
 
 namespace MediaCopier {
 
-class MediaCopierError : public std::runtime_error {
-    using std::runtime_error::runtime_error;
-};
-
-class FileInfoError : public MediaCopierError {
-    using MediaCopierError::MediaCopierError;
-};
-
-class FileOperationError : public MediaCopierError {
-    using MediaCopierError::MediaCopierError;
+class FileInfoVideo : public AbstractFileInfo {
+public:
+    explicit FileInfoVideo(std::filesystem::path path);
+    void accept(const AbstractFileOperation& operation) const override;
 };
 
 }

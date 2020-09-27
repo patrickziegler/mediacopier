@@ -15,15 +15,15 @@
  */
 
 #include <mediacopier/exceptions.hpp>
-#include <mediacopier/file_info_image.hpp>
-#include <mediacopier/file_info_image_jpeg.hpp>
-#include <mediacopier/file_info_video.hpp>
-#include <mediacopier/file_operation_copy.hpp>
+#include <mediacopier/FileInfoImage.hpp>
+#include <mediacopier/FileInfoImageJpeg.hpp>
+#include <mediacopier/FileInfoVideo.hpp>
+#include <mediacopier/FileOperationCopy.hpp>
 
 #include <fstream>
 
 namespace fs = std::filesystem;
-namespace mc = mediacopier;
+namespace mc = MediaCopier;
 
 static bool check_equal(fs::path file1, fs::path file2)
 {

@@ -16,24 +16,24 @@
 
 #pragma once
 
-#include <chrono>
 #include <filesystem>
 
-namespace mediacopier {
+namespace MediaCopier {
 
-class AbstractFileOperation;
+class AbstractFileInfo;
 
-class AbstractFileInfo {
+class FilePathFactory {
 public:
-    AbstractFileInfo(std::filesystem::path path)
-        : m_path{std::move(path)} {}
-    virtual ~AbstractFileInfo() = default;
-    virtual void accept(const AbstractFileOperation& operation) const = 0;
-    std::filesystem::path path() const { return m_path; }
-    std::chrono::system_clock::time_point timestamp() const { return m_timestamp; }
-protected:
-    std::filesystem::path m_path;
-    std::chrono::system_clock::time_point m_timestamp;
+    explicit FilePathFactory(std::filesystem::path destination, std::string pattern, bool useSubsec = true);
+    ~FilePathFactory();
+    std::filesystem::path createPathFrom(const AbstractFileInfo &file, unsigned int id = 0) const;
+    std::filesystem::path createTemporaryPathFrom(const AbstractFileInfo &file) const;
+private:
+    std::filesystem::path createPath(const AbstractFileInfo &file, std::filesystem::path destination, unsigned int id = 0) const;
+    std::filesystem::path m_destination;
+    std::filesystem::path m_tempdir;
+    std::string m_pattern;
+    bool m_useSubsec;
 };
 
 }

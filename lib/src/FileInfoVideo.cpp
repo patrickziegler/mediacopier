@@ -16,8 +16,8 @@
 
 #include <date/date.h>
 #include <mediacopier/exceptions.hpp>
-#include <mediacopier/abstract_file_operation.hpp>
-#include <mediacopier/file_info_video.hpp>
+#include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/FileInfoVideo.hpp>
 
 extern "C"
 {
@@ -26,7 +26,7 @@ extern "C"
 
 #include <sstream>
 
-namespace mc = mediacopier;
+namespace mc = MediaCopier;
 
 mc::FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path}
 {

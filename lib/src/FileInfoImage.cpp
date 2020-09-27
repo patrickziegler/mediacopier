@@ -16,10 +16,10 @@
 
 #include <date/date.h>
 #include <mediacopier/exceptions.hpp>
-#include <mediacopier/abstract_file_operation.hpp>
-#include <mediacopier/file_info_image.hpp>
+#include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/FileInfoImage.hpp>
 
-namespace mc = mediacopier;
+namespace mc = MediaCopier;
 
 static constexpr const std::array<char[29], 4> keysDateTime = {
     "Exif.Photo.DateTimeOriginal",

@@ -14,21 +14,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/cli/ConfigStore.hpp>
+#include <mediacopier/cli/run.hpp>
 
-#include <mediacopier/file_operation_copy.hpp>
-#include <mediacopier/file_path_format.hpp>
+#ifdef ENABLE_GUI
+#include <mediacopier/gui/dialog.hpp>
+#include <QApplication>
+#endif
 
-namespace mediacopier {
+namespace fs = std::filesystem;
 
-class FileOperationCopyJpeg : public FileOperationCopy {
-public:
-    using FileOperationCopy::FileOperationCopy;
-    void visit(const FileInfoImage &file) const override;
-    void visit(const FileInfoImageJpeg &file) const override;
-    void visit(const FileInfoVideo &file) const override;
-protected:
-    void copyJpeg(const FileInfoImageJpeg &file) const;
-};
+using namespace MediaCopier::CLI;
 
+int main(int argc, char *argv[])
+{
+    ConfigStore config;
+    config.parseArgs(argc, argv);
+
+#ifdef ENABLE_GUI
+    if (config.command() == ConfigStore::Command::GUI) {
+        QApplication app(argc, argv);
+        MediaCopierDialog dialog;
+        dialog.show();
+        return app.exec();
+    }
+#endif
+    return run(config);
 }

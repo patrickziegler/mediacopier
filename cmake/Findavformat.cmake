@@ -11,8 +11,7 @@ find_path(AVFORMAT_INCLUDE_DIR libavformat/avformat.h
     /opt/local/include
     /opt/csw/include
     /opt/include
-    /mingw/include
-    )
+    /mingw/include)
 
 find_library(AVFORMAT_LIBRARY
     NAMES avformat
@@ -26,8 +25,7 @@ find_library(AVFORMAT_LIBRARY
     /opt/local
     /opt/csw
     /opt
-    /mingw
-    )
+    /mingw)
 
 if(AVFORMAT_INCLUDE_DIR AND AVFORMAT_LIBRARY)
     set(AVFORMAT_FOUND TRUE)

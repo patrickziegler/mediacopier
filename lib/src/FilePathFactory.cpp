@@ -14,14 +14,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/abstract_file_info.hpp>
-#include <mediacopier/file_path_format.hpp>
+#include <mediacopier/AbstractFileInfo.hpp>
+#include <mediacopier/FilePathFactory.hpp>
 
 #include <random>
 #include <sstream>
 
 namespace fs = std::filesystem;
-namespace mc = mediacopier;
+namespace mc = MediaCopier;
 
 static fs::path create_unique_path(const std::string prefix = "MediaCopier-", const unsigned int len = 12) {
     std::random_device device;
@@ -42,7 +42,7 @@ static fs::path create_unique_path(const std::string prefix = "MediaCopier-", co
     return unique_path;
 }
 
-fs::path mc::FilePathFormat::createPath(const mc::AbstractFileInfo &file, fs::path destination, unsigned int id) const
+fs::path mc::FilePathFactory::createPath(const mc::AbstractFileInfo &file, fs::path destination, unsigned int id) const
 {
     std::stringstream ss;
     ss << destination.string();
@@ -64,25 +64,25 @@ fs::path mc::FilePathFormat::createPath(const mc::AbstractFileInfo &file, fs::pa
     return {ss.str()};
 }
 
-mc::FilePathFormat::FilePathFormat(fs::path destination, std::string pattern, bool useSubsec) : m_destination{std::move(destination)}, m_pattern{std::move(pattern)}, m_useSubsec{useSubsec}
+mc::FilePathFactory::FilePathFactory(fs::path destination, std::string pattern, bool useSubsec) : m_destination{std::move(destination)}, m_pattern{std::move(pattern)}, m_useSubsec{useSubsec}
 {
     m_destination /= ""; // this will append a trailing directory separator when necessary
     m_tempdir = create_unique_path();
 }
 
-mc::FilePathFormat::~FilePathFormat()
+mc::FilePathFactory::~FilePathFactory()
 {
     if (fs::exists(m_tempdir)) {
         fs::remove_all(m_tempdir);
     }
 }
 
-fs::path mc::FilePathFormat::createPathFrom(const mc::AbstractFileInfo &file, unsigned int id) const
+fs::path mc::FilePathFactory::createPathFrom(const mc::AbstractFileInfo &file, unsigned int id) const
 {
     return createPath(file, m_destination, std::move(id));
 }
 
-fs::path mc::FilePathFormat::createTemporaryPathFrom(const AbstractFileInfo &file) const
+fs::path mc::FilePathFactory::createTemporaryPathFrom(const AbstractFileInfo &file) const
 {
     return createPath(file, m_tempdir);
 }
