@@ -1,6 +1,5 @@
 find_package(avformat)
 find_package(Exiv2)
-find_package(JPEG)
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/src/version.hpp.in"
@@ -15,8 +14,7 @@ add_library(mediacopier SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationCopyJpeg.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationMove.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/FileOperationMoveJpeg.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/FilePathFactory.cpp"
-    "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/transupp.c")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/FilePathFactory.cpp")
 
 target_include_directories(mediacopier PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
@@ -26,13 +24,14 @@ target_include_directories(mediacopier PRIVATE
     "${CMAKE_SOURCE_DIR}/extern/date/include"
     "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/"
     "${AVFORMAT_INCLUDE_DIR}"
-    "${EXIV2_INCLUDE_DIR}"
-    "${JPEG_INCLUDE_DIR}")
+    "${EXIV2_INCLUDE_DIR}")
+
+set_property(TARGET turbojpeg-static PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(mediacopier PRIVATE
     "${AVFORMAT_LIBRARY}"
     "${EXIV2_LIBRARY}"
-    "${JPEG_LIBRARY}")
+    turbojpeg-static)
 
 if(${ENABLE_TEST})
     add_subdirectory(test)

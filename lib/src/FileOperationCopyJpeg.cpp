@@ -24,7 +24,7 @@
 
 extern "C"
 {
-#include <jpeglib.h>
+#include "jpeglib.h"
 #include "transupp.h"
 }
 
