@@ -15,7 +15,10 @@
  */
 
 #include <mediacopier/cli/ConfigStore.hpp>
-#include <mediacopier/cli/run.hpp>
+#include <mediacopier/cli/execute.hpp>
+
+#include <log4cplus/configurator.h>
+#include <log4cplus/loggingmacros.h>
 
 #ifdef ENABLE_GUI
 #include <mediacopier/gui/dialog.hpp>
@@ -28,6 +31,9 @@ using namespace MediaCopier::CLI;
 
 int main(int argc, char *argv[])
 {
+    log4cplus::BasicConfigurator log;
+    log.configure();
+
     ConfigStore config;
     config.parseArgs(argc, argv);
 
@@ -39,5 +45,5 @@ int main(int argc, char *argv[])
         return app.exec();
     }
 #endif
-    return run(config);
+    return execute(config);
 }

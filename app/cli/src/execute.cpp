@@ -15,6 +15,7 @@
  */
 
 #include <mediacopier/cli/ConfigStore.hpp>
+#include <mediacopier/cli/execute.hpp>
 
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/exceptions.hpp>
@@ -23,15 +24,18 @@
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FilePathFactory.hpp>
 
+#include <log4cplus/loggingmacros.h>
+
 #include <filesystem>
-#include <iostream>
 
 namespace fs = std::filesystem;
 
 namespace MediaCopier::CLI {
 
-int run(const ConfigStore& config)
+int execute(const ConfigStore& config)
 {
+    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("execute"));
+
     MediaCopier::FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
 
     std::unique_ptr<MediaCopier::AbstractFileOperation> op;
@@ -39,10 +43,12 @@ int run(const ConfigStore& config)
     switch (config.command()) {
     case ConfigStore::Command::COPY:
         op = std::make_unique<MediaCopier::FileOperationCopyJpeg>(filePathFactory);
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Using 'copy' operation"));
         break;
 
     case ConfigStore::Command::MOVE:
         op = std::make_unique<MediaCopier::FileOperationMoveJpeg>(filePathFactory);
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Using 'move' operation"));
         break;
 
     default:
@@ -58,10 +64,11 @@ int run(const ConfigStore& config)
                 file->accept(*op);
             }
         }  catch (const MediaCopier::FileInfoError& err) {
-            std::cout << err.what() << " (" << path << ")" << std::endl;
+            LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what() << " (" << path << ")"));
         }
     }
 
+    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Operation completed"));
     return 0;
 }
 

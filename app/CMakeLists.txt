@@ -1,13 +1,16 @@
+find_package(log4cplus)
+
 # -- mediacopier-cli
 
 add_library(mediacopier-cli STATIC
     "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/ConfigStore.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/run.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/execute.cpp")
 
 target_include_directories(mediacopier-cli PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/cli/include")
 
 target_link_libraries(mediacopier-cli PUBLIC
+    "${LOG4CPLUS_LIBRARY}"
     mediacopier)
 
 # -- mediacopier-app

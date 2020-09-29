@@ -53,7 +53,7 @@ void mc::CLI::ConfigStore::parseArgs(int argc, char *argv[])
 
     if (pos.size() < 1) {
         std::cout << "MediaCopier v" << MEDIACOPIER_VERSION << ", Copyright (C) 2020 Patrick Ziegler\n"
-                  << "Usage: mediacopier [options] COMMAND\n"
+                  << "Usage: mediacopier COMMAND [options]\n"
                   << "\nAvailable commands:\n"
                   << "  copy SRC DST : Copy files from SRC directory to DST\n"
                   << "  move SRC DST : The same as 'copy', but removing successfully copied files\n";
