@@ -19,6 +19,8 @@
 #include <QDialog>
 #include <QApplication>
 
+#include <mediacopier/cli/ConfigStore.hpp>
+
 namespace Ui {
 class MediaCopierDialog;
 }
@@ -28,9 +30,13 @@ class MediaCopierDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MediaCopierDialog(QWidget *parent = nullptr);
+    explicit MediaCopierDialog(MediaCopier::Cli::ConfigStore config, QWidget *parent = nullptr);
     ~MediaCopierDialog();
+
+private slots:
+    void do_smth(int a);
 
 private:
     Ui::MediaCopierDialog *ui;
+    MediaCopier::Cli::ConfigStore m_config;
 };

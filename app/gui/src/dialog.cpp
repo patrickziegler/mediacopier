@@ -17,14 +17,47 @@
 #include <mediacopier/gui/dialog.hpp>
 #include "ui_dialog.h"
 
-MediaCopierDialog::MediaCopierDialog(QWidget *parent) :
+#include <QFileDialog>
+
+namespace mcc = MediaCopier::Cli;
+
+using CMapItem = QPair<QString, mcc::ConfigStore::Command>;
+
+static const QList<CMapItem> commands = {
+    CMapItem("Copy", mcc::ConfigStore::Command::COPY),
+    CMapItem("Move", mcc::ConfigStore::Command::MOVE)
+};
+
+MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigStore config, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::MediaCopierDialog)
+    ui(new Ui::MediaCopierDialog),
+    m_config(config)
 {
     ui->setupUi(this);
+
+    ui->lineInputDir->setText(QString::fromStdString(m_config.inputDir().string()));
+    ui->lineOutputDir->setText(QString::fromStdString(m_config.outputDir().string()));
+    ui->lineBaseFormat->setText(QString::fromStdString(m_config.baseFormat()));
+
+    Q_FOREACH(CMapItem item, commands)
+    {
+        ui->comboOperation->addItem(item.first);
+    }
+
+    QObject::connect(ui->comboOperation, SIGNAL(currentIndexChanged(int)),
+                     this, SLOT(do_smth(int)));
 }
 
 MediaCopierDialog::~MediaCopierDialog()
 {
     delete ui;
+}
+
+void MediaCopierDialog::do_smth(int a)
+{
+    if (commands.at(a).second == mcc::ConfigStore::Command::COPY) {
+        ui->textLog->appendPlainText("copy selected");
+    } else {
+        ui->textLog->appendPlainText("move selected");
+    }
 }

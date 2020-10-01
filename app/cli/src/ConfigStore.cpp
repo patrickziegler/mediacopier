@@ -23,7 +23,7 @@
 namespace fs = std::filesystem;
 namespace mc = MediaCopier;
 
-void mc::CLI::ConfigStore::parseArgs(int argc, char *argv[])
+void mc::Cli::ConfigStore::parseArgs(int argc, char *argv[])
 {
     std::vector<std::string> pos;
 
@@ -53,12 +53,12 @@ void mc::CLI::ConfigStore::parseArgs(int argc, char *argv[])
 
     if (pos.size() < 1) {
         std::cout << "MediaCopier v" << MEDIACOPIER_VERSION << ", Copyright (C) 2020 Patrick Ziegler\n"
-                  << "Usage: mediacopier COMMAND [options]\n"
+                  << "Usage: mediacopier COMMAND [options] SRC DST\n"
                   << "\nAvailable commands:\n"
-                  << "  copy SRC DST : Copy files from SRC directory to DST\n"
-                  << "  move SRC DST : The same as 'copy', but removing successfully copied files\n";
+                  << "  copy : Copy files from SRC directory to DST\n"
+                  << "  move : The same as 'copy', but removing successfully copied files\n";
 #ifdef ENABLE_GUI
-        std::cout << "  gui          : Show graphical user interface\n";
+        std::cout << "  gui  : Show graphical user interface\n";
 #endif
         std::cout << "\nOptions and arguments:\n"
                   << "  -h     : Show this help message and exit\n"
@@ -79,35 +79,35 @@ void mc::CLI::ConfigStore::parseArgs(int argc, char *argv[])
 
 #ifdef ENABLE_GUI
     if (op == "gui") {
-        m_command = mc::CLI::ConfigStore::Command::GUI;
+        m_command = mc::Cli::ConfigStore::Command::GUI;
     }
 #endif
 
     if (op == "copy") {
-        m_command = mc::CLI::ConfigStore::Command::COPY;
+        m_command = mc::Cli::ConfigStore::Command::COPY;
     } else if (op == "move") {
-        m_command = mc::CLI::ConfigStore::Command::MOVE;
+        m_command = mc::Cli::ConfigStore::Command::MOVE;
     }
 
-    if (m_command == mc::CLI::ConfigStore::Command::UNKNOWN) {
+    if (m_command == mc::Cli::ConfigStore::Command::UNKNOWN) {
         std::cerr << "Unknown operation '" << op << "'" << std::endl;
         std::exit(1);
     }
 }
 
-void mc::CLI::ConfigStore::setInputDir(fs::path dir) {
+void mc::Cli::ConfigStore::setInputDir(fs::path dir) {
     m_inputDir = std::move(dir);
 }
 
-void mc::CLI::ConfigStore::setOutputDir(fs::path dir) {
+void mc::Cli::ConfigStore::setOutputDir(fs::path dir) {
     m_outputDir = std::move(dir);
 }
 
-void mc::CLI::ConfigStore::setBaseFormat(std::string fmt) {
+void mc::Cli::ConfigStore::setBaseFormat(std::string fmt) {
     m_outputDir = std::move(fmt);
 }
 
-void mc::CLI::ConfigStore::setCommand(mc::CLI::ConfigStore::Command op) {
+void mc::Cli::ConfigStore::setCommand(mc::Cli::ConfigStore::Command op) {
     m_command = op;
 #ifndef ENABLE_GUI
     if (op == mc::CLI::ConfigStore::Command::GUI) {
@@ -116,22 +116,22 @@ void mc::CLI::ConfigStore::setCommand(mc::CLI::ConfigStore::Command op) {
 #endif
 }
 
-fs::path mc::CLI::ConfigStore::inputDir() const
+fs::path mc::Cli::ConfigStore::inputDir() const
 {
     return m_inputDir;
 }
 
-fs::path mc::CLI::ConfigStore::outputDir() const
+fs::path mc::Cli::ConfigStore::outputDir() const
 {
     return m_outputDir;
 }
 
-std::string mc::CLI::ConfigStore::baseFormat() const
+std::string mc::Cli::ConfigStore::baseFormat() const
 {
     return m_baseFormat;
 }
 
-mc::CLI::ConfigStore::Command mc::CLI::ConfigStore::command() const
+mc::Cli::ConfigStore::Command mc::Cli::ConfigStore::command() const
 {
     return m_command;
 }

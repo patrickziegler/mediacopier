@@ -18,7 +18,7 @@
 
 #include <filesystem>
 
-namespace MediaCopier::CLI {
+namespace MediaCopier::Cli {
 
 class ConfigStore {
 public:
@@ -28,19 +28,15 @@ public:
         MOVE,
         GUI,
     };
-
     void parseArgs(int argc, char *argv[]);
-
     void setInputDir(std::filesystem::path dir);
     void setOutputDir(std::filesystem::path dir);
     void setBaseFormat(std::string fmt);
     void setCommand(Command op);
-
     std::filesystem::path inputDir() const;
     std::filesystem::path outputDir() const;
     std::string baseFormat() const;
     Command command() const;
-
 private:
     std::filesystem::path m_inputDir;
     std::filesystem::path m_outputDir;

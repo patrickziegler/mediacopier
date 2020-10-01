@@ -27,7 +27,7 @@
 
 namespace fs = std::filesystem;
 
-using namespace MediaCopier::CLI;
+using namespace MediaCopier::Cli;
 
 int main(int argc, char *argv[])
 {
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 #ifdef ENABLE_GUI
     if (config.command() == ConfigStore::Command::GUI) {
         QApplication app(argc, argv);
-        MediaCopierDialog dialog;
+        MediaCopierDialog dialog{config};
         dialog.show();
         return app.exec();
     }

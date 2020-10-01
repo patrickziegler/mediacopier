@@ -30,14 +30,13 @@
 
 namespace fs = std::filesystem;
 
-namespace MediaCopier::CLI {
+namespace MediaCopier::Cli {
 
 int execute(const ConfigStore& config)
 {
     auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("execute"));
 
     MediaCopier::FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
-
     std::unique_ptr<MediaCopier::AbstractFileOperation> op;
 
     switch (config.command()) {

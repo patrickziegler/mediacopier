@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>306</width>
-    <height>409</height>
+    <width>230</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -96,23 +96,12 @@
       <item row="0" column="1">
        <widget class="QLineEdit" name="lineBaseFormat">
         <property name="text">
-         <string>IMG_%Y%m%d_%H%M%S_</string>
+         <string/>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="comboOperation">
-        <item>
-         <property name="text">
-          <string>Copy</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Move</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="comboOperation"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="labelOperation">
