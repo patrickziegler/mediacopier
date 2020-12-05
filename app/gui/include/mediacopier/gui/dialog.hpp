@@ -16,10 +16,14 @@
 
 #pragma once
 
-#include <QDialog>
 #include <QApplication>
+#include <QDialog>
+#include <QThread>
 
 #include <mediacopier/cli/ConfigStore.hpp>
+#include <mediacopier/gui/worker.hpp>
+
+class QAbstractButton;
 
 namespace Ui {
 class MediaCopierDialog;
@@ -34,9 +38,23 @@ public:
     ~MediaCopierDialog();
 
 private slots:
-    void do_smth(int a);
+    void onOpenInputDirClicked(QAbstractButton *button);
+    void onOpenOutputDirClicked(QAbstractButton *button);
+    void onDialogControlClicked(QAbstractButton *button);
+    void onInputDirChanged(const QString& text);
+    void onOutputDirChanged(const QString& text);
+    void onBaseFormatChanged(const QString& text);
+    void onOperationChanged(int index);
+
+    // worker related slots
+    void onThreadFinished();
+    void onWorkerError(QString message);
+    void onWorkerLog(QString message);
+    void onWorkerProgress(double progress);
 
 private:
     Ui::MediaCopierDialog *ui;
     MediaCopier::Cli::ConfigStore m_config;
+    QThread* m_thread;
+    Worker* m_worker;
 };

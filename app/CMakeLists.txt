@@ -37,8 +37,10 @@ if(${ENABLE_GUI})
 
     add_library(mediacopier-gui STATIC
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/include/mediacopier/gui/dialog.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/include/mediacopier/gui/worker.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/src/dialog.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/gui/src/dialog.ui")
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/src/dialog.ui"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/src/worker.cpp")
 
     target_include_directories(mediacopier-gui PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/include")

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>230</width>
-    <height>399</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="comboOperation"/>
+       <widget class="QComboBox" name="comboCommand"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="labelOperation">
@@ -152,24 +152,11 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QProgressBar" name="progressBar">
-        <property name="value">
-         <number>0</number>
-        </property>
-        <property name="textVisible">
-         <bool>true</bool>
-        </property>
-        <property name="invertedAppearance">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonRun">
+    <widget class="QDialogButtonBox" name="buttonDialogControl">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
@@ -177,6 +164,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineInputDir</tabstop>
+  <tabstop>lineOutputDir</tabstop>
+  <tabstop>lineBaseFormat</tabstop>
+  <tabstop>comboCommand</tabstop>
+  <tabstop>textLog</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
