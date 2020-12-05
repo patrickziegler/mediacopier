@@ -24,7 +24,7 @@ class AbstractFileInfo;
 
 class FileInfoFactory {
 public:
-    std::unique_ptr<AbstractFileInfo> createFileFrom(const std::filesystem::path &path) const;
+    std::unique_ptr<AbstractFileInfo> createFromPath(const std::filesystem::path &path) const;
 };
 
 }

@@ -15,7 +15,7 @@
  */
 
 #include <mediacopier/cli/ConfigStore.hpp>
-#include <mediacopier/cli/execute.hpp>
+#include <mediacopier/cli/run.hpp>
 
 #include <log4cplus/configurator.h>
 #include <log4cplus/loggingmacros.h>
@@ -45,5 +45,5 @@ int main(int argc, char *argv[])
         return app.exec();
     }
 #endif
-    return execute(config);
+    return run(config);
 }

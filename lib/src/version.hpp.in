@@ -1,1 +1,2 @@
 constexpr const char* MEDIACOPIER_VERSION = "${PROJECT_VERSION}";
+constexpr const char* MEDIACOPIER_PROJECT_NAME = "${PROJECT_NAME}";

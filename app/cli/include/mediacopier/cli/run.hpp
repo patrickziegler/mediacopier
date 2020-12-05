@@ -18,6 +18,6 @@ namespace MediaCopier::Cli {
 
 class ConfigStore;
 
-int execute(const ConfigStore& config);
+int run(const ConfigStore& config);
 
 }

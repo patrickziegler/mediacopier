@@ -15,7 +15,7 @@
  */
 
 #include <mediacopier/cli/ConfigStore.hpp>
-#include <mediacopier/cli/execute.hpp>
+#include <mediacopier/cli/run.hpp>
 
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/exceptions.hpp>
@@ -32,7 +32,7 @@ namespace fs = std::filesystem;
 
 namespace MediaCopier::Cli {
 
-int execute(const ConfigStore& config)
+int run(const ConfigStore& config)
 {
     auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("execute"));
 
@@ -59,7 +59,7 @@ int execute(const ConfigStore& config)
     for (const auto& path : fs::recursive_directory_iterator(config.inputDir())) {
         try {
             if (path.is_regular_file()) {
-                auto file = fileInfoFactory.createFileFrom(path);
+                auto file = fileInfoFactory.createFromPath(path);
                 file->accept(*op);
             }
         }  catch (const MediaCopier::FileInfoError& err) {

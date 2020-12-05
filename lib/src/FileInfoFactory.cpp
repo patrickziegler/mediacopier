@@ -22,7 +22,7 @@
 
 namespace mc = MediaCopier;
 
-std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFileFrom(const std::filesystem::path &path) const
+std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFromPath(const std::filesystem::path &path) const
 {
     try {
         std::unique_ptr<Exiv2::Image> image;

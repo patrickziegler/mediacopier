@@ -1,10 +1,18 @@
 find_package(log4cplus)
 
-# -- mediacopier-cli
+# -- mediacopier-app (executable)
+
+add_executable(mediacopier-app
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
+
+set_target_properties(mediacopier-app PROPERTIES
+    OUTPUT_NAME mediacopier)
+
+# -- mediacopier-cli (library)
 
 add_library(mediacopier-cli STATIC
     "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/ConfigStore.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/execute.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/run.cpp")
 
 target_include_directories(mediacopier-cli PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/cli/include")
@@ -13,18 +21,10 @@ target_link_libraries(mediacopier-cli PUBLIC
     "${LOG4CPLUS_LIBRARY}"
     mediacopier)
 
-# -- mediacopier-app
-
-add_executable(mediacopier-app
-    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
-
-set_target_properties(mediacopier-app PROPERTIES
-    OUTPUT_NAME mediacopier)
-
 target_link_libraries(mediacopier-app PRIVATE
     mediacopier-cli)
 
-# -- mediacopier-gui
+# -- mediacopier-gui (library)
 
 if(${ENABLE_GUI})
     find_package(Qt5 COMPONENTS Widgets REQUIRED)
