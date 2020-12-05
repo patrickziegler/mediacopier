@@ -14,8 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/gui/dialog.hpp>
 #include <mediacopier/version.hpp>
+#include <mediacopier/gui/dialog.hpp>
 
 #include <QAbstractButton>
 #include <QFileDialog>
@@ -27,6 +27,9 @@ namespace cli = MediaCopier::Cli;
 
 using CMapItem = QPair<QString, cli::ConfigStore::Command>;
 
+static constexpr const size_t DEFAULT_DIALOG_WIDTH = 500;
+static constexpr const size_t DEFAULT_DIALOG_HEIGHT = 550;
+
 static const QList<CMapItem> commands = {
     CMapItem("Copy", cli::ConfigStore::Command::COPY),
     CMapItem("Move", cli::ConfigStore::Command::MOVE)
@@ -37,20 +40,19 @@ MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigStore config, QWidg
 {
     ui->setupUi(this);
 
-    this->setWindowTitle(MEDIACOPIER_PROJECT_NAME);
-    this->resize(400, 500);
+    auto title = QString{"%1 v%2"}.arg(MEDIACOPIER_PROJECT_NAME, MEDIACOPIER_VERSION);
+    this->setWindowTitle(title);
+    this->resize(DEFAULT_DIALOG_WIDTH, DEFAULT_DIALOG_HEIGHT);
 
-    ui->lineInputDir->setText(QString::fromStdString(m_config.inputDir().string()));
-    ui->lineOutputDir->setText(QString::fromStdString(m_config.outputDir().string()));
-    ui->lineBaseFormat->setText(QString::fromStdString(m_config.baseFormat()));
+    ui->lineInputDir->setText(m_config.inputDir().c_str());
+    ui->lineOutputDir->setText(m_config.outputDir().c_str());
+    ui->lineBaseFormat->setText(m_config.baseFormat().c_str());
 
     Q_FOREACH(CMapItem item, commands) {
         ui->comboCommand->addItem(item.first);
     }
 
     m_config.setCommand(commands.at(0).second);
-
-    ui->buttonDialogControl->button(QDialogButtonBox::Cancel)->setEnabled(false);
 
     m_thread = new QThread();
     m_worker = new Worker();
@@ -62,20 +64,23 @@ MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigStore config, QWidg
     connect(m_worker, SIGNAL(finished()),
             this, SLOT(onThreadFinished()));
 
-    connect(m_worker, SIGNAL(error(QString)),
-            this, SLOT(onWorkerError(QString)));
-
     connect(m_worker, SIGNAL(log(QString)),
             this, SLOT(onWorkerLog(QString)));
 
-    connect(m_worker, SIGNAL(progress(double)),
-            this, SLOT(onWorkerProgress(double)));
+    connect(m_worker, SIGNAL(warning(QString)),
+            this, SLOT(onWorkerWarning(QString)));
+
+    connect(m_worker, SIGNAL(error(QString)),
+            this, SLOT(onWorkerError(QString)));
+
+    connect(m_worker, SIGNAL(progress(size_t)),
+            this, SLOT(onWorkerProgress(size_t)));
 
     connect(ui->buttonOpenInputDir, SIGNAL(clicked(QAbstractButton*)),
-            this, SLOT(onOpenInputDirClicked(QAbstractButton*)));
+            this, SLOT(onOpenInputDirClicked()));
 
     connect(ui->buttonOpenOutputDir, SIGNAL(clicked(QAbstractButton*)),
-            this, SLOT(onOpenOutputDirClicked(QAbstractButton*)));
+            this, SLOT(onOpenOutputDirClicked()));
 
     connect(ui->buttonDialogControl, SIGNAL(clicked(QAbstractButton*)),
             this, SLOT(onDialogControlClicked(QAbstractButton*)));
@@ -91,6 +96,8 @@ MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigStore config, QWidg
 
     connect(ui->comboCommand, SIGNAL(currentIndexChanged(int)),
             this, SLOT(onOperationChanged(int)));
+
+    m_btnOk = ui->buttonDialogControl->button(QDialogButtonBox::Ok);
 }
 
 MediaCopierDialog::~MediaCopierDialog()
@@ -100,28 +107,34 @@ MediaCopierDialog::~MediaCopierDialog()
     delete m_worker;
 }
 
-void MediaCopierDialog::onOpenInputDirClicked(QAbstractButton *button)
+void MediaCopierDialog::onOpenInputDirClicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", QDir::currentPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString dir = QFileDialog::getExistingDirectory(
+                this, "Open Directory",QDir::currentPath(),
+                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
     ui->lineInputDir->setText(dir);
 }
 
-void MediaCopierDialog::onOpenOutputDirClicked(QAbstractButton *button)
+void MediaCopierDialog::onOpenOutputDirClicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", QDir::currentPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString dir = QFileDialog::getExistingDirectory(
+                this, "Open Directory", QDir::currentPath(),
+                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
     ui->lineOutputDir->setText(dir);
 }
 
 void MediaCopierDialog::onDialogControlClicked(QAbstractButton *button)
 {
     if (ui->buttonDialogControl->standardButton(button) == QDialogButtonBox::Ok) {
-        ui->buttonDialogControl->button(QDialogButtonBox::Ok)->setEnabled(false);
+        m_btnOk->setEnabled(false);
         m_worker->useConfig(m_config);
         m_thread->start();
-        ui->buttonDialogControl->button(QDialogButtonBox::Cancel)->setEnabled(true);
+    } else if(!m_thread->isRunning()) {
+        close();
     } else {
-        ui->buttonDialogControl->button(QDialogButtonBox::Cancel)->setEnabled(false);
-        m_worker->abort();
+        m_worker->cancel();
     }
 }
 
@@ -148,12 +161,7 @@ void MediaCopierDialog::onOperationChanged(int index)
 void MediaCopierDialog::onThreadFinished()
 {
     m_thread->quit();
-    ui->buttonDialogControl->button(QDialogButtonBox::Ok)->setEnabled(true);
-}
-
-void MediaCopierDialog::onWorkerError(QString message)
-{
-
+    m_btnOk->setEnabled(true);
 }
 
 void MediaCopierDialog::onWorkerLog(QString message)
@@ -161,7 +169,17 @@ void MediaCopierDialog::onWorkerLog(QString message)
     ui->textLog->appendPlainText(message);
 }
 
-void MediaCopierDialog::onWorkerProgress(double progress)
+void MediaCopierDialog::onWorkerWarning(QString message)
 {
+    ui->textLog->appendPlainText("WARNING: " + message);
+}
 
+void MediaCopierDialog::onWorkerError(QString message)
+{
+    ui->textLog->appendPlainText("ERROR: " + message);
+}
+
+void MediaCopierDialog::onWorkerProgress(size_t value)
+{
+    ui->barProgress->setValue(value);
 }

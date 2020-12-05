@@ -24,6 +24,7 @@
 #include <mediacopier/gui/worker.hpp>
 
 class QAbstractButton;
+class QPushButton;
 
 namespace Ui {
 class MediaCopierDialog;
@@ -38,8 +39,9 @@ public:
     ~MediaCopierDialog();
 
 private slots:
-    void onOpenInputDirClicked(QAbstractButton *button);
-    void onOpenOutputDirClicked(QAbstractButton *button);
+    // dialog related slots
+    void onOpenInputDirClicked();
+    void onOpenOutputDirClicked();
     void onDialogControlClicked(QAbstractButton *button);
     void onInputDirChanged(const QString& text);
     void onOutputDirChanged(const QString& text);
@@ -48,13 +50,15 @@ private slots:
 
     // worker related slots
     void onThreadFinished();
-    void onWorkerError(QString message);
     void onWorkerLog(QString message);
-    void onWorkerProgress(double progress);
+    void onWorkerWarning(QString message);
+    void onWorkerError(QString message);
+    void onWorkerProgress(size_t value);
 
 private:
     Ui::MediaCopierDialog *ui;
     MediaCopier::Cli::ConfigStore m_config;
     QThread* m_thread;
     Worker* m_worker;
+    QPushButton* m_btnOk;
 };

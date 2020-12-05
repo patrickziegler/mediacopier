@@ -29,16 +29,17 @@ public:
 
 public slots:
     void run();
-    void abort();
+    void cancel();
     void useConfig(MediaCopier::Cli::ConfigStore config);
 
 signals:
+    void info(QString message);
+    void warning(QString message);
     void error(QString message);
+    void progress(size_t value);
     void finished();
-    void log(QString message);
-    void progress(double progress);
 
 private:
-    bool m_abort;
+    bool m_operationCancelled;
     MediaCopier::Cli::ConfigStore m_config;
 };
