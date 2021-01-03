@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/cli/ConfigStore.hpp>
+#include <mediacopier/cli/ConfigManager.hpp>
 #include <mediacopier/cli/run.hpp>
 
 #include <log4cplus/configurator.h>
@@ -25,25 +25,29 @@
 #include <QApplication>
 #endif
 
-namespace fs = std::filesystem;
+// TODO: remove this
+#include <iostream>
 
-using namespace MediaCopier::Cli;
+namespace cli = MediaCopier::Cli;
+namespace fs  = std::filesystem;
 
 int main(int argc, char *argv[])
 {
     log4cplus::BasicConfigurator log;
     log.configure();
 
-    ConfigStore config;
+    cli::ConfigManager config;
     config.parseArgs(argc, argv);
 
 #ifdef ENABLE_GUI
-    if (config.command() == ConfigStore::Command::GUI) {
+    if (config.command() == cli::Command::GUI) {
         QApplication app(argc, argv);
         MediaCopierDialog dialog{config};
         dialog.show();
         return app.exec();
     }
 #endif
-    return run(config);
+
+    std::cout << "not implemented yet" << std::endl;
+    return 0;
 }

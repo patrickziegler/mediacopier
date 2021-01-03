@@ -17,10 +17,19 @@
 #pragma once
 
 #include <mediacopier/cli/ConfigManager.hpp>
-#include <mediacopier/cli/FeedbackGateway.hpp>
 
 namespace MediaCopier::Cli {
 
-void run(const ConfigManager& config, FeedbackGateway& feedback);
+enum class LogLevel {
+    INFO,
+    WARNING,
+    ERROR,
+};
+
+class FeedbackGateway {
+public:  
+    virtual void log(LogLevel level, std::string message);
+    virtual void progress(size_t value);
+};
 
 }

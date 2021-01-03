@@ -203,6 +203,7 @@ void mc::FileOperationCopyJpeg::copyJpeg(const mc::FileInfoImageJpeg &file) cons
         FileInfoImage tmp(dst, exif);
         copyFile(tmp);
 
+        // TODO: 'err' seems to be used too often (also in catch block)
         fs::remove(dst, err);
 
     }  catch (const Exiv2::Error& err) {

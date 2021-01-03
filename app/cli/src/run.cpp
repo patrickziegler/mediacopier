@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 Patrick Ziegler
+/* Copyright (C) 2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,61 +14,115 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/cli/ConfigStore.hpp>
-#include <mediacopier/cli/run.hpp>
-
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/exceptions.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileOperationCopyJpeg.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FilePathFactory.hpp>
+#include <mediacopier/cli/run.hpp>
 
-#include <log4cplus/loggingmacros.h>
+#include <atomic>
+#include <signal.h>
 
-#include <filesystem>
+namespace cli = MediaCopier::Cli;
+namespace fs  = std::filesystem;
 
-namespace fs = std::filesystem;
+static constexpr const size_t PROGRESS_UPDATE_INTERVAL_MS = 500;
 
-namespace MediaCopier::Cli {
+static std::atomic<bool> operationCancelled;
 
-int run(const ConfigStore& config)
+void onSignalInterrupt(int s)
 {
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("execute"));
-
-    MediaCopier::FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
-    std::unique_ptr<MediaCopier::AbstractFileOperation> op;
-
-    switch (config.command()) {
-    case ConfigStore::Command::COPY:
-        op = std::make_unique<MediaCopier::FileOperationCopyJpeg>(filePathFactory);
-        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Using 'copy' operation"));
-        break;
-
-    case ConfigStore::Command::MOVE:
-        op = std::make_unique<MediaCopier::FileOperationMoveJpeg>(filePathFactory);
-        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Using 'move' operation"));
-        break;
-
-    default:
-        return 0;
-    }
-
-    MediaCopier::FileInfoFactory fileInfoFactory;
-
-    for (const auto& path : fs::recursive_directory_iterator(config.inputDir())) {
-        try {
-            if (path.is_regular_file()) {
-                auto file = fileInfoFactory.createFromPath(path);
-                file->accept(*op);
-            }
-        }  catch (const MediaCopier::FileInfoError& err) {
-            LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what() << " (" << path << ")"));
-        }
-    }
-
-    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Operation completed"));
-    return 0;
+    (void) s;
+    operationCancelled.store(true);
 }
 
+void cli::run(const ConfigManager& config, FeedbackGateway& feedback)
+{
+    auto execute_operation = [&]() -> void {
+        std::stringstream ss;
+
+        FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
+        std::unique_ptr<AbstractFileOperation> op{};
+
+        size_t count = std::distance(
+                    fs::recursive_directory_iterator(config.inputDir()),
+                    fs::recursive_directory_iterator{});
+
+        if (count < 1) {
+            ss << "No files were found in " << config.inputDir();
+            feedback.log(LogLevel::WARNING, ss.str());
+            return;
+        }
+
+        switch (config.command())
+        {
+        case Command::COPY:
+            op = std::make_unique<FileOperationCopyJpeg>(filePathFactory);
+            ss << "Copying " << count << " files";
+            feedback.log(LogLevel::INFO, ss.str());
+            break;
+
+        case Command::MOVE:
+            op = std::make_unique<FileOperationMoveJpeg>(filePathFactory);
+            ss << "Moving " << count << " files";
+            feedback.log(LogLevel::INFO, ss.str());
+            break;
+
+        default:
+            feedback.log(LogLevel::ERROR, "Unknown operation type");
+            return;
+        }
+
+        feedback.progress(0);
+
+        auto clock = std::chrono::steady_clock();
+        auto ref = clock.now();
+
+        size_t diff = 0;
+        size_t pos = 0;
+
+        FileInfoFactory fileInfoFactory{};
+
+        for (const auto& path : fs::recursive_directory_iterator(config.inputDir())) {
+            try {
+                if (path.is_regular_file()) {
+                    auto file = fileInfoFactory.createFromPath(path);
+                    file->accept(*op);
+                }
+            }  catch (const FileInfoError& err) {
+                ss.str("");
+                ss.clear();
+                ss << err.what() << " (" << path.path() << ") ";
+                feedback.log(LogLevel::WARNING, ss.str());
+            }
+
+            ++pos;
+
+            diff = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now() - ref).count();
+
+            if (diff > PROGRESS_UPDATE_INTERVAL_MS) {
+                feedback.progress(100 * pos / count);
+                ref = clock.now();
+            }
+
+            if (operationCancelled.load()) {
+                feedback.log(LogLevel::INFO, "Operation cancelled");
+                break;
+            }
+        }
+    };
+
+    operationCancelled.store(false);
+
+    signal(SIGINT, onSignalInterrupt);
+
+    try {
+        execute_operation();
+    } catch (const std::exception& err) {
+        feedback.log(LogLevel::ERROR, err.what());
+    }
+
+    signal(SIGINT, SIG_DFL);
 }

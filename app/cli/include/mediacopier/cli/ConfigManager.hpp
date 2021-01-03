@@ -20,14 +20,15 @@
 
 namespace MediaCopier::Cli {
 
-class ConfigStore {
+enum class Command {
+    UNKNOWN,
+    COPY,
+    MOVE,
+    GUI,
+};
+
+class ConfigManager {
 public:
-    enum class Command {
-        UNKNOWN,
-        COPY,
-        MOVE,
-        GUI,
-    };
     void parseArgs(int argc, char *argv[]);
     void setInputDir(std::filesystem::path dir);
     void setOutputDir(std::filesystem::path dir);

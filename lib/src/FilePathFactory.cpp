@@ -51,6 +51,7 @@ fs::path mc::FilePathFactory::createPath(const mc::AbstractFileInfo &file, fs::p
     ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
 
     if (m_useSubsec) {
+        // TODO: why is there '% 1000000' in the following line?
         auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
         ss << std::setfill('0') << std::setw(6) << us.count();
     }

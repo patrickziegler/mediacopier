@@ -25,22 +25,23 @@
 
 namespace cli = MediaCopier::Cli;
 
-using CMapItem = QPair<QString, cli::ConfigStore::Command>;
+using CMapItem = QPair<QString, cli::Command>;
 
 static constexpr const size_t DEFAULT_DIALOG_WIDTH = 500;
 static constexpr const size_t DEFAULT_DIALOG_HEIGHT = 550;
 
 static const QList<CMapItem> commands = {
-    CMapItem("Copy", cli::ConfigStore::Command::COPY),
-    CMapItem("Move", cli::ConfigStore::Command::MOVE)
+    CMapItem("Copy", cli::Command::COPY),
+    CMapItem("Move", cli::Command::MOVE)
 };
 
-MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigStore config, QWidget *parent) :
+MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigManager config, QWidget *parent) :
     QDialog(parent), ui(new Ui::MediaCopierDialog), m_config(config)
 {
     ui->setupUi(this);
 
     auto title = QString{"%1 v%2"}.arg(MEDIACOPIER_PROJECT_NAME, MEDIACOPIER_VERSION);
+
     this->setWindowTitle(title);
     this->resize(DEFAULT_DIALOG_WIDTH, DEFAULT_DIALOG_HEIGHT);
 
@@ -55,25 +56,25 @@ MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigStore config, QWidg
     m_config.setCommand(commands.at(0).second);
 
     m_thread = new QThread();
-    m_worker = new Worker();
+    m_worker = new Worker(m_config);
     m_worker->moveToThread(m_thread);
 
     connect(m_thread, SIGNAL(started()),
-            m_worker, SLOT(run()));
+            m_worker, SLOT(start()));
 
-    connect(m_worker, SIGNAL(finished()),
-            this, SLOT(onThreadFinished()));
+    connect(m_worker, SIGNAL(finishedSignal()),
+            this, SLOT(onWorkerFinished()));
 
-    connect(m_worker, SIGNAL(log(QString)),
-            this, SLOT(onWorkerLog(QString)));
+    connect(m_worker, SIGNAL(logInfoMessage(QString)),
+            this, SLOT(onWorkerLogInfo(QString)));
 
-    connect(m_worker, SIGNAL(warning(QString)),
-            this, SLOT(onWorkerWarning(QString)));
+    connect(m_worker, SIGNAL(logWarningMessage(QString)),
+            this, SLOT(onWorkerLogWarning(QString)));
 
-    connect(m_worker, SIGNAL(error(QString)),
-            this, SLOT(onWorkerError(QString)));
+    connect(m_worker, SIGNAL(logErrorMessage(QString)),
+            this, SLOT(onWorkerLogError(QString)));
 
-    connect(m_worker, SIGNAL(progress(size_t)),
+    connect(m_worker, SIGNAL(progressValue(size_t)),
             this, SLOT(onWorkerProgress(size_t)));
 
     connect(ui->buttonOpenInputDir, SIGNAL(clicked(QAbstractButton*)),
@@ -129,7 +130,6 @@ void MediaCopierDialog::onDialogControlClicked(QAbstractButton *button)
 {
     if (ui->buttonDialogControl->standardButton(button) == QDialogButtonBox::Ok) {
         m_btnOk->setEnabled(false);
-        m_worker->useConfig(m_config);
         m_thread->start();
     } else if(!m_thread->isRunning()) {
         close();
@@ -158,23 +158,23 @@ void MediaCopierDialog::onOperationChanged(int index)
     m_config.setCommand(commands.at(index).second);
 }
 
-void MediaCopierDialog::onThreadFinished()
+void MediaCopierDialog::onWorkerFinished()
 {
     m_thread->quit();
     m_btnOk->setEnabled(true);
 }
 
-void MediaCopierDialog::onWorkerLog(QString message)
+void MediaCopierDialog::onWorkerLogInfo(QString message)
 {
     ui->textLog->appendPlainText(message);
 }
 
-void MediaCopierDialog::onWorkerWarning(QString message)
+void MediaCopierDialog::onWorkerLogWarning(QString message)
 {
     ui->textLog->appendPlainText("WARNING: " + message);
 }
 
-void MediaCopierDialog::onWorkerError(QString message)
+void MediaCopierDialog::onWorkerLogError(QString message)
 {
     ui->textLog->appendPlainText("ERROR: " + message);
 }

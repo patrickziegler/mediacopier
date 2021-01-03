@@ -18,28 +18,28 @@
 
 #include <QObject>
 
-#include <mediacopier/cli/ConfigStore.hpp>
+#include <mediacopier/cli/FeedbackGateway.hpp>
 
-class Worker : public QObject {
+class Worker : public QObject, MediaCopier::Cli::FeedbackGateway {
     Q_OBJECT
 
 public:
-    Worker() = default;
-    ~Worker() = default;
+    Worker(const MediaCopier::Cli::ConfigManager& config) : m_config{config} {};
+    Worker(const MediaCopier::Cli::ConfigManager&&) = delete; // don't accept temporary references
+    void log(MediaCopier::Cli::LogLevel level, std::string message) override;
+    void progress(size_t value) override;
 
 public slots:
-    void run();
+    void start();
     void cancel();
-    void useConfig(MediaCopier::Cli::ConfigStore config);
 
 signals:
-    void info(QString message);
-    void warning(QString message);
-    void error(QString message);
-    void progress(size_t value);
-    void finished();
+    void logInfoMessage(QString message);
+    void logWarningMessage(QString message);
+    void logErrorMessage(QString message);
+    void progressValue(size_t value);
+    void finishedSignal();
 
 private:
-    bool m_operationCancelled;
-    MediaCopier::Cli::ConfigStore m_config;
+    const MediaCopier::Cli::ConfigManager& m_config;
 };

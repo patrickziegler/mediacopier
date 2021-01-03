@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 Patrick Ziegler
+/* Copyright (C) 2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,28 +14,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/cli/run.hpp>
-#include <mediacopier/gui/worker.hpp>
+#include <mediacopier/cli/FeedbackGateway.hpp>
 
 #include <iostream>
-#include <signal.h>
 
 namespace cli = MediaCopier::Cli;
 
-void Worker::log(cli::LogLevel level, std::string message)
+void cli::FeedbackGateway::log(LogLevel level, std::string message)
 {
     switch (level)
     {
-    case cli::LogLevel::INFO:
-        emit logInfoMessage(QString::fromStdString(message));
+    case LogLevel::INFO:
         break;
 
-    case cli::LogLevel::WARNING:
-        emit logWarningMessage(QString::fromStdString(message));
+    case LogLevel::WARNING:
         break;
 
-    case cli::LogLevel::ERROR:
-        emit logErrorMessage(QString::fromStdString(message));
+    case LogLevel::ERROR:
         break;
 
     default:
@@ -43,18 +38,7 @@ void Worker::log(cli::LogLevel level, std::string message)
     }
 }
 
-void Worker::progress(size_t value)
+void cli::FeedbackGateway::progress(size_t value)
 {
-    emit progressValue(value);
-}
-
-void Worker::start()
-{
-    run(m_config, *this);
-    emit finishedSignal();
-}
-
-void Worker::cancel()
-{
-    raise(SIGINT);
+    (void) value;
 }

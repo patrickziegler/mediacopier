@@ -1,17 +1,18 @@
 find_package(log4cplus)
 
-# -- mediacopier-app (executable)
+# -- mediacopier-main (executable)
 
-add_executable(mediacopier-app
+add_executable(mediacopier-main
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 
-set_target_properties(mediacopier-app PROPERTIES
+set_target_properties(mediacopier-main PROPERTIES
     OUTPUT_NAME mediacopier)
 
-# -- mediacopier-cli (library)
+# -- mediacopier-cli (static library)
 
 add_library(mediacopier-cli STATIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/ConfigStore.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/ConfigManager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/FeedbackGateway.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/run.cpp")
 
 target_include_directories(mediacopier-cli PUBLIC
@@ -21,10 +22,10 @@ target_link_libraries(mediacopier-cli PUBLIC
     "${LOG4CPLUS_LIBRARY}"
     mediacopier)
 
-target_link_libraries(mediacopier-app PRIVATE
+target_link_libraries(mediacopier-main PRIVATE
     mediacopier-cli)
 
-# -- mediacopier-gui (library)
+# -- mediacopier-gui (static library)
 
 if(${ENABLE_GUI})
     find_package(Qt5 COMPONENTS Widgets REQUIRED)
@@ -48,7 +49,7 @@ if(${ENABLE_GUI})
     target_link_libraries(mediacopier-gui PUBLIC
         Qt5::Widgets mediacopier-cli)
 
-    target_link_libraries(mediacopier-app PRIVATE
+    target_link_libraries(mediacopier-main PRIVATE
         mediacopier-gui)
 endif()
 

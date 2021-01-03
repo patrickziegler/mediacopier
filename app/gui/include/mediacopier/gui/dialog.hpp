@@ -20,7 +20,7 @@
 #include <QDialog>
 #include <QThread>
 
-#include <mediacopier/cli/ConfigStore.hpp>
+#include <mediacopier/cli/ConfigManager.hpp>
 #include <mediacopier/gui/worker.hpp>
 
 class QAbstractButton;
@@ -35,7 +35,7 @@ class MediaCopierDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MediaCopierDialog(MediaCopier::Cli::ConfigStore config, QWidget *parent = nullptr);
+    explicit MediaCopierDialog(MediaCopier::Cli::ConfigManager config, QWidget *parent = nullptr);
     ~MediaCopierDialog();
 
 private slots:
@@ -49,15 +49,15 @@ private slots:
     void onOperationChanged(int index);
 
     // worker related slots
-    void onThreadFinished();
-    void onWorkerLog(QString message);
-    void onWorkerWarning(QString message);
-    void onWorkerError(QString message);
+    void onWorkerFinished();
+    void onWorkerLogInfo(QString message);
+    void onWorkerLogWarning(QString message);
+    void onWorkerLogError(QString message);
     void onWorkerProgress(size_t value);
 
 private:
     Ui::MediaCopierDialog *ui;
-    MediaCopier::Cli::ConfigStore m_config;
+    MediaCopier::Cli::ConfigManager m_config;
     QThread* m_thread;
     Worker* m_worker;
     QPushButton* m_btnOk;

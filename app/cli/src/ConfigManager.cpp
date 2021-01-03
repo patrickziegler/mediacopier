@@ -14,16 +14,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/cli/ConfigStore.hpp>
+#include <mediacopier/cli/ConfigManager.hpp>
 #include <mediacopier/version.hpp>
 
 #include <iostream>
 #include <vector>
 
-namespace fs = std::filesystem;
-namespace mc = MediaCopier;
+namespace cli = MediaCopier::Cli;
+namespace fs  = std::filesystem;
 
-void mc::Cli::ConfigStore::parseArgs(int argc, char *argv[])
+void cli::ConfigManager::parseArgs(int argc, char *argv[])
 {
     std::vector<std::string> pos;
 
@@ -80,59 +80,59 @@ void mc::Cli::ConfigStore::parseArgs(int argc, char *argv[])
 
 #ifdef ENABLE_GUI
     if (op == "gui") {
-        m_command = mc::Cli::ConfigStore::Command::GUI;
+        m_command = Command::GUI;
     }
 #endif
 
     if (op == "copy") {
-        m_command = mc::Cli::ConfigStore::Command::COPY;
+        m_command = Command::COPY;
     } else if (op == "move") {
-        m_command = mc::Cli::ConfigStore::Command::MOVE;
+        m_command = Command::MOVE;
     }
 
-    if (m_command == mc::Cli::ConfigStore::Command::UNKNOWN) {
+    if (m_command == Command::UNKNOWN) {
         std::cerr << "Unknown operation '" << op << "'" << std::endl;
         std::exit(1);
     }
 }
 
-void mc::Cli::ConfigStore::setInputDir(fs::path dir) {
+void cli::ConfigManager::setInputDir(fs::path dir) {
     m_inputDir = std::move(dir);
 }
 
-void mc::Cli::ConfigStore::setOutputDir(fs::path dir) {
+void cli::ConfigManager::setOutputDir(fs::path dir) {
     m_outputDir = std::move(dir);
 }
 
-void mc::Cli::ConfigStore::setBaseFormat(std::string fmt) {
+void cli::ConfigManager::setBaseFormat(std::string fmt) {
     m_outputDir = std::move(fmt);
 }
 
-void mc::Cli::ConfigStore::setCommand(mc::Cli::ConfigStore::Command op) {
+void cli::ConfigManager::setCommand(Command op) {
     m_command = op;
 #ifndef ENABLE_GUI
-    if (op == mc::CLI::ConfigStore::Command::GUI) {
-        m_command = mc::CLI::ConfigStore::Command::UNKNOWN;
+    if (op == cli::Command::GUI) {
+        m_command = cli::ConfigStore::Command::UNKNOWN;
     }
 #endif
 }
 
-fs::path mc::Cli::ConfigStore::inputDir() const
+fs::path cli::ConfigManager::inputDir() const
 {
     return m_inputDir;
 }
 
-fs::path mc::Cli::ConfigStore::outputDir() const
+fs::path cli::ConfigManager::outputDir() const
 {
     return m_outputDir;
 }
 
-std::string mc::Cli::ConfigStore::baseFormat() const
+std::string cli::ConfigManager::baseFormat() const
 {
     return m_baseFormat;
 }
 
-mc::Cli::ConfigStore::Command mc::Cli::ConfigStore::command() const
+cli::Command cli::ConfigManager::command() const
 {
     return m_command;
 }
