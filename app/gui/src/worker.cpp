@@ -17,8 +17,8 @@
 #include <mediacopier/cli/run.hpp>
 #include <mediacopier/gui/worker.hpp>
 
+#include <csignal>
 #include <iostream>
-#include <signal.h>
 
 namespace cli = MediaCopier::Cli;
 
@@ -45,7 +45,7 @@ void Worker::log(cli::LogLevel level, std::string message)
 
 void Worker::progress(size_t value)
 {
-    emit progressValue(value);
+    emit progressValue(static_cast<int>(value));
 }
 
 void Worker::start()
@@ -56,5 +56,5 @@ void Worker::start()
 
 void Worker::cancel()
 {
-    raise(SIGINT);
+    std::raise(SIGINT);
 }

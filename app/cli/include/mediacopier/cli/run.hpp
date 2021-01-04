@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include <mediacopier/cli/ConfigManager.hpp>
-#include <mediacopier/cli/FeedbackGateway.hpp>
+#include <mediacopier/cli/config.hpp>
+#include <mediacopier/cli/feedback.hpp>
 
 namespace MediaCopier::Cli {
 
-void run(const ConfigManager& config, FeedbackGateway& feedback);
+void run(const ConfigManager& config, FeedbackProxy& feedback);
 
 }

@@ -14,14 +14,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/cli/ConfigManager.hpp>
+#include <mediacopier/cli/config.hpp>
 #include <mediacopier/version.hpp>
 
 #include <iostream>
 #include <vector>
 
 namespace cli = MediaCopier::Cli;
-namespace fs  = std::filesystem;
+namespace fs = std::filesystem;
 
 void cli::ConfigManager::parseArgs(int argc, char *argv[])
 {

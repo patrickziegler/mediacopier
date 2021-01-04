@@ -18,9 +18,9 @@
 
 #include <QObject>
 
-#include <mediacopier/cli/FeedbackGateway.hpp>
+#include <mediacopier/cli/feedback.hpp>
 
-class Worker : public QObject, MediaCopier::Cli::FeedbackGateway {
+class Worker : public QObject, private MediaCopier::Cli::FeedbackProxy {
     Q_OBJECT
 
 public:
@@ -37,7 +37,7 @@ signals:
     void logInfoMessage(QString message);
     void logWarningMessage(QString message);
     void logErrorMessage(QString message);
-    void progressValue(size_t value);
+    void progressValue(int value);
     void finishedSignal();
 
 private:

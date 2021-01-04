@@ -74,8 +74,8 @@ MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigManager config, QWi
     connect(m_worker, SIGNAL(logErrorMessage(QString)),
             this, SLOT(onWorkerLogError(QString)));
 
-    connect(m_worker, SIGNAL(progressValue(size_t)),
-            this, SLOT(onWorkerProgress(size_t)));
+    connect(m_worker, SIGNAL(progressValue(int)),
+            this, SLOT(onWorkerProgress(int)));
 
     connect(ui->buttonOpenInputDir, SIGNAL(clicked(QAbstractButton*)),
             this, SLOT(onOpenInputDirClicked()));
@@ -179,7 +179,7 @@ void MediaCopierDialog::onWorkerLogError(QString message)
     ui->textLog->appendPlainText("ERROR: " + message);
 }
 
-void MediaCopierDialog::onWorkerProgress(size_t value)
+void MediaCopierDialog::onWorkerProgress(int value)
 {
     ui->barProgress->setValue(value);
 }

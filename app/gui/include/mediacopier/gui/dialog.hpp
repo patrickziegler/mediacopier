@@ -20,7 +20,7 @@
 #include <QDialog>
 #include <QThread>
 
-#include <mediacopier/cli/ConfigManager.hpp>
+#include <mediacopier/cli/config.hpp>
 #include <mediacopier/gui/worker.hpp>
 
 class QAbstractButton;
@@ -53,7 +53,7 @@ private slots:
     void onWorkerLogInfo(QString message);
     void onWorkerLogWarning(QString message);
     void onWorkerLogError(QString message);
-    void onWorkerProgress(size_t value);
+    void onWorkerProgress(int value);
 
 private:
     Ui::MediaCopierDialog *ui;

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>230</width>
-    <height>429</height>
+    <height>415</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,35 +121,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="verticalFrame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="frameProgress">
-      <item>
-       <widget class="QLabel" name="labelProgress">
-        <property name="text">
-         <string>Progress</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QProgressBar" name="barProgress">
-        <property name="value">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QFrame" name="frameLog">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -178,6 +149,25 @@
         </property>
         <property name="backgroundVisible">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="verticalFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="frameProgress">
+      <item>
+       <widget class="QProgressBar" name="barProgress">
+        <property name="value">
+         <number>0</number>
         </property>
        </widget>
       </item>

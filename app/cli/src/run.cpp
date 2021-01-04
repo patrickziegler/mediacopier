@@ -23,67 +23,68 @@
 #include <mediacopier/cli/run.hpp>
 
 #include <atomic>
-#include <signal.h>
+#include <csignal>
 
 namespace cli = MediaCopier::Cli;
-namespace fs  = std::filesystem;
+namespace fs = std::filesystem;
 
 static constexpr const size_t PROGRESS_UPDATE_INTERVAL_MS = 500;
 
-static std::atomic<bool> operationCancelled;
+static volatile std::atomic<bool> operationCancelled;
 
-void onSignalInterrupt(int s)
+void onSigInt(int s)
 {
     (void) s;
     operationCancelled.store(true);
 }
 
-void cli::run(const ConfigManager& config, FeedbackGateway& feedback)
+void cli::run(const ConfigManager& config, FeedbackProxy& feedback)
 {
-    auto execute_operation = [&]() -> void {
-        std::stringstream ss;
+    FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
 
-        FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
-        std::unique_ptr<AbstractFileOperation> op{};
+    std::unique_ptr<AbstractFileOperation> op;
 
-        size_t count = std::distance(
-                    fs::recursive_directory_iterator(config.inputDir()),
-                    fs::recursive_directory_iterator{});
+    size_t count = std::distance(
+                fs::recursive_directory_iterator(config.inputDir()),
+                fs::recursive_directory_iterator{});
 
-        if (count < 1) {
-            ss << "No files were found in " << config.inputDir();
-            feedback.log(LogLevel::WARNING, ss.str());
-            return;
-        }
+    std::stringstream ss;
 
-        switch (config.command())
-        {
-        case Command::COPY:
-            op = std::make_unique<FileOperationCopyJpeg>(filePathFactory);
-            ss << "Copying " << count << " files";
-            feedback.log(LogLevel::INFO, ss.str());
-            break;
+    if (count < 1) {
+        ss << "No files were found in " << config.inputDir();
+        feedback.log(LogLevel::WARNING, ss.str());
+        return;
+    }
 
-        case Command::MOVE:
-            op = std::make_unique<FileOperationMoveJpeg>(filePathFactory);
-            ss << "Moving " << count << " files";
-            feedback.log(LogLevel::INFO, ss.str());
-            break;
+    switch (config.command())
+    {
+    case Command::COPY:
+        op = std::make_unique<FileOperationCopyJpeg>(filePathFactory);
+        ss << "Copying " << count << " files";
+        feedback.log(LogLevel::INFO, ss.str());
+        break;
 
-        default:
-            feedback.log(LogLevel::ERROR, "Unknown operation type");
-            return;
-        }
+    case Command::MOVE:
+        op = std::make_unique<FileOperationMoveJpeg>(filePathFactory);
+        ss << "Moving " << count << " files";
+        feedback.log(LogLevel::INFO, ss.str());
+        break;
 
-        feedback.progress(0);
+    default:
+        feedback.log(LogLevel::ERROR, "Unknown operation type");
+        return;
+    }
 
+    auto execute = [&config, &feedback, &op, &count]() -> void {
         auto clock = std::chrono::steady_clock();
         auto ref = clock.now();
 
         size_t diff = 0;
         size_t pos = 0;
 
-        FileInfoFactory fileInfoFactory{};
+        FileInfoFactory fileInfoFactory;
+
+        feedback.progress(0);
 
         for (const auto& path : fs::recursive_directory_iterator(config.inputDir())) {
             try {
@@ -92,10 +93,9 @@ void cli::run(const ConfigManager& config, FeedbackGateway& feedback)
                     file->accept(*op);
                 }
             }  catch (const FileInfoError& err) {
-                ss.str("");
-                ss.clear();
-                ss << err.what() << " (" << path.path() << ") ";
-                feedback.log(LogLevel::WARNING, ss.str());
+                std::stringstream msg;
+                msg << err.what() << " (" << path.path() << ") ";
+                feedback.log(LogLevel::WARNING, msg.str());
             }
 
             ++pos;
@@ -112,17 +112,19 @@ void cli::run(const ConfigManager& config, FeedbackGateway& feedback)
                 break;
             }
         }
+
+        feedback.progress(100 * pos / count);
     };
 
     operationCancelled.store(false);
 
-    signal(SIGINT, onSignalInterrupt);
+    std::signal(SIGINT, onSigInt);
 
     try {
-        execute_operation();
+        execute();
     } catch (const std::exception& err) {
         feedback.log(LogLevel::ERROR, err.what());
     }
 
-    signal(SIGINT, SIG_DFL);
+    std::signal(SIGINT, SIG_DFL);
 }

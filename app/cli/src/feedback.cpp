@@ -14,22 +14,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/cli/feedback.hpp>
 
-#include <mediacopier/cli/ConfigManager.hpp>
+#include <iostream>
 
-namespace MediaCopier::Cli {
+namespace cli = MediaCopier::Cli;
 
-enum class LogLevel {
-    INFO,
-    WARNING,
-    ERROR,
-};
+void cli::FeedbackProxy::log(LogLevel level, std::string message)
+{
+    switch (level)
+    {
+    case LogLevel::INFO:
+        break;
 
-class FeedbackGateway {
-public:  
-    virtual void log(LogLevel level, std::string message);
-    virtual void progress(size_t value);
-};
+    case LogLevel::WARNING:
+        break;
 
+    case LogLevel::ERROR:
+        break;
+
+    default:
+        std::cout << message << std::endl;
+    }
+}
+
+void cli::FeedbackProxy::progress(size_t value)
+{
+    (void) value;
 }

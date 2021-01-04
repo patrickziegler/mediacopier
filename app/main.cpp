@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/cli/ConfigManager.hpp>
+#include <mediacopier/cli/config.hpp>
 #include <mediacopier/cli/run.hpp>
 
 #include <log4cplus/configurator.h>

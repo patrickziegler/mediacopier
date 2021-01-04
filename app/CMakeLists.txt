@@ -11,8 +11,8 @@ set_target_properties(mediacopier-main PROPERTIES
 # -- mediacopier-cli (static library)
 
 add_library(mediacopier-cli STATIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/ConfigManager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/FeedbackGateway.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/config.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/feedback.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cli/src/run.cpp")
 
 target_include_directories(mediacopier-cli PUBLIC
