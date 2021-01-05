@@ -38,8 +38,10 @@ void onSigInt(int s)
     operationCancelled.store(true);
 }
 
-void cli::run(const ConfigManager& config, FeedbackProxy& feedback)
+int cli::run(const ConfigManager& config, FeedbackProxy& feedback)
 {
+    // TODO: config sanity check
+
     FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
 
     std::unique_ptr<AbstractFileOperation> op;
@@ -53,7 +55,7 @@ void cli::run(const ConfigManager& config, FeedbackProxy& feedback)
     if (count < 1) {
         ss << "No files were found in " << config.inputDir();
         feedback.log(LogLevel::WARNING, ss.str());
-        return;
+        return 0;
     }
 
     switch (config.command())
@@ -72,7 +74,7 @@ void cli::run(const ConfigManager& config, FeedbackProxy& feedback)
 
     default:
         feedback.log(LogLevel::ERROR, "Unknown operation type");
-        return;
+        return 1;
     }
 
     auto execute = [&config, &feedback, &op, &count]() -> void {
@@ -127,4 +129,6 @@ void cli::run(const ConfigManager& config, FeedbackProxy& feedback)
     }
 
     std::signal(SIGINT, SIG_DFL);
+
+    return 0;
 }

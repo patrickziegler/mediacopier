@@ -50,7 +50,11 @@ void Worker::progress(size_t value)
 
 void Worker::start()
 {
-    run(m_config, *this);
+    try {
+        cli::run(m_config, *this);
+    } catch (const std::exception& err) {
+        emit logErrorMessage(err.what());
+    }
     emit finishedSignal();
 }
 

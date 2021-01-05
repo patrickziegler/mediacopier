@@ -85,7 +85,8 @@ static std::error_code jpeg_copy_rotated(const mc::FileInfoImageJpeg& file, cons
     jpeg_compress_struct d_info;
     jpeg_error c_err, d_err;
     jpeg_transform_info trans;
-    JpegErrorCategory cat{};
+
+    JpegErrorCategory cat;
 
     trans.trim = false;
     trans.crop = false;

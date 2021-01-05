@@ -21,6 +21,6 @@
 
 namespace MediaCopier::Cli {
 
-void run(const ConfigManager& config, FeedbackProxy& feedback);
+int run(const ConfigManager& config, FeedbackProxy& feedback);
 
 }

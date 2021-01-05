@@ -15,6 +15,7 @@
  */
 
 #include <mediacopier/cli/config.hpp>
+#include <mediacopier/cli/feedback.hpp>
 #include <mediacopier/cli/run.hpp>
 
 #include <log4cplus/configurator.h>
@@ -48,6 +49,13 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    std::cout << "not implemented yet" << std::endl;
-    return 0;
+    cli::FeedbackProxy feedback;
+
+    try {
+        return cli::run(config, feedback);
+    } catch (const std::exception& err) {
+        emit feedback.log(cli::LogLevel::ERROR, err.what());
+    }
+
+    return 1;
 }
