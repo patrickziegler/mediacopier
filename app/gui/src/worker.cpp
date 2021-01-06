@@ -34,12 +34,8 @@ void Worker::log(cli::LogLevel level, std::string message)
         emit logWarningMessage(QString::fromStdString(message));
         break;
 
-    case cli::LogLevel::ERROR:
-        emit logErrorMessage(QString::fromStdString(message));
-        break;
-
     default:
-        std::cout << message << std::endl;
+        emit logErrorMessage(QString::fromStdString(message));
     }
 }
 

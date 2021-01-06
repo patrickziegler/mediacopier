@@ -26,9 +26,6 @@
 #include <QApplication>
 #endif
 
-// TODO: remove this
-#include <iostream>
-
 namespace cli = MediaCopier::Cli;
 namespace fs  = std::filesystem;
 
@@ -54,7 +51,7 @@ int main(int argc, char *argv[])
     try {
         return cli::run(config, feedback);
     } catch (const std::exception& err) {
-        emit feedback.log(cli::LogLevel::ERROR, err.what());
+        feedback.log(cli::LogLevel::ERROR, err.what());
     }
 
     return 1;

@@ -47,29 +47,26 @@ int cli::run(const ConfigManager& config, FeedbackProxy& feedback)
     std::unique_ptr<AbstractFileOperation> op;
 
     size_t count = std::distance(
-                fs::recursive_directory_iterator(config.inputDir()),
+                fs::recursive_directory_iterator{config.inputDir()},
                 fs::recursive_directory_iterator{});
 
-    std::stringstream ss;
-
     if (count < 1) {
-        ss << "No files were found in " << config.inputDir();
-        feedback.log(LogLevel::WARNING, ss.str());
+        feedback.log(LogLevel::WARNING, "No files were found in " + config.inputDir().string());
         return 0;
     }
+
+    feedback.log(LogLevel::INFO, "Found " + std::to_string(count) + " files");
 
     switch (config.command())
     {
     case Command::COPY:
         op = std::make_unique<FileOperationCopyJpeg>(filePathFactory);
-        ss << "Copying " << count << " files";
-        feedback.log(LogLevel::INFO, ss.str());
+        feedback.log(LogLevel::INFO, "Copying files");
         break;
 
     case Command::MOVE:
         op = std::make_unique<FileOperationMoveJpeg>(filePathFactory);
-        ss << "Moving " << count << " files";
-        feedback.log(LogLevel::INFO, ss.str());
+        feedback.log(LogLevel::INFO, "Moving files");
         break;
 
     default:
@@ -95,9 +92,7 @@ int cli::run(const ConfigManager& config, FeedbackProxy& feedback)
                     file->accept(*op);
                 }
             }  catch (const FileInfoError& err) {
-                std::stringstream msg;
-                msg << err.what() << " (" << path.path() << ") ";
-                feedback.log(LogLevel::WARNING, msg.str());
+                feedback.log(LogLevel::WARNING, std::string{err.what()} + " in '" + path.path().string() + "'");
             }
 
             ++pos;

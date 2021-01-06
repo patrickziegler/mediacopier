@@ -16,29 +16,33 @@
 
 #include <mediacopier/cli/feedback.hpp>
 
-#include <iostream>
+#include <log4cplus/logger.h>
+#include <log4cplus/loggingmacros.h>
 
 namespace cli = MediaCopier::Cli;
 
 void cli::FeedbackProxy::log(LogLevel level, std::string message)
 {
+    static auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("log"));
+
     switch (level)
     {
     case LogLevel::INFO:
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT(message));
         break;
 
     case LogLevel::WARNING:
-        break;
-
-    case LogLevel::ERROR:
+        LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(message));
         break;
 
     default:
-        std::cout << message << std::endl;
+        LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(message));
     }
 }
 
 void cli::FeedbackProxy::progress(size_t value)
 {
-    (void) value;
+    static auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("progress"));
+
+    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Progress " << value << " %"));
 }

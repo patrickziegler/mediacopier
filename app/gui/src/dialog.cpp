@@ -57,6 +57,7 @@ MediaCopierDialog::MediaCopierDialog(MediaCopier::Cli::ConfigManager config, QWi
 
     m_thread = new QThread();
     m_worker = new Worker(m_config);
+
     m_worker->moveToThread(m_thread);
 
     connect(m_thread, SIGNAL(started()),
@@ -129,6 +130,7 @@ void MediaCopierDialog::onOpenOutputDirClicked()
 void MediaCopierDialog::onDialogControlClicked(QAbstractButton *button)
 {
     if (ui->buttonDialogControl->standardButton(button) == QDialogButtonBox::Ok) {
+        // TODO: use state machine for this
         m_btnOk->setEnabled(false);
         m_thread->start();
     } else if(!m_thread->isRunning()) {
