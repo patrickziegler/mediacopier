@@ -112,7 +112,7 @@ void cli::ConfigManager::setCommand(Command op) {
     m_command = op;
 #ifndef ENABLE_GUI
     if (op == cli::Command::GUI) {
-        m_command = cli::ConfigStore::Command::UNKNOWN;
+        m_command = cli::Command::UNKNOWN;
     }
 #endif
 }
