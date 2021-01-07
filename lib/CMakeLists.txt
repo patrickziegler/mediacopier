@@ -26,7 +26,8 @@ target_include_directories(mediacopier PRIVATE
     "${AVFORMAT_INCLUDE_DIR}"
     "${EXIV2_INCLUDE_DIR}")
 
-set_property(TARGET turbojpeg-static PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET turbojpeg-static PROPERTY
+    POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(mediacopier PRIVATE
     "${AVFORMAT_LIBRARY}"

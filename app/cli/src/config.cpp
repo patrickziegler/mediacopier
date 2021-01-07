@@ -39,7 +39,7 @@ void cli::ConfigManager::parseArgs(int argc, char *argv[])
 
             if (arg.find("f") < arg.npos) {
                 if (i + 1 < argc) {
-                    m_baseFormat = std::string(argv[++i]);
+                    m_baseFormat = std::string{argv[++i]};
                 } else {
                     std::cerr << "Option '-f' requires an argument" << std::endl;
                     std::exit(1);
