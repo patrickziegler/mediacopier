@@ -14,7 +14,6 @@ endif()
 
 project(MediaCopier VERSION 2.0.0)
 
-add_subdirectory(extern/libjpeg-turbo)
 add_subdirectory(lib)
 add_subdirectory(app)
 
