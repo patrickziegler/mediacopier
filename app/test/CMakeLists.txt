@@ -11,6 +11,7 @@ target_link_libraries(mediacopier-component-test PRIVATE
 add_dependencies(mediacopier-component-test
     mediacopier-test-data)
 
-gtest_discover_tests(mediacopier-component-test)
+gtest_discover_tests(mediacopier-component-test
+    TEST_PREFIX "component-test_")
 
 enable_testing()

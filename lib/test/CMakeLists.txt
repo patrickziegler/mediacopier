@@ -8,6 +8,7 @@ target_link_libraries(mediacopier-unittest PRIVATE
     gtest gtest_main
     )
 
-gtest_discover_tests(mediacopier-unittest)
+gtest_discover_tests(mediacopier-unittest
+    TEST_PREFIX "unittest_")
 
 enable_testing()
