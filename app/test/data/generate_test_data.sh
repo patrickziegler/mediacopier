@@ -58,7 +58,7 @@ VID_MKV="${DATA_PATH}"/roundhay_garden_scene.webm
 
 # --- Clean-Up
 
-rm -rd "${DATA_PATH}"
+rm -rf "${DATA_PATH}"
 mkdir -p "${DATA_PATH}"
 
 # --- Create images with orientations as in [1]

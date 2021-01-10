@@ -1,4 +1,4 @@
-set(TEST_DATA_DIR "${CMAKE_BINARY_DIR}/test/data")
+set(TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
 add_custom_target(mediacopier-test-data
     DEPENDS "${TEST_DATA_DIR}")
