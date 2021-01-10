@@ -9,32 +9,32 @@ This library supports **lossless auto-rotation of JPEG files with known orientat
 
 ### :hammer: Build and Install
 
-1. Clone this repository and create a build directory
-   ```sh
-   git clone --recursive https://github.com/patrickziegler/MediaCopier.git
-   mkdir MediaCopier/build && cd MediaCopier/build
-   ```
+Clone this repository and create a build directory
+```sh
+git clone --recursive https://github.com/patrickziegler/MediaCopier.git
+cd MediaCopier && mkdir build && cd build
+```
 
-2. Build for installing to `/usr/local` *(default)*
-   ```sh
-   cmake .. && make -j$(nproc)
-   ```
+Build for installing to `/usr/local` *(default)*
+```sh
+cmake .. && make -j$(nproc)
+```
 
-3. Build for installing to another destination *(alternative)*
-   ```sh
-   export INSTALL_PREFIX=~/.local
+Build for installing to another destination *(alternative)*
+```sh
+export INSTALL_PREFIX=~/.local
 
-   cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX .. && make -j$(nproc)
+cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX .. && make -j$(nproc)
 
-   # optional
-   export $PATH=$PATH:$INSTALL_PREFIX/bin
-   export $LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALL_PREFIX/lib
-   ```
+# optional
+export $PATH=$PATH:$INSTALL_PREFIX/bin
+export $LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALL_PREFIX/lib
+```
 
-4. Execute installation
-   ```sh
-   make install
-   ```
+Execute installation
+```sh
+make install
+```
 
 ### :whale: Build and test inside Docker container
 
