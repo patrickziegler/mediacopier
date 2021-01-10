@@ -1,4 +1,4 @@
-find_package(GTest REQUIRED)
+find_package(GTest)
 
 add_executable(mediacopier-unittest
     "${CMAKE_CURRENT_SOURCE_DIR}/test_example.cpp"

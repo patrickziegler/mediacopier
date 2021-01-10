@@ -9,5 +9,4 @@ target_include_directories(mediacopier-cli PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 target_link_libraries(mediacopier-cli PUBLIC
-    "${LOG4CPLUS_LIBRARY}"
-    mediacopier)
+    "${LOG4CPLUS_LIBRARY}" mediacopier)
