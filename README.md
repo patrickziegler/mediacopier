@@ -36,6 +36,16 @@ This library supports **lossless auto-rotation of JPEG files with known orientat
    make install
    ```
 
+### :whale: Build and test inside Docker container
+
+```sh
+docker build -t mediacopier-build .
+docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build /bin/bash
+mkdir /tmp/build && cd /tmp/build
+cmake /usr/src/mediacopier && make -j$(nproc)
+make test
+```
+
 ## Authors
 
 * Patrick Ziegler
