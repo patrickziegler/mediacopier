@@ -4,10 +4,17 @@ on: [push]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        config:
+        - {name: "Ubuntu 20.04 GCC", os: ubuntu-20.04, CC: "gcc", CXX: "g++"}
+        - {name: "Ubuntu 20.04 Clang", os: ubuntu-20.04, CC: "clang", CXX: "clang++"}
+
+    name: ${{matrix.config.name}}
+    runs-on: ${{matrix.config.os}}
 
     steps:
-    - name: Prepare build environment
+    - name: Install dependencies
       env:
         DEBIAN_FRONTEND: "noninteractive"
       run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick libavformat-dev libexiv2-dev libimage-exiftool-perl libjpeg-dev libjpeg-progs liblog4cplus-dev qtbase5-dev
@@ -18,9 +25,12 @@ jobs:
         submodules: recursive
 
     - name: Create build directory
-      run: cmake -E make_directory ${{github.workspace}}/build
+      run: mkdir -p ${{github.workspace}}/build
 
-    - name: Configure CMake
+    - name: Configure build
+      env:
+        CC: ${{matrix.config.CC}}
+        CXX: ${{matrix.config.CXX}}
       working-directory: ${{github.workspace}}/build
       run: cmake ..
 
@@ -28,7 +38,6 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: make -j$(nproc)
 
-    - name: Test
+    - name: Run tests
       working-directory: ${{github.workspace}}/build
       run: make test
-
