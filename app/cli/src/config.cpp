@@ -56,10 +56,10 @@ void cli::ConfigManager::parseArgs(int argc, char *argv[])
                   << ", Copyright (C) 2020 Patrick Ziegler\n"
                   << "Usage: mediacopier COMMAND SRC DST [options]\n"
                   << "\nAvailable commands:\n"
-                  << "  copy : Copy files from SRC directory to DST\n"
-                  << "  move : The same as 'copy', but removing successfully copied files\n";
+                  << "  copy   : Copy files from SRC directory to DST\n"
+                  << "  move   : The same as 'copy', but removing successfully copied files\n";
 #ifdef ENABLE_GUI
-        std::cout << "  gui  : Show graphical user interface\n";
+        std::cout << "  gui    : Show graphical user interface\n";
 #endif
         std::cout << "\nOptions and arguments:\n"
                   << "  -h     : Show this help message and exit\n"
