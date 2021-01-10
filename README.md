@@ -1,5 +1,7 @@
 # :camera: MediaCopier
 
+[![Build Status](https://github.com/patrickziegler/MediaCopier/workflows/build-and-test/badge.svg)](https://github.com/patrickziegler/MediaCopier/actions)
+
 ### Features
 This software searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format. The original creation date is used to **generate a folder structure** and unique filenames. Raw image files and videos are supported as well.
 
