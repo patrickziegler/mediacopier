@@ -1,14 +1,14 @@
 name: build-and-test
 
-on: [push]
+on: ["push", "pull_request"]
 
 jobs:
   build-and-test:
     strategy:
       matrix:
         config:
-        - {name: "Ubuntu 20.04 GCC", os: ubuntu-20.04, CC: "gcc", CXX: "g++"}
-        - {name: "Ubuntu 20.04 Clang", os: ubuntu-20.04, CC: "clang", CXX: "clang++"}
+        - {name: "Ubuntu 20.04 (GCC)", os: "ubuntu-20.04", CC: "gcc", CXX: "g++"}
+        - {name: "Ubuntu 20.04 (Clang)", os: "ubuntu-20.04", CC: "clang", CXX: "clang++"}
 
     name: ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}

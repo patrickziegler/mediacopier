@@ -1,0 +1,37 @@
+name: coverage
+
+on: ["push"]
+
+jobs:
+  coverage:
+    name: "Coverage"
+    runs-on: "ubuntu-20.04"
+
+    steps:
+    - name: Install dependencies
+      env:
+        DEBIAN_FRONTEND: "noninteractive"
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libimage-exiftool-perl libjpeg-dev libjpeg-progs liblog4cplus-dev qtbase5-dev
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Create build directory
+      run: mkdir -p ${{github.workspace}}/build
+
+    - name: Configure build
+      env:
+        CC: ${{matrix.config.CC}}
+        CXX: ${{matrix.config.CXX}}
+      working-directory: ${{github.workspace}}/build
+      run: cmake -DENABLE_COVERAGE=ON ..
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      run: make -j$(nproc)
+
+    - name: Analyze test coverage
+      working-directory: ${{github.workspace}}/build
+      run: make coverage
