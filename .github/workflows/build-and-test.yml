@@ -17,27 +17,49 @@ jobs:
     - name: Install dependencies
       env:
         DEBIAN_FRONTEND: "noninteractive"
-      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick libavformat-dev libexiv2-dev libimage-exiftool-perl libjpeg-dev libjpeg-progs liblog4cplus-dev qtbase5-dev
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libimage-exiftool-perl libjpeg-dev libjpeg-progs liblog4cplus-dev qtbase5-dev
 
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
         submodules: recursive
 
-    - name: Create build directory
-      run: mkdir -p ${{github.workspace}}/build
+    - name: Build-and-Test - Create build directory
+      run: mkdir -p ${{github.workspace}}/build-and-test
 
-    - name: Configure build
+    - name: Build-and-Test - Configure build
       env:
         CC: ${{matrix.config.CC}}
         CXX: ${{matrix.config.CXX}}
-      working-directory: ${{github.workspace}}/build
+      working-directory: ${{github.workspace}}/build-and-test
       run: cmake ..
 
-    - name: Build
-      working-directory: ${{github.workspace}}/build
+    - name: Build-and-Test - Build
+      working-directory: ${{github.workspace}}/build-and-test
       run: make -j$(nproc)
 
-    - name: Run tests
-      working-directory: ${{github.workspace}}/build
+    - name: Build-and-Test - Run tests
+      working-directory: ${{github.workspace}}/build-and-test
       run: make test
+
+    - name: Coverage - Create build directory
+      run: mkdir -p ${{github.workspace}}/build-coverage
+      if: matrix.config.CC == 'gcc'
+
+    - name: Coverage - Configure build
+      env:
+        CC: ${{matrix.config.CC}}
+        CXX: ${{matrix.config.CXX}}
+      working-directory: ${{github.workspace}}/build-coverage
+      run: cmake -DENABLE_COVERAGE=ON ..
+      if: matrix.config.CC == 'gcc'
+
+    - name: Coverage - Build
+      working-directory: ${{github.workspace}}/build-coverage
+      run: make -j$(nproc)
+      if: matrix.config.CC == 'gcc'
+
+    - name: Coverage - Analyze test coverage
+      working-directory: ${{github.workspace}}/build-coverage
+      run: make coverage
+      if: matrix.config.CC == 'gcc'
