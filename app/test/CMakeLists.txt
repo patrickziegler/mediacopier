@@ -9,7 +9,7 @@ target_link_libraries(mediacopier-component-test PRIVATE
     gtest gtest_main)
 
 add_dependencies(mediacopier-component-test
-    mediacopier-test-data)
+    test-data)
 
 gtest_discover_tests(mediacopier-component-test
     TEST_PREFIX "component-test_")
