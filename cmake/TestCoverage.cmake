@@ -17,7 +17,6 @@ add_custom_command(
                 "${CMAKE_SOURCE_DIR}/build/*"
                 "${CMAKE_SOURCE_DIR}/extern/*"
                 "${CMAKE_SOURCE_DIR}/app/main.cpp"
-                "${CMAKE_SOURCE_DIR}/app/gui/*"
                 "${CMAKE_SOURCE_DIR}/app/test/*"
                 "${CMAKE_SOURCE_DIR}/lib/test/*"
     COMMAND genhtml ${TRACEFILE} --output-directory ${REPORT_DIR}
