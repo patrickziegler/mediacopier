@@ -25,41 +25,47 @@ jobs:
         submodules: recursive
 
     - name: Build-and-Test - Create build directory
-      run: mkdir -p ${{github.workspace}}/build-and-test
+      run: mkdir -p ${{github.workspace}}/build
 
-    - name: Build-and-Test - Configure build
+    - name: Build-and-Test - Configure build for testing
       env:
         CC: ${{matrix.config.CC}}
         CXX: ${{matrix.config.CXX}}
-      working-directory: ${{github.workspace}}/build-and-test
-      run: cmake ..
+      working-directory: ${{github.workspace}}/build
+      run: cmake -DENABLE_TEST=ON ..
 
     - name: Build-and-Test - Build
-      working-directory: ${{github.workspace}}/build-and-test
+      working-directory: ${{github.workspace}}/build
       run: make -j$(nproc)
 
     - name: Build-and-Test - Run tests
-      working-directory: ${{github.workspace}}/build-and-test
+      working-directory: ${{github.workspace}}/build
       run: make test
 
-    - name: Coverage - Create build directory
-      run: mkdir -p ${{github.workspace}}/build-coverage
+    - name: Coverage - Cleanup build directory
+      run: |
+        rm -rf ${{github.workspace}}/build
+        mkdir -p ${{github.workspace}}/build
       if: matrix.config.CC == 'gcc'
 
-    - name: Coverage - Configure build
-      env:
-        CC: ${{matrix.config.CC}}
-        CXX: ${{matrix.config.CXX}}
-      working-directory: ${{github.workspace}}/build-coverage
+    - name: Coverage - Configure build for coverage
+      working-directory: ${{github.workspace}}/build
       run: cmake -DENABLE_COVERAGE=ON -DENABLE_GUI=OFF ..
       if: matrix.config.CC == 'gcc'
 
     - name: Coverage - Build
-      working-directory: ${{github.workspace}}/build-coverage
+      working-directory: ${{github.workspace}}/build
       run: make -j$(nproc)
       if: matrix.config.CC == 'gcc'
 
     - name: Coverage - Analyze test coverage
-      working-directory: ${{github.workspace}}/build-coverage
+      working-directory: ${{github.workspace}}/build
       run: make coverage
+      if: matrix.config.CC == 'gcc'
+
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        path-to-lcov: ${{github.workspace}}/build/coverage/trace.info
       if: matrix.config.CC == 'gcc'
