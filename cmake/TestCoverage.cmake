@@ -4,11 +4,13 @@ set(TRACEFILE "${COVERAGE_OUTPUT_DIR}/trace.info")
 set(REPORT_DIR "${COVERAGE_OUTPUT_DIR}/report")
 
 add_custom_command(
-    OUTPUT "${TRACEFILE}"
+    OUTPUT "${TRACEFILE}" always
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E remove_directory "${COVERAGE_OUTPUT_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${COVERAGE_OUTPUT_DIR}"
+    COMMAND lcov -d "${CMAKE_BINARY_DIR}" -z
     COMMAND lcov -o "${BASELINE}" -d "${CMAKE_BINARY_DIR}" -c -i
-    COMMAND ctest
+    COMMAND ${CMAKE_CTEST_COMMAND}
     COMMAND lcov -o "${TRACEFILE}" -d "${CMAKE_BINARY_DIR}" -c
     COMMAND lcov -o "${TRACEFILE}" -a "${BASELINE}" -a "${TRACEFILE}"
     COMMAND lcov -o ${TRACEFILE} -e ${TRACEFILE}
@@ -23,4 +25,4 @@ add_custom_command(
     VERBATIM)
 
 add_custom_target(coverage
-    DEPENDS ${TRACEFILE})
+    DEPENDS ${TRACEFILE} always)
