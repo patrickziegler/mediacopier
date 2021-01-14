@@ -1,6 +1,7 @@
 # :camera: MediaCopier
 
 [![Build Status](https://github.com/patrickziegler/MediaCopier/workflows/build-and-test/badge.svg)](https://github.com/patrickziegler/MediaCopier/actions)
+[![Coverage Status](https://coveralls.io/repos/github/patrickziegler/MediaCopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/MediaCopier?branch=master)
 
 ### Features
 This software searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
@@ -41,7 +42,7 @@ Execute installation
 make install
 ```
 
-### :whale2: Build and Test with Docker
+### :factory: Build and Test with Docker
 
 Build an image and run it as a containerized build environment.
 ```sh
