@@ -46,16 +46,19 @@ make install
 
 Build an image and run it as a containerized build environment.
 ```sh
-docker build -t mediacopier-build .
-docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build /bin/bash
+docker build \
+    --build-arg USER_NAME=$(whoami) \
+    --build-arg USER_ID=$(id -u) \
+    --build-arg GROUP_ID=$(id -g) \
+    -t mediacopier-build .
+docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
 ```
 
 Inside the container, run the following commands.
 All build-time dependencies are solved already.
 ```sh
-mkdir /tmp/build && cd /tmp/build
-cmake /usr/src/mediacopier && make -j$(nproc)
-make test
+cmake /usr/src/mediacopier
+make -j$(nproc) && make test
 ```
 
 ## Authors
