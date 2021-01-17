@@ -1,13 +1,41 @@
 #include <gtest/gtest.h>
 
-double timesThree(double x)
+#include <mediacopier/cli/run.hpp>
+
+#include <filesystem>
+
+namespace cli = MediaCopier::Cli;
+namespace fs = std::filesystem;
+
+TEST(testCopyTestData, completeWorkflowTests)
 {
-    return x * 3;
+    cli::ConfigManager config;
+    cli::FeedbackProxy feedback;
+
+    config.setInputDir("./data/generated");
+    config.setOutputDir("./data/copied");
+    config.setCommand(cli::Command::COPY);
+    cli::run(config, feedback);
+
+    // TODO: verify
+
+    fs::remove_all("./data/copied");
 }
 
-TEST(testTimesThree, integerTests)
+TEST(testMoveTestData, completeWorkflowTests)
 {
-    EXPECT_EQ(0, timesThree(0));
-    EXPECT_EQ(3, timesThree(1));
-    EXPECT_EQ(369, timesThree(123));
+    cli::ConfigManager config;
+    cli::FeedbackProxy feedback;
+
+    fs::copy("./data/generated", "./data/copied");
+
+    config.setInputDir("./data/copied");
+    config.setOutputDir("./data/moved");
+    config.setCommand(cli::Command::MOVE);
+    cli::run(config, feedback);
+
+    // TODO: verify
+
+    fs::remove_all("./data/copied");
+    fs::remove_all("./data/moved");
 }
