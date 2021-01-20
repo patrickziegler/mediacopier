@@ -8,21 +8,48 @@ add_custom_command(
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
     COMMAND ${CMAKE_COMMAND} -E remove_directory "${COVERAGE_OUTPUT_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${COVERAGE_OUTPUT_DIR}"
-    COMMAND lcov -d "${CMAKE_BINARY_DIR}" -z
-    COMMAND lcov -o "${BASELINE}" -d "${CMAKE_BINARY_DIR}" -c -i
-    COMMAND ${CMAKE_CTEST_COMMAND}
-    COMMAND lcov -o "${TRACEFILE}" -d "${CMAKE_BINARY_DIR}" -c
-    COMMAND lcov -o "${TRACEFILE}" -a "${BASELINE}" -a "${TRACEFILE}"
-    COMMAND lcov -o ${TRACEFILE} -e ${TRACEFILE}
-                "${CMAKE_SOURCE_DIR}/*"
-    COMMAND lcov -o ${TRACEFILE} -r ${TRACEFILE}
-                "${CMAKE_SOURCE_DIR}/build/*"
-                "${CMAKE_SOURCE_DIR}/extern/*"
-                "${CMAKE_SOURCE_DIR}/app/main.cpp"
-                "${CMAKE_SOURCE_DIR}/app/test/*"
-                "${CMAKE_SOURCE_DIR}/lib/test/*"
-    COMMAND genhtml ${TRACEFILE} --output-directory ${REPORT_DIR}
-    VERBATIM)
+
+    COMMAND lcov
+                --zerocounters
+                --directory "${CMAKE_BINARY_DIR}"
+
+    COMMAND lcov
+                --capture
+                --initial
+                --directory "${CMAKE_BINARY_DIR}"
+                --output-file "${BASELINE}"
+
+    COMMAND ${CMAKE_CTEST_COMMAND} # executing the test suite
+
+    COMMAND lcov
+                --capture
+                --directory "${CMAKE_BINARY_DIR}"
+                --output-file "${TRACEFILE}"
+
+    COMMAND lcov
+                --add-tracefile "${BASELINE}"
+                --add-tracefile "${TRACEFILE}"
+                --output-file "${TRACEFILE}"
+
+    COMMAND lcov
+                --extract ${TRACEFILE}
+                    "${CMAKE_SOURCE_DIR}/*"
+                --output-file ${TRACEFILE}
+
+    COMMAND lcov
+                --remove ${TRACEFILE}
+                    "${CMAKE_SOURCE_DIR}/build/*"
+                    "${CMAKE_SOURCE_DIR}/extern/*"
+                    "${CMAKE_SOURCE_DIR}/app/main.cpp"
+                    "${CMAKE_SOURCE_DIR}/app/test/*"
+                    "${CMAKE_SOURCE_DIR}/lib/test/*"
+                --output-file ${TRACEFILE}
+
+    COMMAND genhtml ${TRACEFILE}
+                --output-directory ${REPORT_DIR}
+
+    VERBATIM # for correct handling of wildcards in command line parameters
+)
 
 add_custom_target(coverage
     DEPENDS ${TRACEFILE} always)
