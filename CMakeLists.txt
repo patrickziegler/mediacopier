@@ -26,6 +26,9 @@ endif()
 
 if(${ENABLE_TEST})
     add_subdirectory("${CMAKE_SOURCE_DIR}/extern/googletest")
+    set(TEST_DATA_DIR "${CMAKE_BINARY_DIR}/test-data/original")
+    set(TEST_DATA_TARGET test-data)
+    add_compile_definitions(TEST_DATA_DIR="${TEST_DATA_DIR}")
     enable_testing()
 endif()
 

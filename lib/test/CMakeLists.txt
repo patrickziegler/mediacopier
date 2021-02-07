@@ -1,14 +1,18 @@
 find_package(GTest)
 
-add_executable(mediacopier-unittest
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_example.cpp"
-    )
+add_subdirectory(data)
 
-target_link_libraries(mediacopier-unittest PRIVATE
-    gtest gtest_main
-    )
+set(TARGET mediacopier-lib-test)
 
-gtest_discover_tests(mediacopier-unittest
-    TEST_PREFIX "unittest_")
+add_executable(${TARGET}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_fileInfoClasses.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_fileOperationClasses.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_filePathFactory.cpp")
+
+target_link_libraries(${TARGET} PRIVATE
+    gtest gtest_main)
+
+gtest_discover_tests(${TARGET}
+    TEST_PREFIX "lib-test_")
 
 enable_testing()

@@ -1,17 +1,19 @@
 find_package(GTest)
 
-add_subdirectory(data)
+set(TARGET mediacopier-app-test)
 
-add_executable(mediacopier-component-test
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_example.cpp")
+add_executable(${TARGET}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_config.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_feedback.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_run.cpp")
 
-target_link_libraries(mediacopier-component-test PRIVATE
+target_link_libraries(${TARGET} PRIVATE
     gtest gtest_main mediacopier-cli)
 
-add_dependencies(mediacopier-component-test
-    test-data)
+add_dependencies(${TARGET}
+    ${TEST_DATA_TARGET})
 
-gtest_discover_tests(mediacopier-component-test
-    TEST_PREFIX "component-test_")
+gtest_discover_tests(${TARGET}
+    TEST_PREFIX "app-test_")
 
 enable_testing()
