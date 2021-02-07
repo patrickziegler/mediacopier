@@ -40,7 +40,10 @@ void onSigInt(int s)
 
 int cli::run(const ConfigManager& config, FeedbackProxy& feedback)
 {
-    // TODO: config sanity check
+    if (!fs::is_directory(config.inputDir())) {
+        feedback.log(LogLevel::ERROR, "Input folder does not exist");
+        return 1;
+    }
 
     FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
 
