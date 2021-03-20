@@ -20,10 +20,10 @@ RUN apt-get update && apt-get install -y \
 
 ARG USER_NAME=dev
 ARG USER_ID=1000
-ARG GROUP_ID=1000
+ARG USER_GID=1000
 
-RUN groupadd -g ${GROUP_ID} ${USER_NAME}; \
-    useradd -l --uid ${USER_ID} --gid ${GROUP_ID} ${USER_NAME}
+RUN groupadd -g ${USER_GID} ${USER_NAME}; \
+    useradd -l --uid ${USER_ID} --gid ${USER_GID} ${USER_NAME}
 
 USER ${USER_NAME}
 
