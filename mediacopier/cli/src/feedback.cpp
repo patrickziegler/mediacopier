@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/cli/feedback.hpp>
+#include "feedback.hpp"
 
 #include <log4cplus/logger.h>
 #include <log4cplus/loggingmacros.h>

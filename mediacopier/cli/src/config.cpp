@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/cli/config.hpp>
+#include "config.hpp"
 #include <mediacopier/version.hpp>
 
 #include <iostream>
