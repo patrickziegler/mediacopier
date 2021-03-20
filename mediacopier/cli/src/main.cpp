@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Patrick Ziegler
+/* Copyright (C) 2020 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,9 @@
 #include <mediacopier/FileOperationCopyJpeg.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FilePathFactory.hpp>
-#include <mediacopier/cli/run.hpp>
+
+#include "config.hpp"
+#include "feedback.hpp"
 
 #include <atomic>
 #include <csignal>
@@ -32,16 +34,19 @@ static constexpr const size_t PROGRESS_UPDATE_INTERVAL_MS = 500;
 
 static volatile std::atomic<bool> operationCancelled;
 
+using namespace MediaCopier;
+using namespace MediaCopier::Cli;
+
 void onSigInt(int s)
 {
     (void) s;
     operationCancelled.store(true);
 }
 
-int cli::run(const ConfigManager& config, FeedbackProxy& feedback)
+int run(const cli::ConfigManager& config, cli::FeedbackProxy& feedback)
 {
     if (!fs::is_directory(config.inputDir())) {
-        feedback.log(LogLevel::ERROR, "Input folder does not exist");
+        feedback.log(cli::LogLevel::ERROR, "Input folder does not exist");
         return 1;
     }
 
@@ -129,4 +134,31 @@ int cli::run(const ConfigManager& config, FeedbackProxy& feedback)
     std::signal(SIGINT, SIG_DFL);
 
     return 0;
+}
+
+
+#include <log4cplus/configurator.h>
+#include <log4cplus/loggingmacros.h>
+
+
+namespace cli = MediaCopier::Cli;
+namespace fs  = std::filesystem;
+
+int main(int argc, char *argv[])
+{
+    log4cplus::BasicConfigurator log;
+    log.configure();
+
+    cli::ConfigManager config;
+    config.parseArgs(argc, argv);
+
+    cli::FeedbackProxy feedback;
+
+    try {
+        return run(config, feedback);
+    } catch (const std::exception& err) {
+        feedback.log(cli::LogLevel::ERROR, err.what());
+    }
+
+    return 1;
 }
