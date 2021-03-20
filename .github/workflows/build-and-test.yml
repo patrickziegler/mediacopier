@@ -50,7 +50,7 @@ jobs:
 
     - name: Coverage - Configure build for coverage
       working-directory: ${{github.workspace}}/build
-      run: cmake -DENABLE_COVERAGE=ON -DENABLE_GUI=OFF ..
+      run: cmake -DENABLE_COVERAGE=ON ..
       if: matrix.config.CC == 'gcc'
 
     - name: Coverage - Build
