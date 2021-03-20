@@ -44,8 +44,8 @@ add_custom_command(
                 --remove ${TRACEFILE}
                     "${CMAKE_SOURCE_DIR}/build/*"
                     "${CMAKE_SOURCE_DIR}/extern/*"
-                    "${CMAKE_SOURCE_DIR}/app/main.cpp"
-                    "${CMAKE_SOURCE_DIR}/app/test/*"
+                    "${CMAKE_SOURCE_DIR}/mediacopier/lib/test/*"
+                    "${CMAKE_SOURCE_DIR}/mediacopier-gui/*"
                     "${CMAKE_SOURCE_DIR}/lib/test/*"
                 --output-file ${TRACEFILE}
 
