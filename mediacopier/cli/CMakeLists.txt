@@ -5,7 +5,7 @@ set(TARGET_NAME mediacopier-cli)
 add_executable(${TARGET_NAME})
 
 set_target_properties(${TARGET_NAME} PROPERTIES
-    OUTPUT_NAME mcp)
+    OUTPUT_NAME mediacopier)
 
 target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/src/abort.cpp"

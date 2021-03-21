@@ -123,9 +123,8 @@ int main(int argc, char *argv[])
     auto run = [config]() -> int {
         auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("run"));
 
-        auto op = prepare_operation(config);
-
         try {
+            auto op = prepare_operation(config);
             execute_operation(config.inputDir(), std::move(op));
         } catch (const std::exception& err) {
             LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what()));
