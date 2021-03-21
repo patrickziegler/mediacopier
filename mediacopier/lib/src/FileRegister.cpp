@@ -15,7 +15,7 @@
  */
 
 #include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/FilePathFactory.hpp>
+#include <mediacopier/FileRegister.hpp>
 
 #include <random>
 #include <sstream>
@@ -42,7 +42,7 @@ static fs::path create_unique_path(const std::string prefix = "MediaCopier-", co
     return unique_path;
 }
 
-fs::path mc::FilePathFactory::createPath(const mc::AbstractFileInfo &file, fs::path destination, unsigned int id) const
+fs::path mc::FileRegister::createPath(const mc::AbstractFileInfo &file, fs::path destination, unsigned int id) const
 {
     std::stringstream ss;
     ss << destination.string();
@@ -65,25 +65,25 @@ fs::path mc::FilePathFactory::createPath(const mc::AbstractFileInfo &file, fs::p
     return {ss.str()};
 }
 
-mc::FilePathFactory::FilePathFactory(fs::path destination, std::string pattern, bool useSubsec) : m_destination{std::move(destination)}, m_pattern{std::move(pattern)}, m_useSubsec{useSubsec}
+mc::FileRegister::FileRegister(fs::path destination, std::string pattern, bool useSubsec) : m_destination{std::move(destination)}, m_pattern{std::move(pattern)}, m_useSubsec{useSubsec}
 {
     m_destination /= ""; // this will append a trailing directory separator when necessary
     m_tempdir = create_unique_path();
 }
 
-mc::FilePathFactory::~FilePathFactory()
+mc::FileRegister::~FileRegister()
 {
     if (fs::exists(m_tempdir)) {
         fs::remove_all(m_tempdir);
     }
 }
 
-fs::path mc::FilePathFactory::createPathFrom(const mc::AbstractFileInfo &file, unsigned int id) const
+fs::path mc::FileRegister::createPathFrom(const mc::AbstractFileInfo &file, unsigned int id) const
 {
     return createPath(file, m_destination, std::move(id));
 }
 
-fs::path mc::FilePathFactory::createTemporaryPathFrom(const AbstractFileInfo &file) const
+fs::path mc::FileRegister::createTemporaryPathFrom(const AbstractFileInfo &file) const
 {
     return createPath(file, m_tempdir);
 }

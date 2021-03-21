@@ -178,7 +178,7 @@ void mc::FileOperationCopyJpeg::copyJpeg(const mc::FileInfoImageJpeg &file) cons
         return copyFile(file);
     }
 
-    auto dst = m_filePathFormat.createTemporaryPathFrom(file);
+    auto dst = m_register.createTemporaryPathFrom(file);
     fs::create_directories(dst.parent_path());
 
     auto err = jpeg_copy_rotated(file, dst);
