@@ -16,27 +16,9 @@
 
 #pragma once
 
-#include <filesystem>
+#include <functional>
 
-class ConfigManager {
-public:
-    enum class Command {
-        UNKNOWN,
-        COPY,
-        MOVE,
-    };
-    void parseArgs(int argc, char *argv[]);
-    void setInputDir(std::filesystem::path dir);
-    void setOutputDir(std::filesystem::path dir);
-    void setBaseFormat(std::string fmt);
-    void setCommand(Command op);
-    std::filesystem::path inputDir() const;
-    std::filesystem::path outputDir() const;
-    std::string baseFormat() const;
-    Command command() const;
-private:
-    std::filesystem::path m_inputDir;
-    std::filesystem::path m_outputDir;
-    std::string m_baseFormat = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
-    Command m_command = Command::UNKNOWN;
-};
+namespace abortable {
+int wrapper(std::function<int()> fn);
+bool aborted();
+}
