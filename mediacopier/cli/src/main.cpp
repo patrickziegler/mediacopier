@@ -14,6 +14,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <log4cplus/configurator.h>
+#include <log4cplus/logger.h>
+#include <log4cplus/loggingmacros.h>
+
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/exceptions.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
@@ -21,144 +25,115 @@
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FilePathFactory.hpp>
 
+#include "abort.hpp"
 #include "config.hpp"
-#include "feedback.hpp"
 
-#include <atomic>
-#include <csignal>
-
-namespace cli = MediaCopier::Cli;
 namespace fs = std::filesystem;
+
+using namespace MediaCopier;
 
 static constexpr const size_t PROGRESS_UPDATE_INTERVAL_MS = 500;
 
-static volatile std::atomic<bool> operationCancelled;
-
-using namespace MediaCopier;
-using namespace MediaCopier::Cli;
-
-void onSigInt(int s)
+std::unique_ptr<AbstractFileOperation> prepare_operation(const ConfigManager& config)
 {
-    (void) s;
-    operationCancelled.store(true);
-}
+    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("prepare_operation"));
 
-int run(const cli::ConfigManager& config, cli::FeedbackProxy& feedback)
-{
     if (!fs::is_directory(config.inputDir())) {
-        feedback.log(cli::LogLevel::ERROR, "Input folder does not exist");
-        return 1;
+        throw std::runtime_error("Input folder does not exist");
     }
 
     FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
 
-    std::unique_ptr<AbstractFileOperation> op;
-
-    size_t count = std::distance(
-                fs::recursive_directory_iterator{config.inputDir()},
-                fs::recursive_directory_iterator{});
-
-    if (count < 1) {
-        feedback.log(LogLevel::WARNING, "No files were found in " + config.inputDir().string());
-        return 0;
-    }
-
-    feedback.log(LogLevel::INFO, "Found " + std::to_string(count) + " files");
-
     switch (config.command())
     {
-    case Command::COPY:
-        op = std::make_unique<FileOperationCopyJpeg>(filePathFactory);
-        feedback.log(LogLevel::INFO, "Copying files");
-        break;
+    case ConfigManager::Command::COPY:
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Copying files"));
+        return std::make_unique<FileOperationCopyJpeg>(filePathFactory);
 
-    case Command::MOVE:
-        op = std::make_unique<FileOperationMoveJpeg>(filePathFactory);
-        feedback.log(LogLevel::INFO, "Moving files");
-        break;
+    case ConfigManager::Command::MOVE:
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Moving files"));
+        return std::make_unique<FileOperationMoveJpeg>(filePathFactory);
 
     default:
-        feedback.log(LogLevel::ERROR, "Unknown operation type");
-        return 1;
+        throw std::runtime_error("Unknown operation type");
     }
-
-    auto execute = [&config, &feedback, &op, &count]() -> void {
-        auto clock = std::chrono::steady_clock();
-        auto ref = clock.now();
-
-        size_t diff = 0;
-        size_t pos = 0;
-
-        FileInfoFactory fileInfoFactory;
-
-        feedback.progress(0);
-
-        for (const auto& path : fs::recursive_directory_iterator(config.inputDir())) {
-            try {
-                if (path.is_regular_file()) {
-                    auto file = fileInfoFactory.createFromPath(path);
-                    file->accept(*op);
-                }
-            }  catch (const FileInfoError& err) {
-                feedback.log(LogLevel::WARNING, std::string{err.what()} + " in '" + path.path().string() + "'");
-            }
-
-            ++pos;
-
-            diff = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now() - ref).count();
-
-            if (diff > PROGRESS_UPDATE_INTERVAL_MS) {
-                feedback.progress(100 * pos / count);
-                ref = clock.now();
-            }
-
-            if (operationCancelled.load()) {
-                feedback.log(LogLevel::INFO, "Operation cancelled");
-                break;
-            }
-        }
-
-        feedback.progress(100 * pos / count);
-    };
-
-    operationCancelled.store(false);
-
-    std::signal(SIGINT, onSigInt);
-
-    try {
-        execute();
-    } catch (const std::exception& err) {
-        feedback.log(LogLevel::ERROR, err.what());
-    }
-
-    std::signal(SIGINT, SIG_DFL);
-
-    return 0;
 }
 
+void execute_operation(fs::path inputDir, std::unique_ptr<AbstractFileOperation> op)
+{
+    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("execute_operation"));
 
-#include <log4cplus/configurator.h>
-#include <log4cplus/loggingmacros.h>
+    size_t fileCount = std::distance(
+                fs::recursive_directory_iterator{inputDir},
+                fs::recursive_directory_iterator{});
 
+    if (fileCount < 1) {
+        throw std::runtime_error("No files were found in " + inputDir.string());
+    }
 
-namespace cli = MediaCopier::Cli;
-namespace fs  = std::filesystem;
+    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Found " + std::to_string(fileCount) + " files in " + inputDir.string()));
+
+    auto clock = std::chrono::steady_clock();
+    auto ref = clock.now();
+
+    size_t diff = 0;
+    size_t pos = 0;
+
+    FileInfoFactory fileInfoFactory;
+
+    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Progress 0 %"));
+
+    for (const auto& path : fs::recursive_directory_iterator(inputDir)) {
+
+        if (abortable::aborted()) {
+            LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Operation cancelled"));
+            break;
+        }
+
+        try {
+            if (path.is_regular_file()) {
+                auto file = fileInfoFactory.createFromPath(path);
+                file->accept(*op);
+            }
+        } catch (const FileInfoError& err) {
+            LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + " in '" + path.path().string() + "'"));
+        }
+
+        ++pos;
+
+        diff = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now() - ref).count();
+
+        if (diff > PROGRESS_UPDATE_INTERVAL_MS) {
+            LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Progress " << 100 * pos / fileCount << " %"));
+            ref = clock.now();
+        }
+    }
+
+    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Progress " << 100 * pos / fileCount << " %"));
+}
 
 int main(int argc, char *argv[])
 {
     log4cplus::BasicConfigurator log;
     log.configure();
 
-    cli::ConfigManager config;
+    ConfigManager config;
     config.parseArgs(argc, argv);
 
-    cli::FeedbackProxy feedback;
+    auto run = [config]() -> int {
+        auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("run"));
 
-    try {
-        return run(config, feedback);
-    } catch (const std::exception& err) {
-        feedback.log(cli::LogLevel::ERROR, err.what());
-    }
+        auto op = prepare_operation(config);
 
-    return 1;
+        try {
+            execute_operation(config.inputDir(), std::move(op));
+        } catch (const std::exception& err) {
+            LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what()));
+            return 1;
+        }
+
+        return 0;
+    };
+
+    return abortable::wrapper(run);
 }

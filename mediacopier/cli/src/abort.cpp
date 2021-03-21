@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Patrick Ziegler
+/* Copyright (C) 2020 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,22 +14,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "abort.hpp"
 
-#include "config.hpp"
+#include <atomic>
+#include <csignal>
 
-namespace MediaCopier::Cli {
+static volatile std::atomic<bool> operationCancelled;
 
-enum class LogLevel {
-    INFO,
-    WARNING,
-    ERROR,
-};
+void on_sigint(int s)
+{
+    (void) s;
+    operationCancelled.store(true);
+}
 
-class FeedbackProxy {
-public:
-    virtual void log(LogLevel level, std::string message);
-    virtual void progress(size_t value);
-};
+int abortable::wrapper(std::function<int()> fn)
+{
+    operationCancelled.store(false);
+    std::signal(SIGINT, on_sigint);
+    int result = fn();
+    std::signal(SIGINT, SIG_DFL);
+    return result;
+}
 
+bool abortable::aborted()
+{
+    return operationCancelled.load();
 }

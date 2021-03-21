@@ -8,8 +8,8 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mcp)
 
 target_sources(${TARGET_NAME} PRIVATE
+    "${CMAKE_CURRENT_LIST_DIR}/src/abort.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/config.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/feedback.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/main.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
