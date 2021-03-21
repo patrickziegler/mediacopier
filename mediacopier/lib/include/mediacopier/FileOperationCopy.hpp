@@ -17,19 +17,19 @@
 #pragma once
 
 #include <mediacopier/AbstractFileOperation.hpp>
-#include <mediacopier/FilePathFactory.hpp>
+#include <mediacopier/FileRegister.hpp>
 
 namespace MediaCopier {
 
 class FileOperationCopy : public AbstractFileOperation {
 public:
-    explicit FileOperationCopy(FilePathFactory filePathFormat) : m_filePathFormat{std::move(filePathFormat)} {}
+    explicit FileOperationCopy(FileRegister executor) : m_register{std::move(executor)} {}
     void visit(const FileInfoImage &file) const override;
     void visit(const FileInfoImageJpeg &file) const override;
     void visit(const FileInfoVideo &file) const override;
 protected:
     void copyFile(const AbstractFileInfo &file) const;
-    FilePathFactory m_filePathFormat;
+    FileRegister m_register;
 };
 
 }

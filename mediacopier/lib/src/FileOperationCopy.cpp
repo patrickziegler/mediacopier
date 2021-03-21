@@ -55,7 +55,7 @@ void mc::FileOperationCopy::copyFile(const mc::AbstractFileInfo &file) const
     unsigned int id = 0;
 
     while (true) {
-        auto dst = m_filePathFormat.createPathFrom(file, id);
+        auto dst = m_register.createPathFrom(file, id);
         if (!fs::exists(dst)) {
             fs::create_directories(dst.parent_path());
             fs::copy_file(file.path(), dst, err);

@@ -16,16 +16,24 @@
 
 #pragma once
 
+#include <mediacopier/AbstractFileInfo.hpp>
+#include <mediacopier/AbstractFileOperation.hpp>
+
 #include <filesystem>
 
 namespace MediaCopier {
 
 class AbstractFileInfo;
 
-class FilePathFactory {
+class FileRegister {
 public:
-    explicit FilePathFactory(std::filesystem::path destination, std::string pattern, bool useSubsec = true);
-    ~FilePathFactory();
+    explicit FileRegister(std::filesystem::path destination, std::string pattern, bool useSubsec = true);
+    ~FileRegister();
+    void add(const AbstractFileInfo& file);
+    void execute(const AbstractFileOperation& operation);
+
+// --- deprecated interface from here on ---
+
     std::filesystem::path createPathFrom(const AbstractFileInfo &file, unsigned int id = 0) const;
     std::filesystem::path createTemporaryPathFrom(const AbstractFileInfo &file) const;
 private:

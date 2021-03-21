@@ -23,7 +23,7 @@
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileOperationCopyJpeg.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
-#include <mediacopier/FilePathFactory.hpp>
+#include <mediacopier/FileRegister.hpp>
 
 #include "abort.hpp"
 #include "config.hpp"
@@ -42,17 +42,17 @@ std::unique_ptr<AbstractFileOperation> prepare_operation(const ConfigManager& co
         throw std::runtime_error("Input folder does not exist");
     }
 
-    FilePathFactory filePathFactory{config.outputDir(), config.baseFormat()};
+    FileRegister fileRegister{config.outputDir(), config.baseFormat()};
 
     switch (config.command())
     {
     case ConfigManager::Command::COPY:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Copying files"));
-        return std::make_unique<FileOperationCopyJpeg>(filePathFactory);
+        return std::make_unique<FileOperationCopyJpeg>(fileRegister);
 
     case ConfigManager::Command::MOVE:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Moving files"));
-        return std::make_unique<FileOperationMoveJpeg>(filePathFactory);
+        return std::make_unique<FileOperationMoveJpeg>(fileRegister);
 
     default:
         throw std::runtime_error("Unknown operation type");
