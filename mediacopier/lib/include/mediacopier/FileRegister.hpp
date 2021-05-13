@@ -35,7 +35,6 @@ public:
     FileInfoMap::const_iterator end() const;
     size_t size() const;
 private:
-    std::filesystem::path create_path(const AbstractFileInfo &file, unsigned int id, bool useSubsec);
     std::filesystem::path m_destdir;
     FileInfoFactory m_factory;
     std::string m_pattern;

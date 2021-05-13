@@ -25,11 +25,11 @@ class FileOperationCopy : public AbstractFileOperation {
 public:
     explicit FileOperationCopy(std::filesystem::path destination) : m_destination{std::move(destination)} {}
     virtual ~FileOperationCopy() = default;
-    void visit(const FileInfoImage &file) const override;
-    void visit(const FileInfoImageJpeg &file) const override;
-    void visit(const FileInfoVideo &file) const override;
+    void visit(const FileInfoImage& file) const override;
+    void visit(const FileInfoImageJpeg& file) const override;
+    void visit(const FileInfoVideo& file) const override;
 protected:
-    static void copyFile(const AbstractFileInfo &file);
+    void copyFile(const AbstractFileInfo& file) const;
     std::filesystem::path m_destination;
 };
 

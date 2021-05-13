@@ -175,19 +175,13 @@ class TmpFile {
 public:
     TmpFile() : m_path{fs::path{std::tmpnam(nullptr)}} {
         if (!fs::exists(m_path.parent_path())) {
-            /* this is better than silently creating the parent paths
-             * because it prevents the need for cleaning them up
-             */
             throw MediaCopier::FileOperationError("Parent path does not exist for " + m_path.string());
         }
     }
 
     ~TmpFile() {
         if (fs::exists(m_path)) {
-            /* the following constrict prevents fs::remove
-             * from throwing an exception
-             */
-            std::error_code err{};
+            std::error_code err{}; // prevents exceptions from fs::remove
             fs::remove(m_path, err);
         }
     }
@@ -202,9 +196,9 @@ private:
 
 namespace MediaCopier {
 
-void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg &file)
+void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
 {
-    static auto default_orientation = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
+    static constexpr const auto default_orientation = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
 
     if (file.orientation() == default_orientation) {
         return copyFile(file);
@@ -234,25 +228,28 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg &file)
 
         // TODO: copy from original file object instead
         FileInfoImageJpeg tmpinfo{tmpfile.path(), exif};
+
         return copyFile(tmpinfo);
 
     }  catch (const Exiv2::Error& err) {
+
         // TODO: log this incident
+
         return copyFile(file);
     }
 }
 
-void FileOperationCopyJpeg::visit(const FileInfoImage &file) const
+void FileOperationCopyJpeg::visit(const FileInfoImage& file) const
 {
     copyFile(file);
 }
 
-void FileOperationCopyJpeg::visit(const FileInfoImageJpeg &file) const
+void FileOperationCopyJpeg::visit(const FileInfoImageJpeg& file) const
 {
     copyJpeg(file);
 }
 
-void FileOperationCopyJpeg::visit(const FileInfoVideo &file) const
+void FileOperationCopyJpeg::visit(const FileInfoVideo& file) const
 {
     copyFile(file);
 }

@@ -20,22 +20,25 @@
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
 
-void mc::FileOperationMoveJpeg::visit(const mc::FileInfoImage &file) const
+namespace MediaCopier {
+
+void FileOperationMoveJpeg::visit(const FileInfoImage& file) const
 {
     copyFile(file);
     fs::remove(file.path());
 }
 
-void mc::FileOperationMoveJpeg::visit(const mc::FileInfoImageJpeg &file) const
+void FileOperationMoveJpeg::visit(const FileInfoImageJpeg& file) const
 {
     copyJpeg(file);
     fs::remove(file.path());
 }
 
-void mc::FileOperationMoveJpeg::visit(const mc::FileInfoVideo &file) const
+void FileOperationMoveJpeg::visit(const FileInfoVideo& file) const
 {
     copyFile(file);
     fs::remove(file.path());
+}
+
 }
