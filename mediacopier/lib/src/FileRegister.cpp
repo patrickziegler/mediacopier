@@ -21,36 +21,23 @@
 #include <sstream>
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
 
-static fs::path create_unique_path(const std::string prefix = "MediaCopier-", const unsigned int len = 12) {
-    std::random_device device;
-    std::mt19937 generator{device()};
-    std::uniform_int_distribution<> distribution{0, 255};
+namespace MediaCopier {
 
-    std::ostringstream unique_identifier;
-    unique_identifier << prefix << std::hex;
-
-    for (unsigned int i = 0; i < len; ++i) {
-        unique_identifier << distribution(generator);
-    }
-
-    fs::path unique_path = fs::temp_directory_path();
-    unique_path /= unique_identifier.str();
-    unique_path /= "";
-
-    return unique_path;
+FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdir{std::move(destination)}, m_pattern{std::move(pattern)}
+{
+    m_destdir /= ""; // this will append a trailing directory separator when necessary
 }
 
-fs::path mc::FileRegister::createPath(const mc::AbstractFileInfo &file, fs::path destination, unsigned int id) const
+std::filesystem::path FileRegister::create_path(const AbstractFileInfo &file, unsigned int id, bool useSubsec)
 {
     std::stringstream ss;
-    ss << destination.string();
+    ss << m_destdir.string();
 
     auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
     ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
 
-    if (m_useSubsec) {
+    if (useSubsec) {
         // TODO: why is there '% 1000000' in the following line?
         auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
         ss << std::setfill('0') << std::setw(6) << us.count();
@@ -65,25 +52,28 @@ fs::path mc::FileRegister::createPath(const mc::AbstractFileInfo &file, fs::path
     return {ss.str()};
 }
 
-mc::FileRegister::FileRegister(fs::path destination, std::string pattern, bool useSubsec) : m_destination{std::move(destination)}, m_pattern{std::move(pattern)}, m_useSubsec{useSubsec}
+void FileRegister::add(const std::filesystem::path& path)
 {
-    m_destination /= ""; // this will append a trailing directory separator when necessary
-    m_tempdir = create_unique_path();
+    auto infoPtr = m_factory.createFromPath(path);
+    auto newPath = create_path(*infoPtr, 0, true);
+
+    // TODO: handle conflicts
+    m_register[newPath.string()] = std::move(infoPtr);
 }
 
-mc::FileRegister::~FileRegister()
+FileInfoMap::const_iterator FileRegister::begin() const
 {
-    if (fs::exists(m_tempdir)) {
-        fs::remove_all(m_tempdir);
-    }
+    return m_register.begin();
 }
 
-fs::path mc::FileRegister::createPathFrom(const mc::AbstractFileInfo &file, unsigned int id) const
+FileInfoMap::const_iterator FileRegister::end() const
 {
-    return createPath(file, m_destination, std::move(id));
+    return m_register.end();
 }
 
-fs::path mc::FileRegister::createTemporaryPathFrom(const AbstractFileInfo &file) const
+size_t FileRegister::size() const
 {
-    return createPath(file, m_tempdir);
+    return m_register.size();
+}
+
 }
