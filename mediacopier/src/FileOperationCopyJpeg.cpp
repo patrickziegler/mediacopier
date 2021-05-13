@@ -181,9 +181,7 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
 {
     auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("copyJpeg"));
 
-    static constexpr const auto default_orientation = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
-
-    if (file.orientation() == default_orientation) {
+    if (file.orientation() == FileInfoImageJpeg::Orientation::ROT_0) {
         return copyFile(file);
     }
 
@@ -204,7 +202,7 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
         image->readMetadata();
 
         auto exif = image->exifData();
-        exif["Exif.Image.Orientation"] = default_orientation;
+        exif["Exif.Image.Orientation"] = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
 
         image->setExifData(exif);
         image->writeMetadata();

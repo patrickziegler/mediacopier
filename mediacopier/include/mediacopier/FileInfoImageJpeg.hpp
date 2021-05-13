@@ -34,9 +34,9 @@ public:
     };
     FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif);
     void accept(const AbstractFileOperation& operation) const override;
-    int orientation() const { return m_orientation; }
+    Orientation orientation() const { return m_orientation; }
 private:
-    int m_orientation;
+    Orientation m_orientation = Orientation::ROT_0;
 };
 
 } // namespace MediaCopier
