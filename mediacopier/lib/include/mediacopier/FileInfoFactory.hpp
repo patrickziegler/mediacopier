@@ -22,9 +22,11 @@ namespace MediaCopier {
 
 class AbstractFileInfo;
 
+using FileInfoPtr = std::unique_ptr<AbstractFileInfo>;
+
 class FileInfoFactory {
 public:
-    std::unique_ptr<AbstractFileInfo> createFromPath(const std::filesystem::path &path) const;
+    static FileInfoPtr createFromPath(const std::filesystem::path &path);
 };
 
 }

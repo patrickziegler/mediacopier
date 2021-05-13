@@ -29,7 +29,6 @@ extern "C"
 }
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
 
 enum class JpegErrorValue {
     UnknownTransformation,
@@ -77,7 +76,7 @@ static void jpeg_error_handler(j_common_ptr c_info)
     longjmp(err->env, 1);
 }
 
-static std::error_code jpeg_copy_rotated(const mc::FileInfoImageJpeg& file, const fs::path &dst)
+static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path &dst)
 {
     FILE *f_in, *f_out;
     jvirt_barray_ptr *c_coeff, *d_coeff;
@@ -92,15 +91,15 @@ static std::error_code jpeg_copy_rotated(const mc::FileInfoImageJpeg& file, cons
     trans.crop = false;
     trans.force_grayscale = false;
 
-    switch (static_cast<mc::FileInfoImageJpeg::Orientation>(file.orientation()))
+    switch (static_cast<MediaCopier::FileInfoImageJpeg::Orientation>(file.orientation()))
     {
-    case mc::FileInfoImageJpeg::Orientation::ROT_180:
+    case MediaCopier::FileInfoImageJpeg::Orientation::ROT_180:
         trans.transform = JXFORM_ROT_180;
         break;
-    case mc::FileInfoImageJpeg::Orientation::ROT_90:
+    case MediaCopier::FileInfoImageJpeg::Orientation::ROT_90:
         trans.transform = JXFORM_ROT_90;
         break;
-    case mc::FileInfoImageJpeg::Orientation::ROT_270:
+    case MediaCopier::FileInfoImageJpeg::Orientation::ROT_270:
         trans.transform = JXFORM_ROT_270;
         break;
     default:
@@ -170,18 +169,50 @@ static std::error_code jpeg_copy_rotated(const mc::FileInfoImageJpeg& file, cons
     return std::error_code{};
 }
 
-void mc::FileOperationCopyJpeg::copyJpeg(const mc::FileInfoImageJpeg &file) const
+// TODO: warning: the use of `tmpnam' is dangerous, better use `mkstemp'
+
+class TmpFile {
+public:
+    TmpFile() : m_path{fs::path{std::tmpnam(nullptr)}} {
+        if (!fs::exists(m_path.parent_path())) {
+            /* this is better than silently creating the parent paths
+             * because it prevents the need for cleaning them up
+             */
+            throw MediaCopier::FileOperationError("Parent path does not exist for " + m_path.string());
+        }
+    }
+
+    ~TmpFile() {
+        if (fs::exists(m_path)) {
+            /* the following constrict prevents fs::remove
+             * from throwing an exception
+             */
+            std::error_code err{};
+            fs::remove(m_path, err);
+        }
+    }
+
+    auto path() -> const fs::path& {
+        return m_path;
+    }
+
+private:
+    fs::path m_path;
+};
+
+namespace MediaCopier {
+
+void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg &file)
 {
-    static auto default_orientation = static_cast<int>(mc::FileInfoImageJpeg::Orientation::ROT_0);
+    static auto default_orientation = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
 
     if (file.orientation() == default_orientation) {
         return copyFile(file);
     }
 
-    auto dst = m_register.createTemporaryPathFrom(file);
-    fs::create_directories(dst.parent_path());
+    TmpFile tmpfile{};
 
-    auto err = jpeg_copy_rotated(file, dst);
+    auto err = jpeg_copy_rotated(file, tmpfile.path());
 
     if (err.value() > 0) {
         if (err.value() == static_cast<int>(JpegErrorValue::ImageSizeError)) {
@@ -192,7 +223,7 @@ void mc::FileOperationCopyJpeg::copyJpeg(const mc::FileInfoImageJpeg &file) cons
 
     try {
         std::unique_ptr<Exiv2::Image> image;
-        image = Exiv2::ImageFactory::open(dst);
+        image = Exiv2::ImageFactory::open(tmpfile.path());
         image->readMetadata();
 
         auto exif = image->exifData();
@@ -201,11 +232,9 @@ void mc::FileOperationCopyJpeg::copyJpeg(const mc::FileInfoImageJpeg &file) cons
         image->setExifData(exif);
         image->writeMetadata();
 
-        FileInfoImage tmp(dst, exif);
-        copyFile(tmp);
-
-        // TODO: 'err' seems to be used too often (also in catch block)
-        fs::remove(dst, err);
+        // TODO: copy from original file object instead
+        FileInfoImageJpeg tmpinfo{tmpfile.path(), exif};
+        return copyFile(tmpinfo);
 
     }  catch (const Exiv2::Error& err) {
         // TODO: log this incident
@@ -213,17 +242,19 @@ void mc::FileOperationCopyJpeg::copyJpeg(const mc::FileInfoImageJpeg &file) cons
     }
 }
 
-void mc::FileOperationCopyJpeg::visit(const mc::FileInfoImage &file) const
+void FileOperationCopyJpeg::visit(const FileInfoImage &file) const
 {
     copyFile(file);
 }
 
-void mc::FileOperationCopyJpeg::visit(const mc::FileInfoImageJpeg &file) const
+void FileOperationCopyJpeg::visit(const FileInfoImageJpeg &file) const
 {
     copyJpeg(file);
 }
 
-void mc::FileOperationCopyJpeg::visit(const mc::FileInfoVideo &file) const
+void FileOperationCopyJpeg::visit(const FileInfoVideo &file) const
 {
     copyFile(file);
+}
+
 }

@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include <chrono>
 #include <filesystem>
 
 namespace MediaCopier {

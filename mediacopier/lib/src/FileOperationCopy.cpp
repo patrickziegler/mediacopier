@@ -49,13 +49,14 @@ static bool check_equal(fs::path file1, fs::path file2)
     return true;
 }
 
-void mc::FileOperationCopy::copyFile(const mc::AbstractFileInfo &file) const
+void mc::FileOperationCopy::copyFile(const mc::AbstractFileInfo &file)
 {
     std::error_code err;
     unsigned int id = 0;
 
     while (true) {
-        auto dst = m_register.createPathFrom(file, id);
+        //auto dst = m_register.createPathFrom(file, id);
+        fs::path dst{};
         if (!fs::exists(dst)) {
             fs::create_directories(dst.parent_path());
             fs::copy_file(file.path(), dst, err);

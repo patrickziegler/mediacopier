@@ -22,7 +22,7 @@
 
 namespace mc = MediaCopier;
 
-std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFromPath(const std::filesystem::path &path) const
+std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFromPath(const std::filesystem::path &path)
 {
     try {
         std::unique_ptr<Exiv2::Image> image;
@@ -31,12 +31,10 @@ std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFromPath(const 
         if (image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
             image->readMetadata();
 
-            auto exif = image->exifData();
-
             if (image->mimeType() == "image/jpeg") {
-                return std::make_unique<FileInfoImageJpeg>(path, exif);
+                return std::make_unique<FileInfoImageJpeg>(path, std::move(image->exifData()));
             } else {
-                return std::make_unique<FileInfoImage>(path, exif);
+                return std::make_unique<FileInfoImage>(path, std::move(image->exifData()));
             }
         }
     }  catch (const Exiv2::Error&) {

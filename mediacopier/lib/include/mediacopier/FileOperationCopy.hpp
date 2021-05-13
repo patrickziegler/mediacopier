@@ -23,13 +23,14 @@ namespace MediaCopier {
 
 class FileOperationCopy : public AbstractFileOperation {
 public:
-    explicit FileOperationCopy(FileRegister executor) : m_register{std::move(executor)} {}
+    explicit FileOperationCopy(std::filesystem::path destination) : m_destination{std::move(destination)} {}
+    virtual ~FileOperationCopy() = default;
     void visit(const FileInfoImage &file) const override;
     void visit(const FileInfoImageJpeg &file) const override;
     void visit(const FileInfoVideo &file) const override;
 protected:
-    void copyFile(const AbstractFileInfo &file) const;
-    FileRegister m_register;
+    static void copyFile(const AbstractFileInfo &file);
+    std::filesystem::path m_destination;
 };
 
 }

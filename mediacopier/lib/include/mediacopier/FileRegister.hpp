@@ -16,32 +16,30 @@
 
 #pragma once
 
-#include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/FileInfoFactory.hpp>
 
 #include <filesystem>
+#include <unordered_map>
 
 namespace MediaCopier {
 
 class AbstractFileInfo;
 
+using FileInfoMap = std::unordered_map<std::string, std::shared_ptr<AbstractFileInfo>>;
+
 class FileRegister {
 public:
-    explicit FileRegister(std::filesystem::path destination, std::string pattern, bool useSubsec = true);
-    ~FileRegister();
-    void add(const AbstractFileInfo& file);
-    void execute(const AbstractFileOperation& operation);
-
-// --- deprecated interface from here on ---
-
-    std::filesystem::path createPathFrom(const AbstractFileInfo &file, unsigned int id = 0) const;
-    std::filesystem::path createTemporaryPathFrom(const AbstractFileInfo &file) const;
+    explicit FileRegister(std::filesystem::path destination, std::string pattern);
+    void add(const std::filesystem::path& path);
+    FileInfoMap::const_iterator begin() const;
+    FileInfoMap::const_iterator end() const;
+    size_t size() const;
 private:
-    std::filesystem::path createPath(const AbstractFileInfo &file, std::filesystem::path destination, unsigned int id = 0) const;
-    std::filesystem::path m_destination;
-    std::filesystem::path m_tempdir;
+    std::filesystem::path create_path(const AbstractFileInfo &file, unsigned int id, bool useSubsec);
+    std::filesystem::path m_destdir;
+    FileInfoFactory m_factory;
     std::string m_pattern;
-    bool m_useSubsec;
+    FileInfoMap m_register;
 };
 
 }
