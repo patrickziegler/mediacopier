@@ -16,6 +16,7 @@
 
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/exceptions.hpp>
+#include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileRegister.hpp>
 
 #include <random>
@@ -82,7 +83,7 @@ void FileRegister::add(const std::filesystem::path& path)
 {
     size_t id = 0;
 
-    auto infoPtr = m_factory.createFromPath(path);
+    auto infoPtr = FileInfoFactory::createFromPath(path);
     fs::path newPath;
 
     while (id < std::numeric_limits<size_t>::max()) {

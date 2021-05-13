@@ -33,7 +33,7 @@ OperationExecutor createExecutor(int argc, char *argv[])
 
     fs::path inputDir;
     fs::path outputDir;
-    std::string baseFormat = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
+    std::string pattern = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
     OperationExecutor::Command command;
 
     for (int i = 1; i < argc; ++i) {
@@ -49,7 +49,7 @@ OperationExecutor createExecutor(int argc, char *argv[])
             if (arg.find("f") < arg.npos) {
                 if (i + 1 < argc) {
                     ++i;
-                    baseFormat = std::string{argv[i]};
+                    pattern = std::string{argv[i]};
                 } else {
                     std::cerr << "Option '-f' requires an argument" << std::endl;
                     std::exit(1);
@@ -71,7 +71,7 @@ OperationExecutor createExecutor(int argc, char *argv[])
                   << "\nOptions and arguments:\n"
                   << "  -h     : Show this help message and exit\n"
                   << "  -f FMT : Set the base format to be used for new filenames\n"
-                  << "           (default: " << baseFormat << ")\n";
+                  << "           (default: " << pattern << ")\n";
         std::exit(0);
     }
 
@@ -94,7 +94,7 @@ OperationExecutor createExecutor(int argc, char *argv[])
         std::exit(1);
     }
 
-    return {command, inputDir, outputDir, baseFormat};
+    return {command, inputDir, outputDir, pattern};
 }
 
 } // namespace MediaCopier

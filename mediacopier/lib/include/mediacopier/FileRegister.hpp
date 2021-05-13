@@ -16,8 +16,6 @@
 
 #pragma once
 
-#include <mediacopier/FileInfoFactory.hpp>
-
 #include <filesystem>
 #include <unordered_map>
 
@@ -36,7 +34,6 @@ public:
     size_t size() const;
 private:
     std::filesystem::path m_destdir;
-    FileInfoFactory m_factory;
     std::string m_pattern;
     FileInfoMap m_register;
 };

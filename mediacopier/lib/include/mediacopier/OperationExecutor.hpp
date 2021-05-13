@@ -26,17 +26,17 @@ public:
         COPY,
         MOVE,
     };
-    OperationExecutor(Command command, std::filesystem::path inputDir, std::filesystem::path outputDir, std::string baseFormat)
+    OperationExecutor(Command command, std::filesystem::path inputDir, std::filesystem::path outputDir, std::string pattern)
         : m_command{std::move(command)},
           m_inputDir{std::move(inputDir)},
           m_outputDir{std::move(outputDir)},
-          m_baseFormat{std::move(baseFormat)} {}
+          m_pattern{std::move(pattern)} {}
     void run();
 private:
     Command m_command;
     std::filesystem::path m_inputDir;
     std::filesystem::path m_outputDir;
-    std::string m_baseFormat;
+    std::string m_pattern;
 };
 
 }
