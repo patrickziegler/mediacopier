@@ -26,22 +26,22 @@ extern "C"
 
 #include <sstream>
 
-namespace mc = MediaCopier;
+namespace MediaCopier {
 
-mc::FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path}
+FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path}
 {
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionaryEntry* tag = nullptr;
 
     if (avformat_open_input(&fmt_ctx, path.c_str(), nullptr, nullptr)) {
-        throw mc::FileInfoError{"Could not read video metadata"};
+        throw FileInfoError{"Could not read video metadata"};
     }
 
     tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX);
 
     if (!tag) {
         avformat_close_input(&fmt_ctx);
-        throw mc::FileInfoError{"'creation_time' not found in video metadata"};
+        throw FileInfoError{"'creation_time' not found in video metadata"};
     }
 
     // magic numbers assume the following format: 2018-01-01T01:01:01.000000Z
@@ -55,11 +55,13 @@ mc::FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{
     avformat_close_input(&fmt_ctx);
 
     if (m_timestamp == std::chrono::system_clock::time_point{}) {
-        throw mc::FileInfoError{"No date information found"};
+        throw FileInfoError{"No date information found"};
     }
 }
 
-void mc::FileInfoVideo::accept(const AbstractFileOperation& operation) const
+void FileInfoVideo::accept(const AbstractFileOperation& operation) const
 {
     operation.visit(*this);
+}
+
 }

@@ -20,9 +20,9 @@
 #include <mediacopier/FileInfoImageJpeg.hpp>
 #include <mediacopier/FileInfoVideo.hpp>
 
-namespace mc = MediaCopier;
+namespace MediaCopier {
 
-std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFromPath(const std::filesystem::path &path)
+std::unique_ptr<AbstractFileInfo> FileInfoFactory::createFromPath(const std::filesystem::path& path)
 {
     try {
         std::unique_ptr<Exiv2::Image> image;
@@ -43,9 +43,11 @@ std::unique_ptr<mc::AbstractFileInfo> mc::FileInfoFactory::createFromPath(const 
 
     try {
         return std::make_unique<FileInfoVideo>(path);
-    }  catch (const mc::FileInfoError&) {
+    }  catch (const FileInfoError&) {
         // this was not a video file
     }
 
-    throw mc::FileInfoError{"Unknown file type"};
+    throw FileInfoError{"Unknown file type"};
+}
+
 }
