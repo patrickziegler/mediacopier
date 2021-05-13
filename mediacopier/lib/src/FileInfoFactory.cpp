@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/exceptions.hpp>
+#include <mediacopier/Error.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileInfoImage.hpp>
 #include <mediacopier/FileInfoImageJpeg.hpp>

@@ -15,7 +15,7 @@
  */
 
 #include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/exceptions.hpp>
+#include <mediacopier/Error.hpp>
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileRegister.hpp>
 

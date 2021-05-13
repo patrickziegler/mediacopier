@@ -17,7 +17,7 @@
 #include <mediacopier/OperationExecutor.hpp>
 
 #include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/exceptions.hpp>
+#include <mediacopier/Error.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FileRegister.hpp>
 
@@ -59,7 +59,7 @@ namespace MediaCopier {
 void OperationExecutor::run()
 {
     if (!fs::is_directory(m_inputDir)) {
-        throw std::runtime_error("Input folder does not exist");
+        throw MediaCopierError("Input folder does not exist");
     }
 
     FileRegister fileRegister{m_outputDir, m_pattern};
@@ -75,7 +75,7 @@ void OperationExecutor::run()
     }
 
     if (fileRegister.size() < 1) {
-        throw std::runtime_error("No files were found in " + m_inputDir.string());
+        throw MediaCopierError("No files were found in " + m_inputDir.string());
     }
 
     switch (m_command)
@@ -93,7 +93,7 @@ void OperationExecutor::run()
         });
 
     default:
-        throw std::runtime_error("Unknown operation type");
+        throw FileOperationError("Unknown operation type");
     }
 }
 
