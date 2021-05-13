@@ -23,14 +23,36 @@
 
 namespace fs = std::filesystem;
 
+#include <atomic>
+#include <csignal>
+#include <functional>
+
+static volatile std::atomic<bool> operationCancelled;
+
+template <typename T>
+static T abortable_wrapper(std::function<T()> fn)
+{
+    operationCancelled.store(false);
+    std::signal(SIGINT, [](int signal) -> void {
+        (void) signal;
+        operationCancelled.store(true);
+    });
+    T result = fn();
+    std::signal(SIGINT, SIG_DFL);
+    return result;
+}
+
 namespace MediaCopier {
 
 template <typename T>
-void execute(const FileRegister& fileRegister)
+static void execute(const FileRegister& fileRegister)
 {
     for (const auto& item : fileRegister) {
         T operation{item.first};
         item.second->accept(operation);
+        if (operationCancelled.load()) {
+            break;
+        }
     }
 }
 
@@ -59,10 +81,16 @@ void OperationExecutor::run()
     switch (m_command)
     {
     case Command::COPY:
-        execute<FileOperationCopyJpeg>(fileRegister);
+        abortable_wrapper<int>([fileRegister]() -> int {
+            execute<FileOperationCopyJpeg>(fileRegister);
+            return 0;
+        });
 
     case Command::MOVE:
-        execute<FileOperationMoveJpeg>(fileRegister);
+        abortable_wrapper<int>([fileRegister]() -> int {
+            execute<FileOperationMoveJpeg>(fileRegister);
+            return 0;
+        });
 
     default:
         throw std::runtime_error("Unknown operation type");
