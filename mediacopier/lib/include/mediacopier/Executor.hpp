@@ -20,13 +20,13 @@
 
 namespace MediaCopier {
 
-class OperationExecutor {
+class Executor {
 public:
     enum class Command {
         COPY,
         MOVE,
     };
-    OperationExecutor(Command command, std::filesystem::path inputDir, std::filesystem::path outputDir, std::string pattern)
+    Executor(Command command, std::filesystem::path inputDir, std::filesystem::path outputDir, std::string pattern)
         : m_command{std::move(command)},
           m_inputDir{std::move(inputDir)},
           m_outputDir{std::move(outputDir)},

@@ -14,10 +14,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/OperationExecutor.hpp>
-
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/Error.hpp>
+#include <mediacopier/Executor.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FileRegister.hpp>
 
@@ -56,7 +55,7 @@ static void execute(const MediaCopier::FileRegister& fileRegister)
 
 namespace MediaCopier {
 
-void OperationExecutor::run()
+void Executor::run()
 {
     if (!fs::is_directory(m_inputDir)) {
         throw MediaCopierError("Input folder does not exist");
