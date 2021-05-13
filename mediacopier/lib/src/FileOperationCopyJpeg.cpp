@@ -169,31 +169,6 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     return std::error_code{};
 }
 
-// TODO: warning: the use of `tmpnam' is dangerous, better use `mkstemp'
-
-class TmpFile {
-public:
-    TmpFile() : m_path{fs::path{std::tmpnam(nullptr)}} {
-        if (!fs::exists(m_path.parent_path())) {
-            throw MediaCopier::FileOperationError("Parent path does not exist for " + m_path.string());
-        }
-    }
-
-    ~TmpFile() {
-        if (fs::exists(m_path)) {
-            std::error_code err{}; // prevents exceptions from fs::remove
-            fs::remove(m_path, err);
-        }
-    }
-
-    auto path() -> const fs::path& {
-        return m_path;
-    }
-
-private:
-    fs::path m_path;
-};
-
 namespace MediaCopier {
 
 void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
@@ -204,9 +179,7 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
         return copyFile(file);
     }
 
-    TmpFile tmpfile{};
-
-    auto err = jpeg_copy_rotated(file, tmpfile.path());
+    auto err = jpeg_copy_rotated(file, m_destination);
 
     if (err.value() > 0) {
         if (err.value() == static_cast<int>(JpegErrorValue::ImageSizeError)) {
@@ -217,7 +190,7 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
 
     try {
         std::unique_ptr<Exiv2::Image> image;
-        image = Exiv2::ImageFactory::open(tmpfile.path());
+        image = Exiv2::ImageFactory::open(m_destination);
         image->readMetadata();
 
         auto exif = image->exifData();
@@ -225,11 +198,6 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
 
         image->setExifData(exif);
         image->writeMetadata();
-
-        // TODO: copy from original file object instead
-        FileInfoImageJpeg tmpinfo{tmpfile.path(), exif};
-
-        return copyFile(tmpinfo);
 
     }  catch (const Exiv2::Error& err) {
 
