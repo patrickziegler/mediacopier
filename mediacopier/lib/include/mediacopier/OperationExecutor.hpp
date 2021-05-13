@@ -26,9 +26,7 @@ public:
         COPY,
         MOVE,
     };
-    OperationExecutor(
-            Command command, std::filesystem::path inputDir, std::filesystem::path outputDir,
-            std::string baseFormat = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_")
+    OperationExecutor(Command command, std::filesystem::path inputDir, std::filesystem::path outputDir, std::string baseFormat)
         : m_command{std::move(command)},
           m_inputDir{std::move(inputDir)},
           m_outputDir{std::move(outputDir)},
