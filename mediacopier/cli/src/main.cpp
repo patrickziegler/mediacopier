@@ -18,66 +18,11 @@
 #include <log4cplus/logger.h>
 #include <log4cplus/loggingmacros.h>
 
-#include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/exceptions.hpp>
-#include <mediacopier/FileOperationMoveJpeg.hpp>
-#include <mediacopier/FileRegister.hpp>
+#include <mediacopier/OperationExecutor.hpp>
 
 #include "config.hpp"
 
 namespace fs = std::filesystem;
-
-using namespace MediaCopier;
-
-template <typename T>
-void execute(const FileRegister& fileRegister)
-{
-    for (const auto& item : fileRegister) {
-        T operation{item.first};
-        item.second->accept(operation);
-    }
-}
-
-void run(const ConfigManager& config)
-{
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("run"));
-
-    if (!fs::is_directory(config.inputDir())) {
-        throw std::runtime_error("Input folder does not exist");
-    }
-
-    FileRegister fileRegister{config.outputDir(), config.baseFormat()};
-
-    for (const auto& path : fs::recursive_directory_iterator(config.inputDir())) {
-        if (path.is_regular_file()) {
-            try {
-                fileRegister.add(path);
-            } catch (const FileInfoError& err) {
-                LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what()));
-            }
-        }
-    }
-
-    if (fileRegister.size() < 1) {
-        throw std::runtime_error("No files were found in " + config.inputDir().string());
-    }
-
-    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Found " + std::to_string(fileRegister.size()) + " files in " + config.inputDir().string()));
-
-    switch (config.command())
-    {
-    case ConfigManager::Command::COPY:
-        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Copying files"));
-        execute<FileOperationCopyJpeg>(fileRegister);
-
-    case ConfigManager::Command::MOVE:
-        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Moving files"));
-        execute<FileOperationMoveJpeg>(fileRegister);
-
-    default:
-        throw std::runtime_error("Unknown operation type");
-    }
-}
 
 int main(int argc, char *argv[])
 {
@@ -89,8 +34,12 @@ int main(int argc, char *argv[])
     ConfigManager config;
     config.parseArgs(argc, argv);
 
+    MediaCopier::OperationExecutor executor{
+        config.command(), config.inputDir(), config.outputDir(), config.baseFormat()
+    };
+
     try {
-        run(config);
+        executor.run();
     } catch (const std::exception& err) {
         LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what()));
         return 1;
