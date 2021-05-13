@@ -78,11 +78,11 @@ using jpeg_error_ptr = jpeg_error*;
 static void jpeg_error_handler(j_common_ptr c_info)
 {
     jpeg_error_ptr err = reinterpret_cast<jpeg_error_ptr>(c_info->err);
-    std::cerr << err->mgr.jpeg_message_table[err->mgr.msg_code] << std::endl;
+    std::cerr << "jpeg_error_handler: " << err->mgr.jpeg_message_table[err->mgr.msg_code] << std::endl;
     longjmp(err->env, 1);
 }
 
-static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path &dst)
+static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path& dst)
 {
     FILE *f_in, *f_out;
     jvirt_barray_ptr *c_coeff, *d_coeff;
@@ -169,10 +169,10 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     jpeg_finish_decompress(&c_info);
     jpeg_destroy_decompress(&c_info);
 
-    fclose(f_in);
     fclose(f_out);
+    fclose(f_in);
 
-    return std::error_code{};
+    return {};
 }
 
 namespace MediaCopier {
@@ -189,6 +189,7 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
         LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT("Already exists: " + m_destination.filename().string()));
     }
 
+    fs::create_directories(m_destination.parent_path());
     auto err = jpeg_copy_rotated(file, m_destination);
 
     if (err.value() > 0) {

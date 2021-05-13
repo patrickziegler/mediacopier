@@ -21,8 +21,12 @@ namespace MediaCopier {
 
 FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif) : FileInfoImage{std::move(path), exif}
 {
-    if (exif.findKey(Exiv2::ExifKey{"Exif.Image.Orientation"}) != exif.end()) {
-        m_orientation = static_cast<Orientation>(exif["Exif.Image.Orientation"].toLong());
+    std::string orientationKey{"Exif.Image.Orientation"};
+    if (exif.findKey(Exiv2::ExifKey{orientationKey}) != exif.end()) {
+        auto orientation = exif[orientationKey].toLong();
+        if (orientation >= static_cast<long>(Orientation::ROT_0) && orientation <= static_cast<long>(Orientation::ROT_270)) {
+            m_orientation = static_cast<Orientation>(orientation);
+        }
     }
 }
 
