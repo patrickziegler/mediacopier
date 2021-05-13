@@ -15,8 +15,8 @@
  */
 
 #include <date/date.h>
-#include <mediacopier/exceptions.hpp>
 #include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/Error.hpp>
 #include <mediacopier/FileInfoImage.hpp>
 
 static constexpr const std::array<char[29], 4> keysDateTime = {
