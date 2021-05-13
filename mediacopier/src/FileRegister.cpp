@@ -105,7 +105,7 @@ void FileRegister::add(const std::filesystem::path& path)
 
         if (fs::exists(newPath)) {
             if (is_equal(path, newPath)) {
-                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Already there: " + path.filename().string() + " same as " + item->second->path().filename().string()));
+                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Already there: " + path.filename().string() + " same as " + newPath.filename().string()));
                 return; // is duplicate
             }
             ++id;
