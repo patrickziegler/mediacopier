@@ -17,9 +17,9 @@
 #include <mediacopier/AbstractFileOperation.hpp>
 #include <mediacopier/FileInfoImageJpeg.hpp>
 
-namespace mc = MediaCopier;
+namespace MediaCopier {
 
-mc::FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData exif) : FileInfoImage{std::move(path), exif}
+FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData exif) : FileInfoImage{std::move(path), exif}
 {
     std::string key{"Exif.Image.Orientation"};
     if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
@@ -27,7 +27,9 @@ mc::FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::Exif
     }
 }
 
-void mc::FileInfoImageJpeg::accept(const AbstractFileOperation& operation) const
+void FileInfoImageJpeg::accept(const AbstractFileOperation& operation) const
 {
     operation.visit(*this);
+}
+
 }

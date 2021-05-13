@@ -19,8 +19,6 @@
 #include <mediacopier/AbstractFileOperation.hpp>
 #include <mediacopier/FileInfoImage.hpp>
 
-namespace mc = MediaCopier;
-
 static constexpr const std::array<char[29], 4> keysDateTime = {
     "Exif.Photo.DateTimeOriginal",
     "Exif.Image.DateTimeOriginal",
@@ -34,7 +32,9 @@ static constexpr const std::array<char[31], 3> keysSubSec = {
     "Exif.Photo.SubSecTime"
 };
 
-mc::FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif) : AbstractFileInfo{std::move(path)}
+namespace MediaCopier {
+
+FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif) : AbstractFileInfo{std::move(path)}
 {
     for (const std::string& key : keysDateTime) {
         if (exif.findKey(std::move(Exiv2::ExifKey{key})) == exif.end()) {
@@ -61,11 +61,13 @@ mc::FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exi
     }
 
     if (m_timestamp == std::chrono::system_clock::time_point{}) {
-        throw mc::FileInfoError{"No date information found"};
+        throw FileInfoError{"No date information found"};
     }
 }
 
-void mc::FileInfoImage::accept(const AbstractFileOperation& operation) const
+void FileInfoImage::accept(const AbstractFileOperation& operation) const
 {
     operation.visit(*this);
+}
+
 }
