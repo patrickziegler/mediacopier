@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 Patrick Ziegler
+/* Copyright (C) 2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,24 +16,29 @@
 
 #pragma once
 
-#include <mediacopier/OperationExecutor.hpp>
-
 #include <filesystem>
 
-class ConfigManager {
+namespace MediaCopier {
+
+class OperationExecutor {
 public:
-    void parseArgs(int argc, char *argv[]);
-    void setInputDir(std::filesystem::path dir);
-    void setOutputDir(std::filesystem::path dir);
-    void setBaseFormat(std::string fmt);
-    void setCommand(MediaCopier::OperationExecutor::Command op);
-    std::filesystem::path inputDir() const;
-    std::filesystem::path outputDir() const;
-    std::string baseFormat() const;
-    MediaCopier::OperationExecutor::Command command() const;
+    enum class Command {
+        COPY,
+        MOVE,
+    };
+    OperationExecutor(
+            Command command, std::filesystem::path inputDir, std::filesystem::path outputDir,
+            std::string baseFormat = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_")
+        : m_command{std::move(command)},
+          m_inputDir{std::move(inputDir)},
+          m_outputDir{std::move(outputDir)},
+          m_baseFormat{std::move(baseFormat)} {}
+    void run();
 private:
+    Command m_command;
     std::filesystem::path m_inputDir;
     std::filesystem::path m_outputDir;
-    std::string m_baseFormat = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
-    MediaCopier::OperationExecutor::Command m_command;
+    std::string m_baseFormat;
 };
+
+}

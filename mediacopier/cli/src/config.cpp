@@ -76,12 +76,10 @@ void ConfigManager::parseArgs(int argc, char *argv[])
     }
 
     if (op == "copy") {
-        m_command = Command::COPY;
+        m_command = MediaCopier::OperationExecutor::Command::COPY;
     } else if (op == "move") {
-        m_command = Command::MOVE;
-    }
-
-    if (m_command == Command::UNKNOWN) {
+        m_command = MediaCopier::OperationExecutor::Command::MOVE;
+    } else {
         std::cerr << "Unknown operation '" << op << "'" << std::endl;
         std::exit(1);
     }
@@ -99,7 +97,7 @@ void ConfigManager::setBaseFormat(std::string fmt) {
     m_outputDir = std::move(fmt);
 }
 
-void ConfigManager::setCommand(Command op) {
+void ConfigManager::setCommand(MediaCopier::OperationExecutor::Command op) {
     m_command = op;
 }
 
@@ -118,7 +116,7 @@ std::string ConfigManager::baseFormat() const
     return m_baseFormat;
 }
 
-ConfigManager::Command ConfigManager::command() const
+MediaCopier::OperationExecutor::Command ConfigManager::command() const
 {
     return m_command;
 }
