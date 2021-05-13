@@ -10,7 +10,7 @@ configure_file(
 
 add_library(${TARGET_NAME} SHARED)
 
-set_target_properties(${MEDIACOPIER_LIB_TARGET_NAME} PROPERTIES
+set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mediacopier)
 
 target_sources(${TARGET_NAME} PRIVATE
