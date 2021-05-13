@@ -39,4 +39,4 @@ private:
     std::string m_pattern;
 };
 
-}
+} // namespace MediaCopier

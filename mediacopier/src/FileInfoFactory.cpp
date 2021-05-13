@@ -52,4 +52,4 @@ std::unique_ptr<AbstractFileInfo> FileInfoFactory::createFromPath(const std::fil
     throw FileInfoError{"Unknown file type"};
 }
 
-}
+} // namespace MediaCopier

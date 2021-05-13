@@ -32,4 +32,4 @@ class FileOperationError : public MediaCopierError {
     using MediaCopierError::MediaCopierError;
 };
 
-}
+} // namespace MediaCopier

@@ -38,4 +38,4 @@ private:
     FileInfoMap m_register;
 };
 
-}
+} // namespace MediaCopier

@@ -32,4 +32,4 @@ protected:
     std::filesystem::path m_destination;
 };
 
-}
+} // namespace MediaCopier

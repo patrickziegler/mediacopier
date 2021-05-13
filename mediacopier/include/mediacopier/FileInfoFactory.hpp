@@ -29,4 +29,4 @@ public:
     static FileInfoPtr createFromPath(const std::filesystem::path& path);
 };
 
-}
+} // namespace MediaCopier

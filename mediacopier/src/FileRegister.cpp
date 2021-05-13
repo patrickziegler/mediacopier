@@ -84,12 +84,10 @@ void FileRegister::add(const std::filesystem::path& path)
     size_t id = 0;
 
     auto infoPtr = FileInfoFactory::createFromPath(path);
-    fs::path newPath;
 
     while (id < std::numeric_limits<size_t>::max()) {
 
-        newPath = create_path(*infoPtr, m_destdir, m_pattern, id, true);
-
+        auto newPath = create_path(*infoPtr, m_destdir, m_pattern, id, true);
         auto item = m_register.find(newPath);
 
         if (item != m_register.end()) {
@@ -130,4 +128,4 @@ size_t FileRegister::size() const
     return m_register.size();
 }
 
-}
+} // namespace MediaCopier

@@ -98,4 +98,4 @@ void Executor::run()
     }
 }
 
-}
+} // namespace MediaCopier

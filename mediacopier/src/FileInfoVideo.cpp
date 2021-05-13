@@ -64,4 +64,4 @@ void FileInfoVideo::accept(const AbstractFileOperation& operation) const
     operation.visit(*this);
 }
 
-}
+} // namespace MediaCopier

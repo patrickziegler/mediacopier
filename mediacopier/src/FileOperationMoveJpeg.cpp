@@ -41,4 +41,4 @@ void FileOperationMoveJpeg::visit(const FileInfoVideo& file) const
     fs::remove(file.path());
 }
 
-}
+} // namespace MediaCopier

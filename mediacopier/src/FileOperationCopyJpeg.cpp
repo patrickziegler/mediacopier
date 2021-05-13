@@ -222,4 +222,4 @@ void FileOperationCopyJpeg::visit(const FileInfoVideo& file) const
     copyFile(file);
 }
 
-}
+} // namespace MediaCopier

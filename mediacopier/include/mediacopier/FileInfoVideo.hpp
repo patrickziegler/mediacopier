@@ -26,4 +26,4 @@ public:
     void accept(const AbstractFileOperation& operation) const override;
 };
 
-}
+} // namespace MediaCopier

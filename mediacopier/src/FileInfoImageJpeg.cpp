@@ -32,4 +32,4 @@ void FileInfoImageJpeg::accept(const AbstractFileOperation& operation) const
     operation.visit(*this);
 }
 
-}
+} // namespace MediaCopier

@@ -30,4 +30,4 @@ protected:
     void copyJpeg(const FileInfoImageJpeg& file) const;
 };
 
-}
+} // namespace MediaCopier

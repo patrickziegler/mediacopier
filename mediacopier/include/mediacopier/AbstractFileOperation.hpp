@@ -30,4 +30,4 @@ public:
     virtual void visit(const FileInfoVideo& file) const = 0;
 };
 
-}
+} // namespace MediaCopier

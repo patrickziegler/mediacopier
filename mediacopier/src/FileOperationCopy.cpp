@@ -52,4 +52,4 @@ void FileOperationCopy::visit(const FileInfoVideo& file) const
     copyFile(file);
 }
 
-}
+} // namespace MediaCopier

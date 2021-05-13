@@ -35,4 +35,4 @@ protected:
     std::chrono::system_clock::time_point m_timestamp;
 };
 
-}
+} // namespace MediaCopier

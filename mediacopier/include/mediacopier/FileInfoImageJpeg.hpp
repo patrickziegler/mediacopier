@@ -39,4 +39,4 @@ private:
     int m_orientation;
 };
 
-}
+} // namespace MediaCopier

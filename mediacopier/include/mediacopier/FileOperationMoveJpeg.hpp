@@ -28,4 +28,4 @@ public:
     void visit(const FileInfoVideo& file) const override;
 };
 
-}
+} // namespace MediaCopier
