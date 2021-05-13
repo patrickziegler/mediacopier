@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 option(ENABLE_COVERAGE "Activate flags for gcov on compilation" OFF)
+option(ENABLE_CLI "Include command line interface" ON)
 option(ENABLE_GUI "Include graphical user interface" OFF)
 option(ENABLE_TEST "Include test targets" OFF)
 
@@ -21,18 +22,18 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 endif()
 
-if(${ENABLE_TEST})
-    set(TEST_DATA_TARGET_NAME test-data)
-    add_subdirectory(test-data)
-    enable_testing()
-endif()
-
 set(MEDIACOPIER_LIB_TARGET_NAME mediacopier-lib)
 
-add_subdirectory(mediacopier/lib)
+add_subdirectory(mediacopier)
 
-add_subdirectory(mediacopier/cli)
+if(${ENABLE_CLI})
+    add_subdirectory(mediacopier-cli)
+endif()
 
 if(${ENABLE_GUI})
     add_subdirectory(mediacopier-gui)
+endif()
+
+if(${ENABLE_TEST})
+    enable_testing()
 endif()
