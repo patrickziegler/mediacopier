@@ -30,7 +30,7 @@ void FileOperationCopy::copyFile(const AbstractFileInfo& file) const
     std::error_code err;
 
     fs::create_directories(m_destination.parent_path());
-    fs::copy_file(file.path(), m_destination, err);
+    fs::copy_file(file.path(), m_destination, fs::copy_options::overwrite_existing, err);
 
     if (err.value() > 0) {
         throw FileOperationError{err.message()};

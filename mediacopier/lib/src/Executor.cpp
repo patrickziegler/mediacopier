@@ -84,12 +84,14 @@ void Executor::run()
             execute<FileOperationCopyJpeg>(fileRegister);
             return 0;
         });
+        break;
 
     case Command::MOVE:
         abortable_wrapper<int>([fileRegister]() -> int {
             execute<FileOperationMoveJpeg>(fileRegister);
             return 0;
         });
+        break;
 
     default:
         throw FileOperationError("Unknown operation type");

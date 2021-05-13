@@ -109,7 +109,7 @@ void FileRegister::add(const std::filesystem::path& path)
         }
 
         m_register[newPath.string()] = std::move(infoPtr);
-        break;
+        return;
     }
 
     throw FileOperationError{"Unable to find unique filename"};
