@@ -23,7 +23,7 @@ namespace MediaCopier {
 
 class FileInfoImage : public AbstractFileInfo {
 public:
-    FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif);
+    FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif);
     void accept(const AbstractFileOperation& operation) const override;
 };
 

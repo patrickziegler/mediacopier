@@ -31,10 +31,12 @@ std::unique_ptr<AbstractFileInfo> FileInfoFactory::createFromPath(const std::fil
         if (image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
             image->readMetadata();
 
+            auto& exif = image->exifData();
+
             if (image->mimeType() == "image/jpeg") {
-                return std::make_unique<FileInfoImageJpeg>(path, std::move(image->exifData()));
+                return std::make_unique<FileInfoImageJpeg>(path, exif);
             } else {
-                return std::make_unique<FileInfoImage>(path, std::move(image->exifData()));
+                return std::make_unique<FileInfoImage>(path, exif);
             }
         }
     }  catch (const Exiv2::Error&) {

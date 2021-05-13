@@ -34,7 +34,7 @@ static constexpr const std::array<char[31], 3> keysSubSec = {
 
 namespace MediaCopier {
 
-FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData exif) : AbstractFileInfo{std::move(path)}
+FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) : AbstractFileInfo{std::move(path)}
 {
     for (const std::string& key : keysDateTime) {
         if (exif.findKey(std::move(Exiv2::ExifKey{key})) == exif.end()) {

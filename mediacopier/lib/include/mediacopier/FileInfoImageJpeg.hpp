@@ -32,7 +32,7 @@ public:
         ROT_270_MIRRORED,
         ROT_270,
     };
-    FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData exif);
+    FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif);
     void accept(const AbstractFileOperation& operation) const override;
     int orientation() const { return m_orientation; }
 private:
