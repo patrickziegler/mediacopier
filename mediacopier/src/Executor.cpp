@@ -20,11 +20,13 @@
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FileRegister.hpp>
 
-namespace fs = std::filesystem;
+#include <log4cplus/log4cplus.h>
 
 #include <atomic>
 #include <csignal>
 #include <functional>
+
+namespace fs = std::filesystem;
 
 static volatile std::atomic<bool> operationCancelled;
 
@@ -44,10 +46,13 @@ static T abortable_wrapper(std::function<T()> fn)
 template <typename T>
 static void execute(const MediaCopier::FileRegister& fileRegister)
 {
+    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("execute"));
+
     for (const auto& item : fileRegister) {
         T operation{item.first};
         item.second->accept(operation);
         if (operationCancelled.load()) {
+            LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Aborting execution"));
             break;
         }
     }
@@ -57,6 +62,8 @@ namespace MediaCopier {
 
 void Executor::run()
 {
+    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("run"));
+
     if (!fs::is_directory(m_inputDir)) {
         throw MediaCopierError("Input folder does not exist");
     }
@@ -68,7 +75,7 @@ void Executor::run()
             try {
                 fileRegister.add(path);
             } catch (const FileInfoError& err) {
-                // TODO: log this incident (err.what())
+                LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(err.what()));
             }
         }
     }
@@ -77,9 +84,12 @@ void Executor::run()
         throw MediaCopierError("No files were found in " + m_inputDir.string());
     }
 
+    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Found " + std::to_string(fileRegister.size())) + " files");
+
     switch (m_command)
     {
     case Command::COPY:
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing COPY operation"));
         abortable_wrapper<int>([fileRegister]() -> int {
             execute<FileOperationCopyJpeg>(fileRegister);
             return 0;
@@ -87,6 +97,7 @@ void Executor::run()
         break;
 
     case Command::MOVE:
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing MOVE operation"));
         abortable_wrapper<int>([fileRegister]() -> int {
             execute<FileOperationMoveJpeg>(fileRegister);
             return 0;
@@ -96,6 +107,8 @@ void Executor::run()
     default:
         throw FileOperationError("Unknown operation type");
     }
+
+    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Execution finished"));
 }
 
 } // namespace MediaCopier

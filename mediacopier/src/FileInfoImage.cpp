@@ -61,7 +61,7 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) 
     }
 
     if (m_timestamp == std::chrono::system_clock::time_point{}) {
-        throw FileInfoError{"No date information found"};
+        throw FileInfoError{"No date information found for " + path.filename().string()};
     }
 }
 

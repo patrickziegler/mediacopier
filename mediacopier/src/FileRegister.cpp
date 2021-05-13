@@ -19,6 +19,8 @@
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileRegister.hpp>
 
+#include <log4cplus/log4cplus.h>
+
 #include <random>
 #include <fstream>
 #include <sstream>
@@ -81,6 +83,8 @@ FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdi
 
 void FileRegister::add(const std::filesystem::path& path)
 {
+    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("add"));
+
     size_t id = 0;
 
     auto infoPtr = FileInfoFactory::createFromPath(path);
@@ -92,6 +96,7 @@ void FileRegister::add(const std::filesystem::path& path)
 
         if (item != m_register.end()) {
             if (is_equal(path, item->second->path())) {
+                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Duplicate: " + path.filename().string() + " same as " + item->second->path().filename().string()));
                 return; // is duplicate
             }
             ++id;
@@ -100,6 +105,7 @@ void FileRegister::add(const std::filesystem::path& path)
 
         if (fs::exists(newPath)) {
             if (is_equal(path, newPath)) {
+                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Already there: " + path.filename().string() + " same as " + item->second->path().filename().string()));
                 return; // is duplicate
             }
             ++id;

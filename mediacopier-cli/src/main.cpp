@@ -17,9 +17,7 @@
 #include <mediacopier/Executor.hpp>
 #include <mediacopier/version.hpp>
 
-#include <log4cplus/configurator.h>
-#include <log4cplus/logger.h>
-#include <log4cplus/loggingmacros.h>
+#include <log4cplus/log4cplus.h>
 
 #include <iostream>
 

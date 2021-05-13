@@ -49,7 +49,7 @@ std::unique_ptr<AbstractFileInfo> FileInfoFactory::createFromPath(const std::fil
         // this was not a video file
     }
 
-    throw FileInfoError{"Unknown file type"};
+    throw FileInfoError{"Unknown file type for " + path.filename().string()};
 }
 
 } // namespace MediaCopier

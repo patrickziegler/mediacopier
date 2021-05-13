@@ -20,7 +20,10 @@
 #include <mediacopier/FileInfoVideo.hpp>
 #include <mediacopier/FileOperationCopyJpeg.hpp>
 
+#include <log4cplus/log4cplus.h>
+
 #include <csetjmp>
+#include <iostream>
 
 extern "C"
 {
@@ -34,7 +37,8 @@ enum class JpegErrorValue {
     UnknownTransformation,
     ImageSizeError,
     JpegError,
-    FileError,
+    FileReadError,
+    FileWriteError,
 };
 
 struct JpegErrorCategory : public std::error_category
@@ -53,8 +57,10 @@ struct JpegErrorCategory : public std::error_category
             return "Image size not fit for transformation";
         case JpegErrorValue::JpegError:
             return "Error reading / writing jpeg coefficients";
-        case JpegErrorValue::FileError:
-            return "Error reading / writing image file";
+        case JpegErrorValue::FileReadError:
+            return "Error reading image file";
+        case JpegErrorValue::FileWriteError:
+            return "Error writing image file";
         default:
             return "Unknown error";
         }
@@ -72,7 +78,7 @@ using jpeg_error_ptr = jpeg_error*;
 static void jpeg_error_handler(j_common_ptr c_info)
 {
     jpeg_error_ptr err = reinterpret_cast<jpeg_error_ptr>(c_info->err);
-    // std::cerr << err->mgr.jpeg_message_table[err->mgr.msg_code] << std::endl;
+    std::cerr << err->mgr.jpeg_message_table[err->mgr.msg_code] << std::endl;
     longjmp(err->env, 1);
 }
 
@@ -126,7 +132,7 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     jpeg_create_compress(&d_info);
 
     if ((f_in = fopen(file.path().c_str(), "rb")) == nullptr) {
-        return std::error_code{static_cast<int>(JpegErrorValue::FileError), cat};
+        return std::error_code{static_cast<int>(JpegErrorValue::FileReadError), cat};
     }
 
     jpeg_stdio_src(&c_info, f_in);
@@ -148,7 +154,7 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
 
     if ((f_out = fopen(dst.c_str(), "wb")) == nullptr) {
         fclose(f_in);
-        return std::error_code{static_cast<int>(JpegErrorValue::FileError), cat};
+        return std::error_code{static_cast<int>(JpegErrorValue::FileWriteError), cat};
     }
 
     jpeg_stdio_dest(&d_info, f_out);
@@ -173,18 +179,22 @@ namespace MediaCopier {
 
 void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
 {
+    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("copyJpeg"));
+
     static constexpr const auto default_orientation = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
 
     if (file.orientation() == default_orientation) {
         return copyFile(file);
     }
 
+    if (fs::exists(m_destination)) {
+        LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT("Already exists: " + m_destination.filename().string()));
+    }
+
     auto err = jpeg_copy_rotated(file, m_destination);
 
     if (err.value() > 0) {
-        if (err.value() == static_cast<int>(JpegErrorValue::ImageSizeError)) {
-            // TODO: log this incident ( err.message() )
-        }
+        LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(err.message() + ": " + file.path().filename().string()) + " -> " + m_destination.filename().string());
         return copyFile(file);
     }
 
@@ -200,9 +210,7 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
         image->writeMetadata();
 
     }  catch (const Exiv2::Error& err) {
-
-        // TODO: log this incident
-
+        LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + ": " + file.path().filename().string()));
         return copyFile(file);
     }
 }
