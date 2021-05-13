@@ -42,10 +42,8 @@ static T abortable_wrapper(std::function<T()> fn)
     return result;
 }
 
-namespace MediaCopier {
-
 template <typename T>
-static void execute(const FileRegister& fileRegister)
+static void execute(const MediaCopier::FileRegister& fileRegister)
 {
     for (const auto& item : fileRegister) {
         T operation{item.first};
@@ -55,6 +53,8 @@ static void execute(const FileRegister& fileRegister)
         }
     }
 }
+
+namespace MediaCopier {
 
 void OperationExecutor::run()
 {
