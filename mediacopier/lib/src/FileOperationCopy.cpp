@@ -15,7 +15,6 @@
  */
 
 #include <mediacopier/exceptions.hpp>
-#include <mediacopier/FileInfoImage.hpp>
 #include <mediacopier/FileInfoImageJpeg.hpp>
 #include <mediacopier/FileInfoVideo.hpp>
 #include <mediacopier/FileOperationCopy.hpp>
@@ -23,68 +22,34 @@
 #include <fstream>
 
 namespace fs = std::filesystem;
-namespace mc = MediaCopier;
 
-static bool check_equal(fs::path file1, fs::path file2)
-{
-    const std::streamsize buffer_size = 1024;
-    std::vector<char> buffer(buffer_size, '\0');
+namespace MediaCopier {
 
-    std::ifstream input1(file1.string(),  std::ios::in | std::ios::binary);
-    std::ifstream input2(file2.string(),  std::ios::in | std::ios::binary);
-
-    std::string chunk1, chunk2;
-
-    while (!(input1.fail() || input2.fail())) {
-        input1.read(buffer.data(), buffer_size);
-        chunk1 = {buffer.begin(), buffer.begin() + input1.gcount()};
-
-        input2.read(buffer.data(), buffer_size);
-        chunk2 = {buffer.begin(), buffer.begin() + input2.gcount()};
-
-        if (chunk1 != chunk2) {
-            return false;
-        }
-    }
-    return true;
-}
-
-void mc::FileOperationCopy::copyFile(const mc::AbstractFileInfo &file)
+void FileOperationCopy::copyFile(const AbstractFileInfo& file) const
 {
     std::error_code err;
-    unsigned int id = 0;
 
-    while (true) {
-        //auto dst = m_register.createPathFrom(file, id);
-        fs::path dst{};
-        if (!fs::exists(dst)) {
-            fs::create_directories(dst.parent_path());
-            fs::copy_file(file.path(), dst, err);
-            if (err.value() > 0) {
-                throw FileOperationError{err.message()};
-            }
-        }
-        if (check_equal(file.path(), dst)) {
-            return;
-        }
-        if (id == std::numeric_limits<unsigned int>::max()) {
-            throw FileOperationError{"Unable to find unique filename"};
-        }
-        ++id;
+    fs::create_directories(m_destination.parent_path());
+    fs::copy_file(file.path(), m_destination, err);
+
+    if (err.value() > 0) {
+        throw FileOperationError{err.message()};
     }
 }
 
-void mc::FileOperationCopy::visit(const mc::FileInfoImage &file) const
+void FileOperationCopy::visit(const FileInfoImage& file) const
 {
     copyFile(file);
 }
 
-void mc::FileOperationCopy::visit(const mc::FileInfoImageJpeg &file) const
+void FileOperationCopy::visit(const FileInfoImageJpeg& file) const
 {
     copyFile(file);
 }
 
-void mc::FileOperationCopy::visit(const mc::FileInfoVideo &file) const
+void FileOperationCopy::visit(const FileInfoVideo& file) const
 {
     copyFile(file);
+}
+
 }

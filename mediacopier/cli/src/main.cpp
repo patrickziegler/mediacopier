@@ -32,9 +32,9 @@ using namespace MediaCopier;
 template <typename T>
 void execute(const FileRegister& fileRegister)
 {
-    for (const auto& element : fileRegister) {
-        T operation{element.first};
-        element.second->accept(operation);
+    for (const auto& item : fileRegister) {
+        T operation{item.first};
+        item.second->accept(operation);
     }
 }
 
