@@ -104,10 +104,10 @@ int main(int argc, char *argv[])
 
     auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
 
-    auto executor = MediaCopier::createExecutor(argc, argv);
-
     try {
+        auto executor = MediaCopier::createExecutor(argc, argv);
         executor.run();
+
     } catch (const std::exception& err) {
         LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what()));
         return 1;

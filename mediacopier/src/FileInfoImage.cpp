@@ -37,7 +37,7 @@ namespace MediaCopier {
 FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) : AbstractFileInfo{std::move(path)}
 {
     for (const std::string& key : keysDateTime) {
-        if (exif.findKey(std::move(Exiv2::ExifKey{key})) == exif.end()) {
+        if (exif.findKey(Exiv2::ExifKey{key}) == exif.end()) {
             continue;
         }
         std::istringstream ss{exif[key].toString()};
@@ -46,7 +46,7 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) 
     }
 
     for (const std::string& key : keysSubSec) {
-        if (exif.findKey(std::move(Exiv2::ExifKey{key})) == exif.end()) {
+        if (exif.findKey(Exiv2::ExifKey{key}) == exif.end()) {
             continue;
         }
         std::string subsec = exif[key].toString();
@@ -61,7 +61,7 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) 
     }
 
     if (m_timestamp == std::chrono::system_clock::time_point{}) {
-        throw FileInfoError{"No date information found for " + path.filename().string()};
+        throw FileInfoError{"No date information found"};
     }
 }
 

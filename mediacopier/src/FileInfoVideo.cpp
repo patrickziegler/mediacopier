@@ -34,14 +34,14 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     AVDictionaryEntry* tag = nullptr;
 
     if (avformat_open_input(&fmt_ctx, path.c_str(), nullptr, nullptr)) {
-        throw FileInfoError{"Could not read metadata for " + path.filename().string()};
+        throw FileInfoError{"Could not read metadata"};
     }
 
     tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX);
 
     if (!tag) {
         avformat_close_input(&fmt_ctx);
-        throw FileInfoError{"'creation_time' not found in metadata for " + path.filename().string()};
+        throw FileInfoError{"'creation_time' not found in metadata"};
     }
 
     // magic numbers assume the following format: 2018-01-01T01:01:01.000000Z
@@ -55,7 +55,7 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     avformat_close_input(&fmt_ctx);
 
     if (m_timestamp == std::chrono::system_clock::time_point{}) {
-        throw FileInfoError{"No date information found for " + path.filename().string()};
+        throw FileInfoError{"No date information found"};
     }
 }
 

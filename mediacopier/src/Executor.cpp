@@ -30,17 +30,15 @@ namespace fs = std::filesystem;
 
 static volatile std::atomic<bool> operationCancelled;
 
-template <typename T>
-static T abortable_wrapper(std::function<T()> fn)
+static void abortable_wrapper(std::function<void()> abortable_function)
 {
     operationCancelled.store(false);
     std::signal(SIGINT, [](int signal) -> void {
         (void) signal;
         operationCancelled.store(true);
     });
-    T result = fn();
+    abortable_function();
     std::signal(SIGINT, SIG_DFL);
-    return result;
 }
 
 template <typename T>
@@ -48,9 +46,15 @@ static void execute(const MediaCopier::FileRegister& fileRegister)
 {
     auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("execute"));
 
-    for (const auto& item : fileRegister) {
-        T operation{item.first};
-        item.second->accept(operation);
+    for (const auto& [destination, file] : fileRegister) {
+        try {
+            T operation{destination};
+            file->accept(operation);
+
+        }  catch (const MediaCopier::FileOperationError& err) {
+            LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + ": " + file->path().string()));
+        }
+
         if (operationCancelled.load()) {
             LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Aborting execution"));
             break;
@@ -70,12 +74,12 @@ void Executor::run()
 
     FileRegister fileRegister{m_outputDir, m_pattern};
 
-    for (const auto& path : fs::recursive_directory_iterator(m_inputDir)) {
-        if (path.is_regular_file()) {
+    for (const auto& file : fs::recursive_directory_iterator(m_inputDir)) {
+        if (file.is_regular_file()) {
             try {
-                fileRegister.add(path);
+                fileRegister.add(file);
             } catch (const FileInfoError& err) {
-                LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(err.what()));
+                LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + ": " + file.path().string()));
             }
         }
     }
@@ -90,22 +94,20 @@ void Executor::run()
     {
     case Command::COPY:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing COPY operation"));
-        abortable_wrapper<int>([fileRegister]() -> int {
+        abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationCopyJpeg>(fileRegister);
-            return 0;
         });
         break;
 
     case Command::MOVE:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing MOVE operation"));
-        abortable_wrapper<int>([fileRegister]() -> int {
+        abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationMoveJpeg>(fileRegister);
-            return 0;
         });
         break;
 
     default:
-        throw FileOperationError("Unknown operation type");
+        throw MediaCopierError("Unknown operation type");
     }
 
     LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Execution finished"));

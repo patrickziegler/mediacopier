@@ -15,19 +15,30 @@
  */
 
 #include <mediacopier/AbstractFileOperation.hpp>
+#include <mediacopier/Error.hpp>
 #include <mediacopier/FileInfoImageJpeg.hpp>
 
 namespace MediaCopier {
 
 FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif) : FileInfoImage{std::move(path), exif}
 {
-    std::string orientationKey{"Exif.Image.Orientation"};
-    if (exif.findKey(Exiv2::ExifKey{orientationKey}) != exif.end()) {
-        auto orientation = exif[orientationKey].toLong();
-        if (orientation >= static_cast<long>(Orientation::ROT_0) && orientation <= static_cast<long>(Orientation::ROT_270)) {
-            m_orientation = static_cast<Orientation>(orientation);
-        }
+    const auto& item = exif.findKey(Exiv2::ExifKey{"Exif.Image.Orientation"});
+
+    if (item == exif.end()) {
+        throw FileInfoImageJpegError{"Field 'Exif.Image.Orientation' not found in metadata"};
     }
+
+    auto orientation = item->toLong();
+
+    if (orientation < static_cast<long>(Orientation::ROT_0)) {
+        throw FileInfoImageJpegError{"Invalid orientation value (smaller than min)"};
+    }
+
+    if (orientation > static_cast<long>(Orientation::ROT_270)) {
+        throw FileInfoImageJpegError{"Invalid orientation value (bigger than max)"};
+    }
+
+    m_orientation = static_cast<Orientation>(orientation);
 }
 
 void FileInfoImageJpeg::accept(const AbstractFileOperation& operation) const

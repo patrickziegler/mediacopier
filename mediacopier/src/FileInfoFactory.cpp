@@ -20,26 +20,32 @@
 #include <mediacopier/FileInfoImageJpeg.hpp>
 #include <mediacopier/FileInfoVideo.hpp>
 
+#include <log4cplus/log4cplus.h>
+
 namespace MediaCopier {
 
-std::unique_ptr<AbstractFileInfo> FileInfoFactory::createFromPath(const std::filesystem::path& path)
+FileInfoPtr FileInfoFactory::createFromPath(const std::filesystem::path& path)
 {
+    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("createFromPath"));
+
     try {
-        std::unique_ptr<Exiv2::Image> image;
-        image = Exiv2::ImageFactory::open(path);
+        auto image = Exiv2::ImageFactory::open(path);
 
         if (image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
             image->readMetadata();
 
-            auto& exif = image->exifData();
-
             if (image->mimeType() == "image/jpeg") {
-                return std::make_unique<FileInfoImageJpeg>(path, exif);
-            } else {
-                return std::make_unique<FileInfoImage>(path, exif);
+                try {
+                    return std::make_unique<FileInfoImageJpeg>(path, image->exifData());
+
+                }  catch (const FileInfoImageJpegError& err) {
+                    LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + ": " + path.string()));
+                }
             }
+
+            return std::make_unique<FileInfoImage>(path, image->exifData());
         }
-    }  catch (const Exiv2::Error&) {
+    } catch (const Exiv2::Error&) {
         // this was not an image file
     }
 
@@ -49,7 +55,7 @@ std::unique_ptr<AbstractFileInfo> FileInfoFactory::createFromPath(const std::fil
         // this was not a video file
     }
 
-    throw FileInfoError{"Unknown file type for " + path.filename().string()};
+    return nullptr;
 }
 
 } // namespace MediaCopier

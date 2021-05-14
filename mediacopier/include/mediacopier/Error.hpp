@@ -28,6 +28,10 @@ class FileInfoError : public MediaCopierError {
     using MediaCopierError::MediaCopierError;
 };
 
+class FileInfoImageJpegError : public MediaCopierError {
+    using MediaCopierError::MediaCopierError;
+};
+
 class FileOperationError : public MediaCopierError {
     using MediaCopierError::MediaCopierError;
 };

@@ -27,7 +27,7 @@
 
 namespace fs = std::filesystem;
 
-static bool is_equal(fs::path file1, fs::path file2)
+static bool is_duplicate(fs::path file1, fs::path file2)
 {
     const std::streamsize buffer_size = 1024;
     std::vector<char> buffer(buffer_size, '\0');
@@ -60,7 +60,7 @@ static std::filesystem::path create_path(const MediaCopier::AbstractFileInfo& fi
     ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
 
     if (useSubsec) {
-        // TODO: why '% 1000000' in the following line?
+        // '% 1000000' because we search for us "on top" of the number of seconds
         auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
         ss << std::setfill('0') << std::setw(6) << us.count();
     }
@@ -89,34 +89,39 @@ void FileRegister::add(const std::filesystem::path& path)
 
     auto infoPtr = FileInfoFactory::createFromPath(path);
 
+    if (infoPtr == nullptr) {
+        throw FileInfoError{"Failed to parse metadata"};
+    }
+
     while (id < std::numeric_limits<size_t>::max()) {
 
-        auto newPath = create_path(*infoPtr, m_destdir, m_pattern, id, true);
-        auto item = m_register.find(newPath);
+        auto destination = create_path(*infoPtr, m_destdir, m_pattern, id, true);
+        auto item = m_register.find(destination);
 
         if (item != m_register.end()) {
-            if (is_equal(path, item->second->path())) {
-                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Duplicate: " + path.filename().string() + " same as " + item->second->path().filename().string()));
-                return; // is duplicate
+            const auto& knownFile = item->second;
+            if (is_duplicate(path, knownFile->path())) {
+                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Duplicate: " + path.filename().string() + " same as " + knownFile->path().filename().string()));
+                return;
             }
             ++id;
             continue;
         }
 
-        if (fs::exists(newPath)) {
-            if (is_equal(path, newPath)) {
-                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Already there: " + path.filename().string() + " same as " + newPath.filename().string()));
-                return; // is duplicate
+        if (fs::exists(destination)) {
+            if (is_duplicate(path, destination)) {
+                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Already there: " + path.filename().string() + " same as " + destination.filename().string()));
+                return;
             }
             ++id;
             continue;
         }
 
-        m_register[newPath.string()] = std::move(infoPtr);
+        m_register[destination.string()] = std::move(infoPtr);
         return;
     }
 
-    throw FileOperationError{"Unable to find unique filename"};
+    throw FileInfoError{"Unable to find unique filename"};
 }
 
 FileInfoMap::const_iterator FileRegister::begin() const
