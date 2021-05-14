@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/Executor.hpp>
+#include <mediacopier/MediaCopier.hpp>
 #include <mediacopier/version.hpp>
 
 #include <log4cplus/log4cplus.h>
@@ -25,14 +25,14 @@ namespace fs = std::filesystem;
 
 namespace MediaCopier {
 
-Executor createExecutor(int argc, char *argv[])
+MediaCopier createExecutor(int argc, char *argv[])
 {
     std::vector<std::string> pos;
 
     fs::path inputDir;
     fs::path outputDir;
     std::string pattern = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
-    Executor::Command command;
+    MediaCopier::Command command;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg{argv[i]};
@@ -84,9 +84,9 @@ Executor createExecutor(int argc, char *argv[])
     }
 
     if (op == "copy") {
-        command = Executor::Command::COPY;
+        command = MediaCopier::Command::COPY;
     } else if (op == "move") {
-        command = Executor::Command::MOVE;
+        command = MediaCopier::Command::MOVE;
     } else {
         std::cerr << "Unknown operation '" << op << "'" << std::endl;
         std::exit(1);

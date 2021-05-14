@@ -14,7 +14,6 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mediacopier)
 
 target_sources(${TARGET_NAME} PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/src/Executor.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/FileInfoFactory.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/FileInfoImage.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/FileInfoImageJpeg.cpp"
@@ -24,6 +23,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/src/FileOperationMove.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/FileOperationMoveJpeg.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/FileRegister.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/MediaCopier.cpp"
     "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/transupp.c")
 
 target_include_directories(${TARGET_NAME} PUBLIC

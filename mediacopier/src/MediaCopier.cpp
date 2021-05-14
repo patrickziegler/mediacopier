@@ -16,9 +16,9 @@
 
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/Error.hpp>
-#include <mediacopier/Executor.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FileRegister.hpp>
+#include <mediacopier/MediaCopier.hpp>
 
 #include <log4cplus/log4cplus.h>
 
@@ -64,7 +64,7 @@ static void execute(const MediaCopier::FileRegister& fileRegister)
 
 namespace MediaCopier {
 
-void Executor::run()
+void MediaCopier::run()
 {
     auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("run"));
 
