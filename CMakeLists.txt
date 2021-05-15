@@ -4,6 +4,7 @@ project(MediaCopier VERSION 2.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -14,12 +15,7 @@ option(ENABLE_TEST "Include test targets" OFF)
 
 if(${ENABLE_COVERAGE})
     include(TestCoverage)
-    set(CMAKE_CXX_FLAGS "-g -O0 --coverage")
-    set(CMAKE_EXE_LINKER_FLAGS "--coverage")
-    set(ENABLE_GUI OFF)
     set(ENABLE_TEST ON)
-else()
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 endif()
 
 set(MEDIACOPIER_LIB_TARGET_NAME mediacopier-lib)

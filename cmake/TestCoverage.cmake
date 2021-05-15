@@ -1,3 +1,6 @@
+set(CMAKE_CXX_FLAGS "-g -O0 --coverage")
+set(CMAKE_EXE_LINKER_FLAGS "--coverage")
+
 set(COVERAGE_OUTPUT_DIR "${CMAKE_BINARY_DIR}/coverage")
 
 set(BASELINE "${COVERAGE_OUTPUT_DIR}/baseline.info")
@@ -44,9 +47,9 @@ add_custom_command(
                 --remove ${TRACEFILE}
                     "${CMAKE_SOURCE_DIR}/build/*"
                     "${CMAKE_SOURCE_DIR}/extern/*"
-                    "${CMAKE_SOURCE_DIR}/mediacopier/lib/test/*"
+                    "${CMAKE_SOURCE_DIR}/mediacopier/test/*"
+                    "${CMAKE_SOURCE_DIR}/mediacopier-cli/*"
                     "${CMAKE_SOURCE_DIR}/mediacopier-gui/*"
-                    "${CMAKE_SOURCE_DIR}/lib/test/*"
                 --output-file ${TRACEFILE}
 
     COMMAND genhtml ${TRACEFILE}
