@@ -28,9 +28,9 @@ public:
         ROT_180,
         ROT_180_MIRRORED,
         ROT_90_MIRRORED,
-        ROT_90,
-        ROT_270_MIRRORED,
         ROT_270,
+        ROT_270_MIRRORED,
+        ROT_90,
     };
     FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif);
     void accept(const AbstractFileOperation& operation) const override;

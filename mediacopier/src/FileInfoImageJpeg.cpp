@@ -34,7 +34,7 @@ FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData
         throw FileInfoImageJpegError{"Invalid orientation value (smaller than min)"};
     }
 
-    if (orientation > static_cast<long>(Orientation::ROT_270)) {
+    if (orientation > static_cast<long>(Orientation::ROT_90)) {
         throw FileInfoImageJpegError{"Invalid orientation value (bigger than max)"};
     }
 
