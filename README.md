@@ -57,8 +57,7 @@ docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
 Inside the container, run the following commands.
 All build-time dependencies are solved already.
 ```sh
-cmake /usr/src/mediacopier
-make -j$(nproc) && make test
+cmake -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
 ```
 
 ## Authors

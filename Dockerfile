@@ -21,9 +21,12 @@ RUN apt-get update && apt-get install -y \
 ARG USER_NAME=dev
 ARG USER_ID=1000
 ARG USER_GID=1000
+ARG BUILD_DIR=/tmp/build
 
 RUN groupadd -g ${USER_GID} ${USER_NAME}; \
-    useradd -l --uid ${USER_ID} --gid ${USER_GID} ${USER_NAME}
+    useradd -l --uid ${USER_ID} --gid ${USER_GID} ${USER_NAME}; \
+    mkdir -p ${BUILD_DIR}; \
+    chown ${USER_NAME} ${BUILD_DIR}
 
 USER ${USER_NAME}
 
