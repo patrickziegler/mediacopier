@@ -20,7 +20,6 @@
 #include <mediacopier/FileInfoImageJpeg.hpp>
 
 #include <log4cplus/configurator.h>
-#include <log4cplus/loggingmacros.h>
 
 namespace fs = std::filesystem;
 

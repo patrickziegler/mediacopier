@@ -66,7 +66,6 @@ jobs:
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
-        base-path: ${{github.workspace}}/build
         github-token: ${{secrets.GITHUB_TOKEN}}
         path-to-lcov: ${{github.workspace}}/build/coverage/trace.info
       if: matrix.config.CC == 'gcc'
