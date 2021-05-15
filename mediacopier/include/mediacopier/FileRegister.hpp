@@ -33,6 +33,7 @@ public:
     FileInfoMap::const_iterator end() const;
     size_t size() const;
 private:
+    std::filesystem::path getDestinationPath(const MediaCopier::AbstractFileInfo& file, size_t id, bool useSubsec) const;
     std::filesystem::path m_destdir;
     std::string m_pattern;
     FileInfoMap m_register;

@@ -51,29 +51,6 @@ static bool is_duplicate(fs::path file1, fs::path file2)
     return true;
 }
 
-static std::filesystem::path create_path(const MediaCopier::AbstractFileInfo& file, const fs::path& m_destdir, const std::string& m_pattern, size_t id, bool useSubsec)
-{
-    std::stringstream ss;
-    ss << m_destdir.string();
-
-    auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
-    ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
-
-    if (useSubsec) {
-        // '% 1000000' because we search for us "on top" of the number of seconds
-        auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
-        ss << std::setfill('0') << std::setw(6) << us.count();
-    }
-
-    if (id > 0) {
-        ss << "_" << id;
-    }
-
-    ss << file.path().extension().string();
-
-    return {ss.str()};
-}
-
 namespace MediaCopier {
 
 FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdir{std::move(destination)}, m_pattern{std::move(pattern)}
@@ -87,15 +64,15 @@ void FileRegister::add(const std::filesystem::path& path)
 
     size_t id = 0;
 
-    auto infoPtr = FileInfoFactory::createFromPath(path);
+    auto file = FileInfoFactory::createFromPath(path);
 
-    if (infoPtr == nullptr) {
+    if (file == nullptr) {
         throw FileInfoError{"Failed to parse metadata"};
     }
 
     while (id < std::numeric_limits<size_t>::max()) {
 
-        auto destination = create_path(*infoPtr, m_destdir, m_pattern, id, true);
+        auto destination = getDestinationPath(*file, id, true);
         auto item = m_register.find(destination);
 
         if (item != m_register.end()) {
@@ -117,7 +94,7 @@ void FileRegister::add(const std::filesystem::path& path)
             continue;
         }
 
-        m_register[destination.string()] = std::move(infoPtr);
+        m_register[destination.string()] = std::move(file);
         return;
     }
 
@@ -137,6 +114,29 @@ FileInfoMap::const_iterator FileRegister::end() const
 size_t FileRegister::size() const
 {
     return m_register.size();
+}
+
+std::filesystem::path FileRegister::getDestinationPath(const MediaCopier::AbstractFileInfo& file, size_t id, bool useSubsec) const
+{
+    std::stringstream ss;
+    ss << m_destdir.string();
+
+    auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
+    ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
+
+    if (useSubsec) {
+        // '% 1000000' because we search for us "on top" of the number of seconds
+        auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
+        ss << std::setfill('0') << std::setw(6) << us.count();
+    }
+
+    if (id > 0) {
+        ss << "_" << id;
+    }
+
+    ss << file.path().extension().string();
+
+    return {ss.str()};
 }
 
 } // namespace MediaCopier
