@@ -20,7 +20,7 @@
 #include <mediacopier/FileRegister.hpp>
 #include <mediacopier/MediaCopier.hpp>
 
-#include <log4cplus/log4cplus.h>
+#include <log4cplus/loggingmacros.h>
 
 #include <atomic>
 #include <csignal>

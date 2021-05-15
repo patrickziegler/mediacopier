@@ -20,7 +20,7 @@
 #include <mediacopier/FileInfoVideo.hpp>
 #include <mediacopier/FileOperationCopyJpeg.hpp>
 
-#include <log4cplus/log4cplus.h>
+#include <log4cplus/loggingmacros.h>
 
 #include <csetjmp>
 #include <iostream>

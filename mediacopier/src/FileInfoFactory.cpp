@@ -20,7 +20,7 @@
 #include <mediacopier/FileInfoImageJpeg.hpp>
 #include <mediacopier/FileInfoVideo.hpp>
 
-#include <log4cplus/log4cplus.h>
+#include <log4cplus/loggingmacros.h>
 
 namespace MediaCopier {
 

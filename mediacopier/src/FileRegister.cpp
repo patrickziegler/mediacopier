@@ -19,7 +19,7 @@
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileRegister.hpp>
 
-#include <log4cplus/log4cplus.h>
+#include <log4cplus/loggingmacros.h>
 
 #include <random>
 #include <fstream>
