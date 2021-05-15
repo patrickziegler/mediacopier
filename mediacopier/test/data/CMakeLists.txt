@@ -1,10 +1,11 @@
-set(TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/original")
+set(TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+set(TEST_DATA_DIR "${TEST_DATA_DIR}" PARENT_SCOPE)
 
-add_compile_definitions(TEST_DATA_DIR="${TEST_DATA_DIR}")
+set(TEST_DATA_ORIGINAL_DIR "${TEST_DATA_DIR}/original")
 
 add_custom_command(
-    OUTPUT "${TEST_DATA_DIR}"
-    COMMAND "${CMAKE_CURRENT_LIST_DIR}/generate_test_data.sh" "${TEST_DATA_DIR}")
+    OUTPUT "${TEST_DATA_ORIGINAL_DIR}"
+    COMMAND "${CMAKE_CURRENT_LIST_DIR}/generate_test_data.sh" "${TEST_DATA_ORIGINAL_DIR}")
 
 add_custom_target(test-data
-    DEPENDS "${TEST_DATA_DIR}")
+    DEPENDS "${TEST_DATA_ORIGINAL_DIR}")
