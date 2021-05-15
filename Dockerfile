@@ -30,4 +30,4 @@ RUN groupadd -g ${USER_GID} ${USER_NAME}; \
 
 USER ${USER_NAME}
 
-WORKDIR /tmp/build
+WORKDIR ${BUILD_DIR}
