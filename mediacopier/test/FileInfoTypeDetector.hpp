@@ -23,15 +23,15 @@
 
 namespace MediaCopier::Test {
 
+enum class FileInfoType {
+    None,
+    FileInfoImage,
+    FileInfoImageJpeg,
+    FileInfoVideo,
+};
+
 class FileInfoTypeDetector : public AbstractFileOperation {
 public:
-    enum class FileInfoType {
-        None,
-        FileInfoImage,
-        FileInfoImageJpeg,
-        FileInfoVideo,
-    };
-
     void visit(const FileInfoImage& /*file*/)
     {
         m_lastType = FileInfoType::FileInfoImage;

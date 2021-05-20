@@ -46,7 +46,7 @@ protected:
     }
     fs::path test_data_dir = TEST_DATA_DIR;
 
-    void check_info_type(std::filesystem::path&& path, FileInfoTypeDetector::FileInfoType type)
+    void check_info_type(std::filesystem::path&& path, FileInfoType type)
     {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
@@ -75,7 +75,7 @@ private:
 TEST_F(FileInfoTests, validJpegFileInfo)
 {
     check_info_type(test_data_dir / "original/lena64_rot0.jpg",
-                    FileInfoTypeDetector::FileInfoType::FileInfoImageJpeg);
+                    FileInfoType::FileInfoImageJpeg);
 
     check_info_meta(test_data_dir / "original/lena64_rot0.jpg",
                     FileInfoImageJpeg::Orientation::ROT_0, "2019-02-05 12:10:32.123456");
@@ -93,7 +93,7 @@ TEST_F(FileInfoTests, validJpegFileInfo)
 TEST_F(FileInfoTests, invalidJpegFileInfo)
 {
     check_info_type(test_data_dir / "original/lena64_rot270_orientation_missing.jpg",
-                    FileInfoTypeDetector::FileInfoType::FileInfoImage);
+                    FileInfoType::FileInfoImage);
 
     auto check_nullptr = [](std::filesystem::path&& path) -> void {
 
