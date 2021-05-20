@@ -23,7 +23,6 @@
 #include <log4cplus/configurator.h>
 
 #include <chrono>
-#include <iostream>
 
 #include "FileInfoTypeDetector.hpp"
 
@@ -46,7 +45,13 @@ protected:
     }
     fs::path test_data_dir = TEST_DATA_DIR;
 
-    void check_info_type(std::filesystem::path&& path, FileInfoType type)
+    void checkNullptr(std::filesystem::path&& path)
+    {
+        const auto& file = FileInfoFactory::createFromPath(path);
+        ASSERT_EQ(file.get(), nullptr);
+    }
+
+    void checkFileInfoType(std::filesystem::path&& path, FileInfoType type)
     {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
@@ -55,53 +60,78 @@ protected:
         ASSERT_TRUE(m_typeDetector.lastType() == type);
     };
 
-    void check_info_meta(std::filesystem::path&& path, MediaCopier::FileInfoImageJpeg::Orientation orientation,
-                         std::string dateTimeOriginal)
+    void checkFileInfoJpeg(std::filesystem::path&& path, FileInfoImageJpeg::Orientation orientation,
+                           std::string dateTimeOriginal)
     {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 
-        const auto& fileJpeg = dynamic_cast<MediaCopier::FileInfoImageJpeg*>(file.get());
+        const auto& fileJpeg = dynamic_cast<FileInfoImageJpeg*>(file.get());
         ASSERT_EQ(fileJpeg->orientation(), orientation);
 
         const auto& timestamp = parse_timestamp(dateTimeOriginal);
         ASSERT_EQ(fileJpeg->timestamp(), timestamp);
     }
 
+    void checkFileInfo(std::filesystem::path&& path, std::string dateTimeOriginal)
+    {
+        const auto& file = FileInfoFactory::createFromPath(path);
+        ASSERT_NE(file.get(), nullptr);
+
+        const auto& timestamp = parse_timestamp(dateTimeOriginal);
+        ASSERT_EQ(file->timestamp(), timestamp);
+    }
+
 private:
     FileInfoTypeDetector m_typeDetector;
 };
 
-TEST_F(FileInfoTests, validJpegFileInfo)
+TEST_F(FileInfoTests, validFileInfoImageJpeg)
 {
-    check_info_type(test_data_dir / "original/lena64_rot0.jpg",
-                    FileInfoType::FileInfoImageJpeg);
+    checkFileInfoType(test_data_dir / "original/lena64_rot0.jpg",
+                      FileInfoType::FileInfoImageJpeg);
 
-    check_info_meta(test_data_dir / "original/lena64_rot0.jpg",
-                    FileInfoImageJpeg::Orientation::ROT_0, "2019-02-05 12:10:32.123456");
+    checkFileInfoJpeg(test_data_dir / "original/lena64_rot0.jpg",
+                      FileInfoImageJpeg::Orientation::ROT_0, "2019-02-05 12:10:32.123456");
 
-    check_info_meta(test_data_dir / "original/lena64_rot90.jpg",
-                    FileInfoImageJpeg::Orientation::ROT_90, "2019-02-05 12:11:32");
+    checkFileInfoJpeg(test_data_dir / "original/lena64_rot90.jpg",
+                      FileInfoImageJpeg::Orientation::ROT_90, "2019-02-05 12:11:32");
 
-    check_info_meta(test_data_dir / "original/lena64_rot180.jpg",
-                    FileInfoImageJpeg::Orientation::ROT_180, "2019-02-05 12:12:32.1234");
+    checkFileInfoJpeg(test_data_dir / "original/lena64_rot180.jpg",
+                      FileInfoImageJpeg::Orientation::ROT_180, "2019-02-05 12:12:32.1234");
 
-    check_info_meta(test_data_dir / "original/lena64_rot270.jpg",
-                    FileInfoImageJpeg::Orientation::ROT_270, "2019-02-05 12:13:32.123");
+    checkFileInfoJpeg(test_data_dir / "original/lena64_rot270.jpg",
+                      FileInfoImageJpeg::Orientation::ROT_270, "2019-02-05 12:13:32.123");
 }
 
-TEST_F(FileInfoTests, invalidJpegFileInfo)
+TEST_F(FileInfoTests, invalidFileInfoImageJpeg)
 {
-    check_info_type(test_data_dir / "original/lena64_rot270_orientation_missing.jpg",
-                    FileInfoType::FileInfoImage);
+    checkFileInfoType(test_data_dir / "original/lena64_rot270_orientation_missing.jpg",
+                      FileInfoType::FileInfoImage);
 
-    auto check_nullptr = [](std::filesystem::path&& path) -> void {
+    checkNullptr(test_data_dir / "original/lena64_rot270_timestamp_missing.jpg");
+}
 
-        const auto& file = MediaCopier::FileInfoFactory::createFromPath(path);
-        ASSERT_EQ(file.get(), nullptr);
-    };
+TEST_F(FileInfoTests, validFileInfoVideo)
+{
+    checkFileInfoType(test_data_dir / "original/roundhay_garden_scene.mov",
+                      FileInfoType::FileInfoVideo);
 
-    check_nullptr(test_data_dir / "original/lena64_rot270_timestamp_missing.jpg");
+    checkFileInfoType(test_data_dir / "original/roundhay_garden_scene.mp4",
+                      FileInfoType::FileInfoVideo);
+
+    checkFileInfoType(test_data_dir / "original/roundhay_garden_scene.webm",
+                      FileInfoType::FileInfoVideo);
+
+    checkFileInfo(test_data_dir / "original/roundhay_garden_scene.mov", "2018-01-01 01:01:01");
+    checkFileInfo(test_data_dir / "original/roundhay_garden_scene.mp4", "2018-01-01 01:01:01");
+    checkFileInfo(test_data_dir / "original/roundhay_garden_scene.webm", "2018-01-01 01:01:01");
+}
+
+TEST_F(FileInfoTests, invalidFileInfoVideo)
+{
+    checkNullptr(test_data_dir / "original/video_timestamp_missing.mov");
+    checkNullptr(test_data_dir / "original/video_broken.webm");
 }
 
 } // namespace MediaCopier::Test

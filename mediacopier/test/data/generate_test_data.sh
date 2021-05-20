@@ -37,26 +37,29 @@ SCRIPT_PATH=`dirname "${SCRIPT}"`
 
 DATA_PATH=$1
 
-IMG_ORIGINAL="${SCRIPT_PATH}"/lena512color.tiff
-VID_ORIGINAL="${SCRIPT_PATH}"/roundhay_garden_scene.mp4
+IMG_ORIGINAL="${SCRIPT_PATH}/lena512color.tiff"
+VID_ORIGINAL="${SCRIPT_PATH}/roundhay_garden_scene.mp4"
 
-IMG_RAW_COPY="${DATA_PATH}"/lena16_rot90.tiff
+IMG_RAW_COPY="${DATA_PATH}/lena16_rot90.tiff"
 
-IMG_64_ROT0="${DATA_PATH}"/lena64_rot0.jpg
-IMG_64_ROT90="${DATA_PATH}"/lena64_rot90.jpg
-IMG_64_ROT180="${DATA_PATH}"/lena64_rot180.jpg
-IMG_64_ROT270="${DATA_PATH}"/lena64_rot270.jpg
+IMG_64_ROT0="${DATA_PATH}/lena64_rot0.jpg"
+IMG_64_ROT90="${DATA_PATH}/lena64_rot90.jpg"
+IMG_64_ROT180="${DATA_PATH}/lena64_rot180.jpg"
+IMG_64_ROT270="${DATA_PATH}/lena64_rot270.jpg"
 
-IMG_64_ROT270_COPY="${DATA_PATH}"/lena64_rot270_copy.png
-IMG_64_ROT270_COPY_TIMESTAMP_MISSING="${DATA_PATH}"/lena64_rot270_timestamp_missing.jpg
-IMG_64_ROT270_COPY_ORIENTATION_MISSING="${DATA_PATH}"/lena64_rot270_orientation_missing.jpg
+IMG_64_ROT270_COPY="${DATA_PATH}/lena64_rot270_copy.png"
+IMG_64_ROT270_COPY_TIMESTAMP_MISSING="${DATA_PATH}/lena64_rot270_timestamp_missing.jpg"
+IMG_64_ROT270_COPY_ORIENTATION_MISSING="${DATA_PATH}/lena64_rot270_orientation_missing.jpg"
 
-IMG_50_ROT0="${DATA_PATH}"/lena50_rot0.jpg
-IMG_50_ROT90="${DATA_PATH}"/lena50_rot90.jpg
+IMG_50_ROT0="${DATA_PATH}/lena50_rot0.jpg"
+IMG_50_ROT90="${DATA_PATH}/lena50_rot90.jpg"
 
-VID_MP4="${DATA_PATH}"/roundhay_garden_scene.mp4
-VID_MOV="${DATA_PATH}"/roundhay_garden_scene.mov
-VID_MKV="${DATA_PATH}"/roundhay_garden_scene.webm
+VID_MP4="${DATA_PATH}/roundhay_garden_scene.mp4"
+VID_MOV="${DATA_PATH}/roundhay_garden_scene.mov"
+VID_MKV="${DATA_PATH}/roundhay_garden_scene.webm"
+
+VID_TIMESTAMP_MISSING="${DATA_PATH}/video_timestamp_missing.mov"
+VID_BROKEN="${DATA_PATH}/video_broken.webm"
 
 # --- Clean-Up
 
@@ -109,6 +112,9 @@ exiftool -overwrite_original -DateTimeOriginal="2018-05-05 06:11:32" "${IMG_50_R
 exiftool -overwrite_original -n -Orientation=8 "${IMG_50_ROT90}"
 
 # --- Create video files in various formats
+
+ffmpeg -i "${VID_ORIGINAL}" -c copy -map_metadata -1 "${VID_TIMESTAMP_MISSING}"
+ffmpeg -i "${VID_ORIGINAL}" -c copy -map_metadata -1 "${VID_BROKEN}"
 
 ffmpeg -i "${VID_ORIGINAL}" -metadata creation_time="2018-01-01 01:01:01Z" "${VID_MP4}"
 ffmpeg -i "${VID_MP4}" -map_metadata 0 -codec copy "${VID_MOV}"
