@@ -23,9 +23,9 @@ namespace MediaCopier {
 class FileOperationCopyJpeg : public FileOperationCopy {
 public:
     using FileOperationCopy::FileOperationCopy;
-    void visit(const FileInfoImage& file) const override;
-    void visit(const FileInfoImageJpeg& file) const override;
-    void visit(const FileInfoVideo& file) const override;
+    void visit(const FileInfoImage& file) override;
+    void visit(const FileInfoImageJpeg& file) override;
+    void visit(const FileInfoVideo& file) override;
 protected:
     void copyJpeg(const FileInfoImageJpeg& file) const;
 };

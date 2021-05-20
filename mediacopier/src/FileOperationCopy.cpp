@@ -37,17 +37,17 @@ void FileOperationCopy::copyFile(const AbstractFileInfo& file) const
     }
 }
 
-void FileOperationCopy::visit(const FileInfoImage& file) const
+void FileOperationCopy::visit(const FileInfoImage& file)
 {
     copyFile(file);
 }
 
-void FileOperationCopy::visit(const FileInfoImageJpeg& file) const
+void FileOperationCopy::visit(const FileInfoImageJpeg& file)
 {
     copyFile(file);
 }
 
-void FileOperationCopy::visit(const FileInfoVideo& file) const
+void FileOperationCopy::visit(const FileInfoVideo& file)
 {
     copyFile(file);
 }

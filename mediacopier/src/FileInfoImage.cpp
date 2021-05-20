@@ -67,7 +67,7 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) 
     timestamp >> date::parse("%Y:%m:%d %H:%M:%S", m_timestamp);
 }
 
-void FileInfoImage::accept(const AbstractFileOperation& operation) const
+void FileInfoImage::accept(AbstractFileOperation& operation) const
 {
     operation.visit(*this);
 }

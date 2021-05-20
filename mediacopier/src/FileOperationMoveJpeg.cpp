@@ -23,19 +23,19 @@ namespace fs = std::filesystem;
 
 namespace MediaCopier {
 
-void FileOperationMoveJpeg::visit(const FileInfoImage& file) const
+void FileOperationMoveJpeg::visit(const FileInfoImage& file)
 {
     copyFile(file);
     fs::remove(file.path());
 }
 
-void FileOperationMoveJpeg::visit(const FileInfoImageJpeg& file) const
+void FileOperationMoveJpeg::visit(const FileInfoImageJpeg& file)
 {
     copyJpeg(file);
     fs::remove(file.path());
 }
 
-void FileOperationMoveJpeg::visit(const FileInfoVideo& file) const
+void FileOperationMoveJpeg::visit(const FileInfoVideo& file)
 {
     copyFile(file);
     fs::remove(file.path());

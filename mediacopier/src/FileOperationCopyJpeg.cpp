@@ -214,17 +214,17 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
     }
 }
 
-void FileOperationCopyJpeg::visit(const FileInfoImage& file) const
+void FileOperationCopyJpeg::visit(const FileInfoImage& file)
 {
     copyFile(file);
 }
 
-void FileOperationCopyJpeg::visit(const FileInfoImageJpeg& file) const
+void FileOperationCopyJpeg::visit(const FileInfoImageJpeg& file)
 {
     copyJpeg(file);
 }
 
-void FileOperationCopyJpeg::visit(const FileInfoVideo& file) const
+void FileOperationCopyJpeg::visit(const FileInfoVideo& file)
 {
     copyFile(file);
 }
