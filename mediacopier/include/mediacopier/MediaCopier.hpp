@@ -25,6 +25,8 @@ public:
     enum class Command {
         COPY,
         MOVE,
+        COPY_JPEG,
+        MOVE_JPEG
     };
     MediaCopier(Command command, std::filesystem::path inputDir, std::filesystem::path outputDir, std::string pattern)
         : m_command{std::move(command)},

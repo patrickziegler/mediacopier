@@ -85,9 +85,9 @@ MediaCopier createExecutor(int argc, char *argv[])
     }
 
     if (op == "copy") {
-        command = MediaCopier::Command::COPY;
+        command = MediaCopier::Command::COPY_JPEG;
     } else if (op == "move") {
-        command = MediaCopier::Command::MOVE;
+        command = MediaCopier::Command::MOVE_JPEG;
     } else {
         std::cerr << "Unknown operation '" << op << "'" << std::endl;
         std::exit(1);

@@ -16,6 +16,7 @@
 
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/Error.hpp>
+#include <mediacopier/FileOperationMove.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FileRegister.hpp>
 #include <mediacopier/MediaCopier.hpp>
@@ -95,12 +96,26 @@ void MediaCopier::run()
     case Command::COPY:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing COPY operation"));
         abortable_wrapper([fileRegister]() -> void {
-            execute<FileOperationCopyJpeg>(fileRegister);
+            execute<FileOperationCopy>(fileRegister);
         });
         break;
 
     case Command::MOVE:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing MOVE operation"));
+        abortable_wrapper([fileRegister]() -> void {
+            execute<FileOperationMove>(fileRegister);
+        });
+        break;
+
+    case Command::COPY_JPEG:
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing COPY operation (with JPEG awareness)"));
+        abortable_wrapper([fileRegister]() -> void {
+            execute<FileOperationCopyJpeg>(fileRegister);
+        });
+        break;
+
+    case Command::MOVE_JPEG:
+        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing MOVE operation (with JPEG awareness)"));
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationMoveJpeg>(fileRegister);
         });
