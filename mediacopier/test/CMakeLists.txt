@@ -11,6 +11,9 @@ add_executable(${TARGET_NAME})
 target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/test_fileInfoClasses.cpp")
 
+target_include_directories(${TARGET_NAME} PRIVATE
+    "${CMAKE_SOURCE_DIR}/extern/date/include")
+
 target_link_libraries(${TARGET_NAME} PRIVATE
     gtest gtest_main ${MEDIACOPIER_LIB_TARGET_NAME})
 

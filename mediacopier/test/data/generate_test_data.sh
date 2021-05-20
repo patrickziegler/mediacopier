@@ -48,6 +48,8 @@ IMG_64_ROT180="${DATA_PATH}"/lena64_rot180.jpg
 IMG_64_ROT270="${DATA_PATH}"/lena64_rot270.jpg
 
 IMG_64_ROT270_COPY="${DATA_PATH}"/lena64_rot270_copy.png
+IMG_64_ROT270_COPY_TIMESTAMP_MISSING="${DATA_PATH}"/lena64_rot270_timestamp_missing.jpg
+IMG_64_ROT270_COPY_ORIENTATION_MISSING="${DATA_PATH}"/lena64_rot270_orientation_missing.jpg
 
 IMG_50_ROT0="${DATA_PATH}"/lena50_rot0.jpg
 IMG_50_ROT90="${DATA_PATH}"/lena50_rot90.jpg
@@ -77,7 +79,7 @@ exiftool -overwrite_original -DateTimeOriginal="2019-02-05 12:10:32" "${IMG_64_R
 exiftool -overwrite_original -n -Orientation=1 "${IMG_64_ROT0}" -SubSecTimeOriginal=123456
 
 exiftool -overwrite_original -DateTimeOriginal="2019-02-05 12:11:32" "${IMG_64_ROT90}"
-exiftool -overwrite_original -n -Orientation=8 "${IMG_64_ROT90}" -SubSecTimeOriginal=12345
+exiftool -overwrite_original -n -Orientation=8 "${IMG_64_ROT90}"
 
 exiftool -overwrite_original -DateTimeOriginal="2019-02-05 12:12:32" "${IMG_64_ROT180}"
 exiftool -overwrite_original -n -Orientation=3 "${IMG_64_ROT180}" -SubSecTimeOriginal=1234
@@ -86,6 +88,12 @@ exiftool -overwrite_original -DateTimeOriginal="2019-02-05 12:13:32" "${IMG_64_R
 exiftool -overwrite_original -n -Orientation=6 "${IMG_64_ROT270}" -SubSecTimeOriginal=123
 
 convert "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY}"
+
+cp "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY_TIMESTAMP_MISSING}"
+exiftool -overwrite_original -DateTimeOriginal= "${IMG_64_ROT270_COPY_TIMESTAMP_MISSING}"
+
+cp "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY_ORIENTATION_MISSING}"
+exiftool -overwrite_original -Orientation= "${IMG_64_ROT270_COPY_ORIENTATION_MISSING}"
 
 # --- Create image with corrupted rotation as described in [2]
 
