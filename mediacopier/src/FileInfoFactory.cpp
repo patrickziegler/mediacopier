@@ -45,6 +45,8 @@ FileInfoPtr FileInfoFactory::createFromPath(const std::filesystem::path& path)
 
             return std::make_unique<FileInfoImage>(path, image->exifData());
         }
+    } catch (const FileInfoError&) {
+        return nullptr;
     } catch (const Exiv2::Error&) {
         // this was not an image file
     }

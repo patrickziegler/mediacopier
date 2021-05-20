@@ -30,12 +30,8 @@ FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData
 
     auto orientation = item->toLong();
 
-    if (orientation < static_cast<long>(Orientation::ROT_0)) {
-        throw FileInfoImageJpegError{"Invalid orientation value (smaller than min)"};
-    }
-
-    if (orientation > static_cast<long>(Orientation::ROT_90)) {
-        throw FileInfoImageJpegError{"Invalid orientation value (bigger than max)"};
+    if (orientation < static_cast<long>(Orientation::ROT_0) || orientation > static_cast<long>(Orientation::ROT_90)) {
+        throw FileInfoImageJpegError{"Invalid orientation value"};
     }
 
     m_orientation = static_cast<Orientation>(orientation);

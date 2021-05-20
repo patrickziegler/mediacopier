@@ -36,33 +36,35 @@ namespace MediaCopier {
 
 FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) : AbstractFileInfo{std::move(path)}
 {
+    std::stringstream timestamp;
+
     for (const std::string& key : keysDateTime) {
         if (exif.findKey(Exiv2::ExifKey{key}) == exif.end()) {
             continue;
         }
-        std::istringstream ss{exif[key].toString()};
-        ss >> date::parse("%Y:%m:%d %H:%M:%S", m_timestamp);
-        break;
+        std::string value = exif[key].toString();
+        if (value.length() > 0) {
+            timestamp << value;
+            break;
+        }
+    }
+
+    if (timestamp.str().size() < 1) {
+        throw FileInfoError{"No date information found"};
     }
 
     for (const std::string& key : keysSubSec) {
         if (exif.findKey(Exiv2::ExifKey{key}) == exif.end()) {
             continue;
         }
-        std::string subsec = exif[key].toString();
-        if (subsec.length() < 1) {
-            continue;
-        } else if (subsec.length() < 4) {
-            m_timestamp += std::chrono::milliseconds{exif[key].toLong()};
-        } else {
-            m_timestamp += std::chrono::microseconds{exif[key].toLong()};
+        std::string value = exif[key].toString();
+        if (value.length() > 0) {
+            timestamp << "." << value;
+            break;
         }
-        break;
     }
 
-    if (m_timestamp == std::chrono::system_clock::time_point{}) {
-        throw FileInfoError{"No date information found"};
-    }
+    timestamp >> date::parse("%Y:%m:%d %H:%M:%S", m_timestamp);
 }
 
 void FileInfoImage::accept(const AbstractFileOperation& operation) const
