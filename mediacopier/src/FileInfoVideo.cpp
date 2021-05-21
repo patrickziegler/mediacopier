@@ -45,12 +45,8 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     }
 
     // magic numbers assume the following format: 2018-01-01T01:01:01.000000Z
-    std::string datetime{tag->value};
-    std::istringstream ss{datetime.substr(0, 19)};
+    std::istringstream ss{tag->value};
     ss >> date::parse("%Y-%m-%dT%H:%M:%S", m_timestamp);
-
-    auto us = std::stol(datetime.substr(20, 6));
-    m_timestamp += std::chrono::microseconds{us};
 
     avformat_close_input(&fmt_ctx);
 
