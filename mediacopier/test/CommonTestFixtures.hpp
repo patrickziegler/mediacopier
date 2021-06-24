@@ -48,14 +48,12 @@ protected:
         log.configure();
     }
 
-    void checkNullptr(std::filesystem::path&& path)
-    {
+    void checkNullptr(std::filesystem::path&& path) {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_EQ(file.get(), nullptr);
     }
 
-    void checkFileInfoType(std::filesystem::path&& path, FileInfoType type)
-    {
+    void checkFileInfoType(std::filesystem::path&& path, FileInfoType type) {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 
@@ -63,9 +61,9 @@ protected:
         ASSERT_TRUE(m_typeDetector.lastType() == type);
     };
 
-    void checkFileInfoJpeg(std::filesystem::path&& path, FileInfoImageJpeg::Orientation orientation,
-                           std::string dateTimeOriginal)
-    {
+    void checkFileInfoJpeg(std::filesystem::path&& path,
+                           FileInfoImageJpeg::Orientation orientation,
+                           std::string dateTimeOriginal) {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 
@@ -76,8 +74,7 @@ protected:
         ASSERT_EQ(fileJpeg->timestamp(), timestamp);
     }
 
-    void checkFileInfo(std::filesystem::path&& path, std::string dateTimeOriginal)
-    {
+    void checkFileInfo(std::filesystem::path&& path, std::string dateTimeOriginal) {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 
