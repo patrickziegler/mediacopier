@@ -101,6 +101,11 @@ void FileRegister::add(const std::filesystem::path& path)
     throw FileInfoError{"Unable to find unique filename"};
 }
 
+void FileRegister::reset()
+{
+    m_register.clear();
+}
+
 FileInfoMap::const_iterator FileRegister::begin() const
 {
     return m_register.begin();

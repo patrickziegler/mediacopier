@@ -29,6 +29,7 @@ class FileRegister {
 public:
     explicit FileRegister(std::filesystem::path destination, std::string pattern);
     void add(const std::filesystem::path& path);
+    void reset();
     FileInfoMap::const_iterator begin() const;
     FileInfoMap::const_iterator end() const;
     size_t size() const;
