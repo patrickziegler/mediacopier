@@ -103,10 +103,10 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
         trans.transform = JXFORM_ROT_180;
         break;
     case MediaCopier::FileInfoImageJpeg::Orientation::ROT_90:
-        trans.transform = JXFORM_ROT_90;
+        trans.transform = JXFORM_ROT_270;
         break;
     case MediaCopier::FileInfoImageJpeg::Orientation::ROT_270:
-        trans.transform = JXFORM_ROT_270;
+        trans.transform = JXFORM_ROT_90;
         break;
     default:
         return std::error_code{static_cast<int>(JpegErrorValue::UnknownTransformation), cat};
