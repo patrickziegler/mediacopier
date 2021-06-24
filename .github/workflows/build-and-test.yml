@@ -40,7 +40,7 @@ jobs:
 
     - name: Build-and-Test - Run tests
       working-directory: ${{github.workspace}}/build
-      run: make test
+      run: ctest --rerun-failed --output-on-failure
 
     - name: Coverage - Cleanup build directory
       run: |
