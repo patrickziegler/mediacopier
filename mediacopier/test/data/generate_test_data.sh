@@ -37,6 +37,8 @@ SCRIPT_PATH=`dirname "${SCRIPT}"`
 
 DATA_PATH=$1
 
+TEXT_FILE="${DATA_PATH}/dummy.txt"
+
 IMG_ORIGINAL="${SCRIPT_PATH}/lena512color.tiff"
 VID_ORIGINAL="${SCRIPT_PATH}/roundhay_garden_scene.mp4"
 
@@ -67,6 +69,8 @@ rm -rf "${DATA_PATH}"
 mkdir -p "${DATA_PATH}"
 
 # --- Create images with orientations as in [1]
+
+touch "${TEXT_FILE}"
 
 convert "${IMG_ORIGINAL}" -resize 64x64 -quality 25 -colorspace GRAY "${IMG_64_ROT0}"
 

@@ -72,4 +72,9 @@ TEST_F(FileInfoTests, invalidFileInfoVideo)
     checkNullptr(test_data_dir_orig / "video_broken.webm");
 }
 
+TEST_F(FileInfoTests, unkownFileType)
+{
+    checkNullptr(test_data_dir_orig / "dummy.txt");
+}
+
 } // namespace MediaCopier::Test
