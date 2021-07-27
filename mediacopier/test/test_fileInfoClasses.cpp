@@ -26,55 +26,38 @@ class FileInfoTests : public CommonTestFixtures {
 
 TEST_F(FileInfoTests, validFileInfoImageJpeg)
 {
-    checkFileInfoType(test_data_dir_orig / "lena64_rot0.jpg",
-                      FileInfoType::FileInfoImageJpeg);
-
-    checkFileInfoJpeg(test_data_dir_orig / "lena64_rot0.jpg",
-                      FileInfoImageJpeg::Orientation::ROT_0, "2019-02-05 12:10:32.123456");
-
-    checkFileInfoJpeg(test_data_dir_orig / "lena64_rot90.jpg",
-                      FileInfoImageJpeg::Orientation::ROT_90, "2019-02-05 12:11:32");
-
-    checkFileInfoJpeg(test_data_dir_orig / "lena64_rot180.jpg",
-                      FileInfoImageJpeg::Orientation::ROT_180, "2019-02-05 12:12:32.1234");
-
-    checkFileInfoJpeg(test_data_dir_orig / "lena64_rot270.jpg",
-                      FileInfoImageJpeg::Orientation::ROT_270, "2019-02-05 12:13:32.123");
+    checkFileInfoType(m_testDataDirOrig / "lena64_rot0.jpg", FileInfoType::FileInfoImageJpeg);
+    checkFileInfoJpegAttrs(m_testDataDirOrig / "lena64_rot0.jpg", FileInfoImageJpeg::Orientation::ROT_0, "2019-02-05 12:10:32.123456");
+    checkFileInfoJpegAttrs(m_testDataDirOrig / "lena64_rot90.jpg", FileInfoImageJpeg::Orientation::ROT_90, "2019-02-05 12:11:32");
+    checkFileInfoJpegAttrs(m_testDataDirOrig / "lena64_rot180.jpg", FileInfoImageJpeg::Orientation::ROT_180, "2019-02-05 12:12:32.1234");
+    checkFileInfoJpegAttrs(m_testDataDirOrig / "lena64_rot270.jpg", FileInfoImageJpeg::Orientation::ROT_270, "2019-02-05 12:13:32.123");
 }
 
 TEST_F(FileInfoTests, invalidFileInfoImageJpeg)
 {
-    checkFileInfoType(test_data_dir_orig / "lena64_rot270_orientation_missing.jpg",
-                      FileInfoType::FileInfoImage);
-
-    checkNullptr(test_data_dir_orig / "lena64_rot270_timestamp_missing.jpg");
+    checkFileInfoType(m_testDataDirOrig / "lena64_rot270_orientation_missing.jpg", FileInfoType::FileInfoImage);
+    checkFileValid(m_testDataDirOrig / "lena64_rot270_timestamp_missing.jpg");
 }
 
 TEST_F(FileInfoTests, validFileInfoVideo)
 {
-    checkFileInfoType(test_data_dir_orig / "roundhay_garden_scene.mov",
-                      FileInfoType::FileInfoVideo);
-
-    checkFileInfoType(test_data_dir_orig / "roundhay_garden_scene.mp4",
-                      FileInfoType::FileInfoVideo);
-
-    checkFileInfoType(test_data_dir_orig / "roundhay_garden_scene.webm",
-                      FileInfoType::FileInfoVideo);
-
-    checkFileInfo(test_data_dir_orig / "roundhay_garden_scene.mov", "2018-01-01 01:01:01");
-    checkFileInfo(test_data_dir_orig / "roundhay_garden_scene.mp4", "2018-01-01 01:01:01");
-    checkFileInfo(test_data_dir_orig / "roundhay_garden_scene.webm", "2018-01-01 01:01:01");
+    checkFileInfoType(m_testDataDirOrig / "roundhay_garden_scene.mov", FileInfoType::FileInfoVideo);
+    checkFileInfoType(m_testDataDirOrig / "roundhay_garden_scene.mp4", FileInfoType::FileInfoVideo);
+    checkFileInfoType(m_testDataDirOrig / "roundhay_garden_scene.webm", FileInfoType::FileInfoVideo);
+    checkFileInfoAttrs(m_testDataDirOrig / "roundhay_garden_scene.mov", "2018-01-01 01:01:01");
+    checkFileInfoAttrs(m_testDataDirOrig / "roundhay_garden_scene.mp4", "2018-01-01 01:01:01");
+    checkFileInfoAttrs(m_testDataDirOrig / "roundhay_garden_scene.webm", "2018-01-01 01:01:01");
 }
 
 TEST_F(FileInfoTests, invalidFileInfoVideo)
 {
-    checkNullptr(test_data_dir_orig / "video_timestamp_missing.mov");
-    checkNullptr(test_data_dir_orig / "video_broken.webm");
+    checkFileValid(m_testDataDirOrig / "video_timestamp_missing.mov");
+    checkFileValid(m_testDataDirOrig / "video_broken.webm");
 }
 
 TEST_F(FileInfoTests, unkownFileType)
 {
-    checkNullptr(test_data_dir_orig / "dummy.txt");
+    checkFileValid(m_testDataDirOrig / "dummy.txt");
 }
 
 } // namespace MediaCopier::Test

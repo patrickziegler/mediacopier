@@ -14,76 +14,67 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "CommonTestFixtures.hpp"
-
-#include <mediacopier/FileRegister.hpp>
 #include <mediacopier/FileOperationMove.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
+#include <mediacopier/FileRegister.hpp>
+
+#include "CommonTestFixtures.hpp"
 
 namespace fs = std::filesystem;
 
 namespace MediaCopier::Test {
 
 template <typename T>
-static const fs::path execOnSingleFile(const MediaCopier::FileRegister& reg)
+static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDir) -> const fs::path
 {
-    const auto& it = reg.begin();
-    const auto& dest = it->first;
-    const auto& file = it->second;
-    T op{dest};
+    FileRegister dst{dstBaseDir, "%Y/%m/%d/TEST_%Y%m%d_%H%M%S_"};
+    dst.add(srcPath);
+    const auto& it = dst.begin();
+    const auto& [dest, file] = std::tie(it->first, it->second);
+            T op{dest};
     file->accept(op);
-    return {dest};
+    return dest;
 }
 
 class FileOperationTests : public CommonTestFixtures {
 protected:
-    void checkOps(std::string srcName, std::string dstName, std::string timestamp, const FileInfoImageJpeg::Orientation& orientation1, const FileInfoImageJpeg::Orientation& orientation2, std::function<void (fs::path, const FileInfoImageJpeg::Orientation&, const std::string&)> check)
+    void checkAllOperations(std::string srcName, std::string dstName, std::string timestamp, const FileInfoImageJpeg::Orientation& orientation, const FileInfoImageJpeg::Orientation& orientationFixed, std::function<void (fs::path, const FileInfoImageJpeg::Orientation&, const std::string&)> checkFileInfoCustom)
     {
+        fs::remove_all(m_dstBaseDir1);
+        fs::remove_all(m_dstBaseDir2);
+
         fs::path srcPath, dstPath;
 
-        fs::remove_all(test_data_dir_dst1);
-        fs::remove_all(test_data_dir_dst2);
-
-        FileRegister dst1{test_data_dir_dst1, "%Y/%m/%d/TEST_%Y%m%d_%H%M%S_"};
-        FileRegister dst2{test_data_dir_dst2, "%Y/%m/%d/TEST_%Y%m%d_%H%M%S_"};
-
         // copy src -> dst1
-        srcPath = test_data_dir_orig / srcName;
-        dst1.reset();
-        dst1.add(srcPath);
-        dstPath = execOnSingleFile<FileOperationCopy>(dst1);
-        check(dstPath, orientation1, timestamp);
+        srcPath = m_testDataDirOrig / srcName;
+        dstPath = execute_operation<FileOperationCopy>(srcPath, m_dstBaseDir1);
+        checkFileInfoCustom(dstPath, orientation, timestamp);
         ASSERT_TRUE(fs::exists(srcPath));
 
         // move dst1 -> dst2
-        srcPath = test_data_dir_dst1 / dstName;
-        dst2.reset();
-        dst2.add(srcPath);
-        dstPath = execOnSingleFile<FileOperationMove>(dst2);
-        check(dstPath, orientation1, timestamp);
+        srcPath = m_dstBaseDir1 / dstName;
+        dstPath = execute_operation<FileOperationMove>(srcPath, m_dstBaseDir2);
+        checkFileInfoCustom(dstPath, orientation, timestamp);
         ASSERT_FALSE(fs::exists(srcPath));
 
         // move dst2 -> dst1, jpeg aware
-        srcPath = test_data_dir_dst2 / dstName;
-        dst1.reset();
-        dst1.add(srcPath);
-        dstPath = execOnSingleFile<FileOperationMoveJpeg>(dst1);
-        check(dstPath, orientation2, timestamp);
+        srcPath = m_dstBaseDir2 / dstName;
+        dstPath = execute_operation<FileOperationMoveJpeg>(srcPath, m_dstBaseDir1);
+        checkFileInfoCustom(dstPath, orientationFixed, timestamp);
         ASSERT_FALSE(fs::exists(srcPath));
 
         // copy src -> dst2, jpeg aware
-        srcPath = test_data_dir_orig / srcName;
-        dst2.reset();
-        dst2.add(srcPath);
-        dstPath = execOnSingleFile<FileOperationCopyJpeg>(dst2);
-        check(dstPath, orientation2, timestamp);
+        srcPath = m_testDataDirOrig / srcName;
+        dstPath = execute_operation<FileOperationCopyJpeg>(srcPath, m_dstBaseDir2);
+        checkFileInfoCustom(dstPath, orientationFixed, timestamp);
         ASSERT_TRUE(fs::exists(srcPath));
     }
 
 private:
     using CommonTestFixtures::SetUp;
-    fs::path test_data_dir_dst1 = test_data_dir / "tmp1";
-    fs::path test_data_dir_dst2 = test_data_dir / "tmp2";
+
+    fs::path m_dstBaseDir1 = m_testDataDir / "tmp1";
+    fs::path m_dstBaseDir2 = m_testDataDir / "tmp2";
 };
 
 TEST_F(FileOperationTests, singleImageJpeg0ImageAllOperations)
@@ -93,12 +84,13 @@ TEST_F(FileOperationTests, singleImageJpeg0ImageAllOperations)
     std::string timestamp = "2019-02-05 12:10:32.123456";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
-    auto check = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpeg(std::move(dstPath), orientation, timestamp);
+    auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
+        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
     };
 
-    checkOps(srcName, dstName, timestamp, orientation, FileInfoImageJpeg::Orientation::ROT_0, check);
+    checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
 TEST_F(FileOperationTests, singleImageJpeg90ImageAllOperations)
@@ -108,12 +100,13 @@ TEST_F(FileOperationTests, singleImageJpeg90ImageAllOperations)
     std::string timestamp = "2019-02-05 12:11:32";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_90;
+    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
-    auto check = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpeg(std::move(dstPath), orientation, timestamp);
+    auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
+        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
     };
 
-    checkOps(srcName, dstName, timestamp, orientation, FileInfoImageJpeg::Orientation::ROT_0, check);
+    checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
 TEST_F(FileOperationTests, singleImageJpeg180ImageAllOperations)
@@ -123,12 +116,13 @@ TEST_F(FileOperationTests, singleImageJpeg180ImageAllOperations)
     std::string timestamp = "2019-02-05 12:12:32.1234";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_180;
+    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
-    auto check = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpeg(std::move(dstPath), orientation, timestamp);
+    auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
+        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
     };
 
-    checkOps(srcName, dstName, timestamp, orientation, FileInfoImageJpeg::Orientation::ROT_0, check);
+    checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
 TEST_F(FileOperationTests, singleImageJpeg270ImageAllOperations)
@@ -138,12 +132,13 @@ TEST_F(FileOperationTests, singleImageJpeg270ImageAllOperations)
     std::string timestamp = "2019-02-05 12:13:32.123";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_270;
+    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
-    auto check = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpeg(std::move(dstPath), orientation, timestamp);
+    auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
+        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
     };
 
-    checkOps(srcName, dstName, timestamp, orientation, FileInfoImageJpeg::Orientation::ROT_0, check);
+    checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
 TEST_F(FileOperationTests, singleImageJpeg90WrongSizeImageAllOperations)
@@ -153,12 +148,13 @@ TEST_F(FileOperationTests, singleImageJpeg90WrongSizeImageAllOperations)
     std::string timestamp = "2018-05-05 06:11:32";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_90;
+    const auto& orientationFixed = orientation;
 
-    auto check = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpeg(std::move(dstPath), orientation, timestamp);
+    auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
+        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
     };
 
-    checkOps(srcName, dstName, timestamp, orientation, FileInfoImageJpeg::Orientation::ROT_90, check);
+    checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
 TEST_F(FileOperationTests, singleImageAllOperations)
@@ -168,12 +164,13 @@ TEST_F(FileOperationTests, singleImageAllOperations)
     std::string timestamp = "2019-02-05 12:09:32";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
-    auto check = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfo(std::move(dstPath), timestamp);
+    auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
+        checkFileInfoAttrs(std::move(dstPath), timestamp);
     };
 
-    checkOps(srcName, dstName, timestamp, orientation, FileInfoImageJpeg::Orientation::ROT_0, check);
+    checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
 TEST_F(FileOperationTests, singleVideoAllOperations)
@@ -183,12 +180,13 @@ TEST_F(FileOperationTests, singleVideoAllOperations)
     std::string timestamp = "2018-01-01 01:01:01";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto& orientationFixed = orientation;
 
-    auto check = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfo(std::move(dstPath), timestamp);
+    auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
+        checkFileInfoAttrs(std::move(dstPath), timestamp);
     };
 
-    checkOps(srcName, dstName, timestamp, orientation, FileInfoImageJpeg::Orientation::ROT_0, check);
+    checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
 } // namespace MediaCopier::Test

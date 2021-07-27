@@ -16,20 +16,20 @@
 
 #pragma once
 
-#include <gtest/gtest.h>
+#include "FileInfoTypeDetector.hpp"
 
 #include <mediacopier/FileInfoFactory.hpp>
 
-#include <chrono>
-
 #include <date/date.h>
+#include <gtest/gtest.h>
 #include <log4cplus/configurator.h>
 
-#include "FileInfoTypeDetector.hpp"
+#include <chrono>
 
 namespace fs = std::filesystem;
 
-static auto parse_timestamp(std::string timestamp) -> std::chrono::system_clock::time_point {
+static auto parse_timestamp(std::string timestamp) -> const std::chrono::system_clock::time_point
+{
     std::istringstream ss{timestamp};
     std::chrono::system_clock::time_point ts;
     ss >> date::parse("%Y-%m-%d %H:%M:%S", ts);
@@ -40,15 +40,15 @@ namespace MediaCopier::Test {
 
 class CommonTestFixtures : public ::testing::Test {
 protected:
-    fs::path test_data_dir = TEST_DATA_DIR;
-    fs::path test_data_dir_orig = test_data_dir / "original";
+    fs::path m_testDataDir = TEST_DATA_DIR;
+    fs::path m_testDataDirOrig = m_testDataDir / "original";
 
     void SetUp() override {
         log4cplus::BasicConfigurator log;
         log.configure();
     }
 
-    void checkNullptr(std::filesystem::path&& path) {
+    void checkFileValid(std::filesystem::path&& path) {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_EQ(file.get(), nullptr);
     }
@@ -61,9 +61,7 @@ protected:
         ASSERT_TRUE(m_typeDetector.lastType() == type);
     };
 
-    void checkFileInfoJpeg(std::filesystem::path&& path,
-                           FileInfoImageJpeg::Orientation orientation,
-                           std::string dateTimeOriginal) {
+    void checkFileInfoJpegAttrs(std::filesystem::path&& path, FileInfoImageJpeg::Orientation orientation, std::string dateTimeOriginal) {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 
@@ -74,7 +72,7 @@ protected:
         ASSERT_EQ(fileJpeg->timestamp(), timestamp);
     }
 
-    void checkFileInfo(std::filesystem::path&& path, std::string dateTimeOriginal) {
+    void checkFileInfoAttrs(std::filesystem::path&& path, std::string dateTimeOriginal) {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 
