@@ -26,13 +26,11 @@ namespace fs = std::filesystem;
 
 namespace MediaCopier {
 
-MediaCopier createExecutor(int argc, char *argv[])
+auto create_executor(int argc, char *argv[]) -> MediaCopier
 {
-    std::vector<std::string> pos;
-
-    fs::path inputDir;
-    fs::path outputDir;
+    std::vector<std::string> posArgs;
     std::string pattern = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
+    fs::path inputDir, outputDir;
     MediaCopier::Command command;
 
     for (int i = 1; i < argc; ++i) {
@@ -41,7 +39,7 @@ MediaCopier createExecutor(int argc, char *argv[])
         if (!arg.compare(0, 1, "-")) {
 
             if (arg.find("h") < arg.npos) {
-                pos.clear();
+                posArgs.clear();
                 break;
             }
 
@@ -56,11 +54,11 @@ MediaCopier createExecutor(int argc, char *argv[])
             }
 
         } else {
-            pos.push_back(arg);
+            posArgs.push_back(arg);
         }
     }
 
-    if (pos.size() < 3) {
+    if (posArgs.size() < 3) {
         std::cout << MEDIACOPIER_PROJECT_NAME << " v" << MEDIACOPIER_VERSION
                   << ", Copyright (C) 2020 Patrick Ziegler\n"
                   << "Usage: mediacopier COMMAND SRC DST [options]\n"
@@ -74,14 +72,14 @@ MediaCopier createExecutor(int argc, char *argv[])
         std::exit(0);
     }
 
-    std::string op{pos.at(0)};
+    std::string op{posArgs.at(0)};
 
-    if (pos.size() > 1) {
-        inputDir = fs::path{pos.at(1)};
+    if (posArgs.size() > 1) {
+        inputDir = fs::path{posArgs.at(1)};
     }
 
-    if (pos.size() > 2) {
-        outputDir = fs::path{pos.at(2)};
+    if (posArgs.size() > 2) {
+        outputDir = fs::path{posArgs.at(2)};
     }
 
     if (op == "copy") {
@@ -106,7 +104,7 @@ int main(int argc, char *argv[])
     auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
 
     try {
-        auto executor = MediaCopier::createExecutor(argc, argv);
+        auto executor = MediaCopier::create_executor(argc, argv);
         executor.run();
 
     } catch (const std::exception& err) {
