@@ -10,7 +10,6 @@ list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 option(ENABLE_COVERAGE "Activate flags for gcov on compilation" OFF)
 option(ENABLE_CLI "Include command line interface" ON)
-option(ENABLE_GUI "Include graphical user interface" OFF)
 option(ENABLE_TEST "Include test targets" OFF)
 
 if(${ENABLE_COVERAGE})
@@ -24,10 +23,6 @@ add_subdirectory(mediacopier)
 
 if(${ENABLE_CLI})
     add_subdirectory(mediacopier-cli)
-endif()
-
-if(${ENABLE_GUI})
-    add_subdirectory(mediacopier-gui)
 endif()
 
 if(${ENABLE_TEST})
