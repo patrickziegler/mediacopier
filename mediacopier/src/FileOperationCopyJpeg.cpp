@@ -117,19 +117,11 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
 
     if (setjmp(c_err.env)) {
         jpeg_destroy_decompress(&c_info);
-        return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
-    }
-
-    d_info.err = jpeg_std_error(&d_err.mgr);
-    d_err.mgr.error_exit = jpeg_error_handler;
-
-    if (setjmp(d_err.env)) {
         jpeg_destroy_compress(&d_info);
         return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
     }
 
     jpeg_create_decompress(&c_info);
-    jpeg_create_compress(&d_info);
 
     if ((f_in = fopen(file.path().c_str(), "rb")) == nullptr) {
         return std::error_code{static_cast<int>(JpegErrorValue::FileReadError), cat};
@@ -142,9 +134,19 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
 
     if (c_info.image_width % 16 > 0 || c_info.image_height % 16 > 0) {
         jpeg_destroy_decompress(&c_info);
-        jpeg_destroy_compress(&d_info);
         return std::error_code{static_cast<int>(JpegErrorValue::ImageSizeError), cat};
     }
+
+    d_info.err = jpeg_std_error(&d_err.mgr);
+    d_err.mgr.error_exit = jpeg_error_handler;
+
+    if (setjmp(d_err.env)) {
+        jpeg_destroy_decompress(&c_info);
+        jpeg_destroy_compress(&d_info);
+        return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
+    }
+
+    jpeg_create_compress(&d_info);
 
     c_coeff = jpeg_read_coefficients(&c_info);
     jpeg_copy_critical_parameters(&c_info, &d_info);
