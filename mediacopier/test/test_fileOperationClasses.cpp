@@ -30,8 +30,9 @@ static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDi
     FileRegister dst{dstBaseDir, "%Y/%m/%d/TEST_%Y%m%d_%H%M%S_"};
     dst.add(srcPath);
     const auto& it = dst.begin();
-    const auto& [dest, file] = std::tie(it->first, it->second);
-            T op{dest};
+    const auto& dest = it->first;
+    const auto& file = it->second;
+    T op{dest};
     file->accept(op);
     return dest;
 }
