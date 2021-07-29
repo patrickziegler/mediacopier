@@ -60,7 +60,7 @@ auto create_executor(int argc, char *argv[]) -> MediaCopier
 
     if (posArgs.size() < 3) {
         std::cout << MEDIACOPIER_PROJECT_NAME << " v" << MEDIACOPIER_VERSION
-                  << ", Copyright (C) 2020 Patrick Ziegler\n"
+                  << ", Copyright (C) 2020-2021 Patrick Ziegler\n"
                   << "Usage: mediacopier COMMAND SRC DST [options]\n"
                   << "\nAvailable commands:\n"
                   << "  copy   : Copy files from SRC directory to DST\n"
