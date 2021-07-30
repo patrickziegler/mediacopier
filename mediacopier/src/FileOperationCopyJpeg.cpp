@@ -112,16 +112,29 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
         return std::error_code{static_cast<int>(JpegErrorValue::UnknownTransformation), cat};
     }
 
+    // create source struct (decompress) and error handlers
+
     c_info.err = jpeg_std_error(&c_err.mgr);
     c_err.mgr.error_exit = jpeg_error_handler;
 
     if (setjmp(c_err.env)) {
-        jpeg_destroy_decompress(&c_info);
-        jpeg_destroy_compress(&d_info);
         return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
     }
 
     jpeg_create_decompress(&c_info);
+
+    // create destination struct (compress) and error handlers
+
+    d_info.err = jpeg_std_error(&d_err.mgr);
+    d_err.mgr.error_exit = jpeg_error_handler;
+
+    if (setjmp(d_err.env)) {
+        return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
+    }
+
+    jpeg_create_compress(&d_info);
+
+    // open file, read header and check image size
 
     if ((f_in = fopen(file.path().c_str(), "rb")) == nullptr) {
         return std::error_code{static_cast<int>(JpegErrorValue::FileReadError), cat};
@@ -130,23 +143,14 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     jpeg_stdio_src(&c_info, f_in);
     jcopy_markers_setup(&c_info, JCOPYOPT_ALL);
     jpeg_read_header(&c_info, true);
-    jtransform_request_workspace(&c_info, &trans);
 
     if (c_info.image_width % 16 > 0 || c_info.image_height % 16 > 0) {
-        jpeg_destroy_decompress(&c_info);
         return std::error_code{static_cast<int>(JpegErrorValue::ImageSizeError), cat};
     }
 
-    d_info.err = jpeg_std_error(&d_err.mgr);
-    d_err.mgr.error_exit = jpeg_error_handler;
+    // do transform
 
-    if (setjmp(d_err.env)) {
-        jpeg_destroy_decompress(&c_info);
-        jpeg_destroy_compress(&d_info);
-        return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
-    }
-
-    jpeg_create_compress(&d_info);
+    jtransform_request_workspace(&c_info, &trans);
 
     c_coeff = jpeg_read_coefficients(&c_info);
     jpeg_copy_critical_parameters(&c_info, &d_info);
