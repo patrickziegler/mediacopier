@@ -32,7 +32,7 @@ jobs:
       run: |
         cmake -B ${BUILD_DIR} -DENABLE_TEST=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}
-        cmake --build ${BUILD_DIR} --target test
+        ctest --test-dir ${BUILD_DIR} -V
 
     - name: Generate coverage report
       env:
