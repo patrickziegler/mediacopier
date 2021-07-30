@@ -133,7 +133,6 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     jtransform_request_workspace(&c_info, &trans);
 
     if (c_info.image_width % 16 > 0 || c_info.image_height % 16 > 0) {
-        jpeg_destroy_decompress(&c_info);
         return std::error_code{static_cast<int>(JpegErrorValue::ImageSizeError), cat};
     }
 
@@ -141,8 +140,6 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     d_err.mgr.error_exit = jpeg_error_handler;
 
     if (setjmp(d_err.env)) {
-        jpeg_destroy_decompress(&c_info);
-        jpeg_destroy_compress(&d_info);
         return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
     }
 
