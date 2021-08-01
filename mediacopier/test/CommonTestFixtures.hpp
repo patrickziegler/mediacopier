@@ -26,7 +26,7 @@
 
 #include <chrono>
 
-namespace fs = std::filesystem;
+const constexpr char* DEFAULT_PATTERN = "%Y/%m/%d/TEST_%Y%m%d_%H%M%S_";
 
 static auto parse_timestamp(std::string timestamp) -> const std::chrono::system_clock::time_point
 {
@@ -40,8 +40,8 @@ namespace MediaCopier::Test {
 
 class CommonTestFixtures : public ::testing::Test {
 protected:
-    fs::path m_testDataDir = TEST_DATA_DIR;
-    fs::path m_testDataDirOrig = m_testDataDir / "original";
+    std::filesystem::path m_testDataDir = TEST_DATA_DIR;
+    std::filesystem::path m_testDataDirOrig = m_testDataDir / "original";
 
     void SetUp() override {
         log4cplus::BasicConfigurator log;

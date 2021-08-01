@@ -27,7 +27,7 @@ namespace MediaCopier::Test {
 template <typename T>
 static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDir) -> const fs::path
 {
-    FileRegister dst{dstBaseDir, "%Y/%m/%d/TEST_%Y%m%d_%H%M%S_"};
+    FileRegister dst{dstBaseDir, DEFAULT_PATTERN};
     dst.add(srcPath);
     const auto& it = dst.begin();
     const auto& dest = it->first;
@@ -69,9 +69,9 @@ protected:
         dstPath = execute_operation<FileOperationCopyJpeg>(srcPath, m_dstBaseDir2);
         checkFileInfoCustom(dstPath, orientationFixed, timestamp);
         ASSERT_TRUE(fs::exists(srcPath));
-    }
+}
 
-private:
+protected:
     using CommonTestFixtures::SetUp;
 
     fs::path m_dstBaseDir1 = m_testDataDir / "tmp1";
