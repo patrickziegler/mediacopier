@@ -82,7 +82,7 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     jvirt_barray_ptr *c_coeff, *d_coeff;
     jpeg_decompress_struct c_info;
     jpeg_compress_struct d_info;
-    jpeg_error c_err, d_err;
+    jpeg_error_mgr c_err, d_err;
     jpeg_transform_info trans;
 
     JpegErrorCategory cat;
@@ -108,29 +108,23 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
 
     // create source struct (decompress) and error handlers
 
-    c_info.err = jpeg_std_error(&c_err.mgr);
-    c_err.mgr.error_exit = jpeg_error_handler;
-
-    if (setjmp(c_err.env)) {
-        return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
-    }
+    c_info.err = jpeg_std_error(&c_err);
+    c_err.error_exit = jpeg_error_handler;
 
     jpeg_create_decompress(&c_info);
 
     // create destination struct (compress) and error handlers
 
-    d_info.err = jpeg_std_error(&d_err.mgr);
-    d_err.mgr.error_exit = jpeg_error_handler;
-
-    if (setjmp(d_err.env)) {
-        return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
-    }
+    d_info.err = jpeg_std_error(&d_err);
+    d_err.error_exit = jpeg_error_handler;
 
     jpeg_create_compress(&d_info);
 
     // open file, read header and check image size
 
     if ((f_in = fopen(file.path().c_str(), "rb")) == nullptr) {
+        jpeg_destroy_decompress(&c_info);
+        jpeg_destroy_compress(&d_info);
         return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
     }
 
@@ -139,6 +133,9 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     jpeg_read_header(&c_info, true);
 
     if (c_info.image_width % 16 > 0 || c_info.image_height % 16 > 0) {
+        fclose(f_in);
+        jpeg_destroy_decompress(&c_info);
+        jpeg_destroy_compress(&d_info);
         return std::error_code{static_cast<int>(JpegErrorValue::ImageSizeError), cat};
     }
 

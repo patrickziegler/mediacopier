@@ -155,7 +155,7 @@ TEST_F(FileOperationTests, singleImageJpeg90WrongSizeImageAllOperations)
         checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
     };
 
-    // checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
+    checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
 TEST_F(FileOperationTests, singleImageAllOperations)
