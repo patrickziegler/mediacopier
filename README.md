@@ -1,6 +1,6 @@
 # :camera: MediaCopier
 
-[![Build Status](https://github.com/patrickziegler/MediaCopier/workflows/build-and-test/badge.svg)](https://github.com/patrickziegler/MediaCopier/actions)
+[![Build Status](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml/badge.svg?branch=master)](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml?query=branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/patrickziegler/MediaCopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/MediaCopier?branch=master)
 
 ### Features
