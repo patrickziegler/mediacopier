@@ -36,9 +36,7 @@ namespace fs = std::filesystem;
 enum class JpegErrorValue {
     UnknownTransformation,
     ImageSizeError,
-    JpegError,
-    FileReadError,
-    FileWriteError,
+    IOError,
 };
 
 struct JpegErrorCategory : public std::error_category
@@ -55,12 +53,8 @@ struct JpegErrorCategory : public std::error_category
             return "Unknown jpeg transformation";
         case JpegErrorValue::ImageSizeError:
             return "Image size not fit for transformation";
-        case JpegErrorValue::JpegError:
-            return "Error reading / writing jpeg coefficients";
-        case JpegErrorValue::FileReadError:
-            return "Error reading image file";
-        case JpegErrorValue::FileWriteError:
-            return "Error writing image file";
+        case JpegErrorValue::IOError:
+            return "Error reading / writing jpeg coefficients or image file";
         default:
             return "Unknown error";
         }
@@ -118,7 +112,7 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     c_err.mgr.error_exit = jpeg_error_handler;
 
     if (setjmp(c_err.env)) {
-        return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
+        return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
     }
 
     jpeg_create_decompress(&c_info);
@@ -129,7 +123,7 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     d_err.mgr.error_exit = jpeg_error_handler;
 
     if (setjmp(d_err.env)) {
-        return std::error_code{static_cast<int>(JpegErrorValue::JpegError), cat};
+        return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
     }
 
     jpeg_create_compress(&d_info);
@@ -137,7 +131,7 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     // open file, read header and check image size
 
     if ((f_in = fopen(file.path().c_str(), "rb")) == nullptr) {
-        return std::error_code{static_cast<int>(JpegErrorValue::FileReadError), cat};
+        return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
     }
 
     jpeg_stdio_src(&c_info, f_in);
@@ -160,7 +154,7 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
 
     if ((f_out = fopen(dst.c_str(), "wb")) == nullptr) {
         fclose(f_in);
-        return std::error_code{static_cast<int>(JpegErrorValue::FileWriteError), cat};
+        return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
     }
 
     jpeg_stdio_dest(&d_info, f_out);
