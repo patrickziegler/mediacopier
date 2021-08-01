@@ -1,4 +1,4 @@
-/* Copyright (C) 2020-2021 Patrick Ziegler
+/* Copyright (C) 2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,27 +14,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "cli/SequentialExecutor.hpp"
+#pragma once
 
-#include <log4cplus/configurator.h>
-#include <log4cplus/loggingmacros.h>
+#include "ConfigManager.hpp"
 
-namespace fs = std::filesystem;
+#include <filesystem>
 
-int main(int argc, char *argv[])
-{
-    log4cplus::BasicConfigurator log;
-    log.configure();
+namespace MediaCopier::Cli {
 
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
+class SequentialExecutor {
+public:
+    SequentialExecutor(ConfigManager config)
+        : m_config{std::move(config)} {}
+    void run() const;
+private:
+    const ConfigManager m_config;
+};
 
-    try {
-        MediaCopier::Cli::SequentialExecutor executor{{argc, argv}};
-        executor.run();
-    } catch (const std::exception& err) {
-        LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what()));
-        return 1;
-    }
-
-    return 0;
-}
+} // namespace MediaCopier::Cli
