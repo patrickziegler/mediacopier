@@ -14,12 +14,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "SequentialExecutor.hpp"
+
 #include <mediacopier/AbstractFileInfo.hpp>
 #include <mediacopier/Error.hpp>
 #include <mediacopier/FileOperationMove.hpp>
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FileRegister.hpp>
-#include <mediacopier/MediaCopier.hpp>
 
 #include <log4cplus/loggingmacros.h>
 
@@ -63,19 +64,19 @@ static void execute(const MediaCopier::FileRegister& fileRegister)
     }
 }
 
-namespace MediaCopier {
+namespace MediaCopier::Cli {
 
-void MediaCopier::run()
+void SequentialExecutor::run() const
 {
     auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("run"));
 
-    if (!fs::is_directory(m_inputDir)) {
+    if (!fs::is_directory(m_config.inputDir)) {
         throw MediaCopierError("Input folder does not exist");
     }
 
-    FileRegister fileRegister{m_outputDir, m_pattern};
+    FileRegister fileRegister{m_config.outputDir, m_config.pattern};
 
-    for (const auto& file : fs::recursive_directory_iterator(m_inputDir)) {
+    for (const auto& file : fs::recursive_directory_iterator(m_config.inputDir)) {
         if (file.is_regular_file()) {
             try {
                 fileRegister.add(file);
@@ -86,35 +87,35 @@ void MediaCopier::run()
     }
 
     if (fileRegister.size() < 1) {
-        throw MediaCopierError("No files were found in " + m_inputDir.string());
+        throw MediaCopierError("No files were found in " + m_config.inputDir.string());
     }
 
     LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Found " + std::to_string(fileRegister.size())) + " files");
 
-    switch (m_command)
+    switch (m_config.command)
     {
-    case Command::COPY:
+    case ConfigManager::Command::COPY:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing COPY operation"));
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationCopy>(fileRegister);
         });
         break;
 
-    case Command::MOVE:
+    case ConfigManager::Command::MOVE:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing MOVE operation"));
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationMove>(fileRegister);
         });
         break;
 
-    case Command::COPY_JPEG:
+    case ConfigManager::Command::COPY_JPEG:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing COPY operation (with JPEG awareness)"));
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationCopyJpeg>(fileRegister);
         });
         break;
 
-    case Command::MOVE_JPEG:
+    case ConfigManager::Command::MOVE_JPEG:
         LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing MOVE operation (with JPEG awareness)"));
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationMoveJpeg>(fileRegister);
@@ -128,4 +129,4 @@ void MediaCopier::run()
     LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Execution finished"));
 }
 
-} // namespace MediaCopier
+} // namespace MediaCopier::Cli

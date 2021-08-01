@@ -18,9 +18,9 @@
 
 #include <filesystem>
 
-namespace MediaCopier {
+namespace MediaCopier::Cli {
 
-class MediaCopier {
+class ConfigManager {
 public:
     enum class Command {
         COPY,
@@ -28,17 +28,11 @@ public:
         COPY_JPEG,
         MOVE_JPEG
     };
-    MediaCopier(Command command, std::filesystem::path inputDir, std::filesystem::path outputDir, std::string pattern)
-        : m_command{std::move(command)},
-          m_inputDir{std::move(inputDir)},
-          m_outputDir{std::move(outputDir)},
-          m_pattern{std::move(pattern)} {}
-    void run();
-private:
-    Command m_command;
-    std::filesystem::path m_inputDir;
-    std::filesystem::path m_outputDir;
-    std::string m_pattern;
+    ConfigManager(int argc, char *argv[]);
+    Command command;
+    std::filesystem::path inputDir;
+    std::filesystem::path outputDir;
+    std::string pattern = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
 };
 
-} // namespace MediaCopier
+} // namespace MediaCopier::Cli

@@ -24,7 +24,6 @@ target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/src/FileOperationMove.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/FileOperationMoveJpeg.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/FileRegister.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/MediaCopier.cpp"
     "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/transupp.c")
 
 target_include_directories(${TARGET_NAME} PUBLIC
