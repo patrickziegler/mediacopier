@@ -43,7 +43,7 @@ protected:
             file->accept(op);
         }
 
-        // reset works as inteneded
+        // reset works as intended
         dst.reset();
         ASSERT_EQ(dst.size(), 0);
     }

@@ -61,21 +61,6 @@ struct JpegErrorCategory : public std::error_category
     }
 };
 
-struct jpeg_error_struct {
-    jpeg_error_mgr mgr;
-    jmp_buf env;
-};
-
-using jpeg_error = struct jpeg_error_struct;
-using jpeg_error_ptr = jpeg_error*;
-
-static void jpeg_error_handler(j_common_ptr c_info)
-{
-    jpeg_error_ptr err = reinterpret_cast<jpeg_error_ptr>(c_info->err);
-    std::cerr << "jpeg_error_handler: " << err->mgr.jpeg_message_table[err->mgr.msg_code] << std::endl;
-    longjmp(err->env, 1);
-}
-
 static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path& dst)
 {
     FILE *f_in, *f_out;
@@ -109,14 +94,12 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
     // create source struct (decompress) and error handlers
 
     c_info.err = jpeg_std_error(&c_err);
-    c_err.error_exit = jpeg_error_handler;
 
     jpeg_create_decompress(&c_info);
 
     // create destination struct (compress) and error handlers
 
     d_info.err = jpeg_std_error(&d_err);
-    d_err.error_exit = jpeg_error_handler;
 
     jpeg_create_compress(&d_info);
 
@@ -151,6 +134,8 @@ static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& f
 
     if ((f_out = fopen(dst.c_str(), "wb")) == nullptr) {
         fclose(f_in);
+        jpeg_destroy_decompress(&c_info);
+        jpeg_destroy_compress(&d_info);
         return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
     }
 
