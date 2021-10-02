@@ -1,5 +1,3 @@
-add_subdirectory("${CMAKE_SOURCE_DIR}/extern/googletest" build)
-
 find_package(GTest)
 
 add_subdirectory(data)

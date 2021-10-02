@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     lcov \
     libavformat-dev \
     libexiv2-dev \
+    libgtest-dev \
     libimage-exiftool-perl \
     libjpeg-dev \
     libjpeg-progs \
