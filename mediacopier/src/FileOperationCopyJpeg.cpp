@@ -170,10 +170,11 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
     }
 
     fs::create_directories(m_destination.parent_path());
-    auto err = jpeg_copy_rotated(file, m_destination);
+    auto result = jpeg_copy_rotated(file, m_destination);
 
-    if (err.value() > 0) {
-        spdlog::warn(err.message() + ": " + file.path().filename().string() + " -> " + m_destination.filename().string());
+    if (result.value() > 0) {
+        const auto message = result.message();
+        spdlog::warn(message + ": " + file.path().filename().string() + " -> " + m_destination.filename().string());
         return copyFile(file);
     }
 
