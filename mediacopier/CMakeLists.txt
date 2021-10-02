@@ -1,5 +1,5 @@
 find_package(avformat REQUIRED)
-find_package(Exiv2 REQUIRED)
+find_package(exiv2 REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(spdlog REQUIRED)
 
@@ -34,12 +34,11 @@ target_include_directories(${TARGET_NAME} PRIVATE
     "${CMAKE_SOURCE_DIR}/extern/date/include"
     "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/"
     "${AVFORMAT_INCLUDE_DIR}"
-    "${JPEG_INCLUDE_DIRS}"
-    "${EXIV2_INCLUDE_DIR}")
+    "${JPEG_INCLUDE_DIRS}")
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     "${AVFORMAT_LIBRARY}"
-    "${EXIV2_LIBRARY}"
+    exiv2lib
     "${JPEG_LIBRARIES}")
 
 target_link_libraries(${TARGET_NAME} PUBLIC
