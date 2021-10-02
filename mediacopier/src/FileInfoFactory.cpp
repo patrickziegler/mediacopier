@@ -20,14 +20,12 @@
 #include <mediacopier/FileInfoImageJpeg.hpp>
 #include <mediacopier/FileInfoVideo.hpp>
 
-#include <log4cplus/loggingmacros.h>
+#include <spdlog/spdlog.h>
 
 namespace MediaCopier {
 
 FileInfoPtr FileInfoFactory::createFromPath(const std::filesystem::path& path)
 {
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("createFromPath"));
-
     try {
         auto image = Exiv2::ImageFactory::open(path);
 
@@ -39,7 +37,7 @@ FileInfoPtr FileInfoFactory::createFromPath(const std::filesystem::path& path)
                     return std::make_unique<FileInfoImageJpeg>(path, image->exifData());
 
                 }  catch (const FileInfoImageJpegError& err) {
-                    LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + ": " + path.string()));
+                    spdlog::warn(std::string{err.what()} + ": " + path.string());
                 }
             }
 

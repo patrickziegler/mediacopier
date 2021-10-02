@@ -16,23 +16,17 @@
 
 #include "cli/SequentialExecutor.hpp"
 
-#include <log4cplus/configurator.h>
-#include <log4cplus/loggingmacros.h>
+#include <spdlog/spdlog.h>
 
 namespace fs = std::filesystem;
 
 int main(int argc, char *argv[])
 {
-    log4cplus::BasicConfigurator log;
-    log.configure();
-
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("main"));
-
     try {
         MediaCopier::Cli::SequentialExecutor executor{{argc, argv}};
         executor.run();
     } catch (const std::exception& err) {
-        LOG4CPLUS_ERROR(logger, LOG4CPLUS_TEXT(err.what()));
+        spdlog::error(err.what());
         return 1;
     }
 

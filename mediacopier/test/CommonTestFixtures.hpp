@@ -22,7 +22,6 @@
 
 #include <date/date.h>
 #include <gtest/gtest.h>
-#include <log4cplus/configurator.h>
 
 #include <chrono>
 
@@ -42,11 +41,6 @@ class CommonTestFixtures : public ::testing::Test {
 protected:
     std::filesystem::path m_testDataDir = TEST_DATA_DIR;
     std::filesystem::path m_testDataDirOrig = m_testDataDir / "original";
-
-    void SetUp() override {
-        log4cplus::BasicConfigurator log;
-        log.configure();
-    }
 
     void checkFileValid(std::filesystem::path&& path) {
         const auto& file = FileInfoFactory::createFromPath(path);

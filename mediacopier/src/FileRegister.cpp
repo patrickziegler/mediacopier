@@ -19,7 +19,7 @@
 #include <mediacopier/FileInfoFactory.hpp>
 #include <mediacopier/FileRegister.hpp>
 
-#include <log4cplus/loggingmacros.h>
+#include <spdlog/spdlog.h>
 
 #include <random>
 #include <fstream>
@@ -60,8 +60,6 @@ FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdi
 
 void FileRegister::add(const std::filesystem::path& path)
 {
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("add"));
-
     size_t id = 0;
 
     auto file = FileInfoFactory::createFromPath(path);
@@ -78,7 +76,7 @@ void FileRegister::add(const std::filesystem::path& path)
         if (item != m_register.end()) {
             const auto& knownFile = item->second;
             if (is_duplicate(path, knownFile->path())) {
-                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Duplicate: " + path.filename().string() + " same as " + knownFile->path().filename().string()));
+                spdlog::info("Duplicate: " + path.filename().string() + " same as " + knownFile->path().filename().string());
                 return;
             }
             ++id;
@@ -87,7 +85,7 @@ void FileRegister::add(const std::filesystem::path& path)
 
         if (fs::exists(destination)) {
             if (is_duplicate(path, destination)) {
-                LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Already there: " + path.filename().string() + " same as " + destination.filename().string()));
+                spdlog::info("Already there: " + path.filename().string() + " same as " + destination.filename().string());
                 return;
             }
             ++id;

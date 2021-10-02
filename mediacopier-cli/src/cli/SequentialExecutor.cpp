@@ -22,7 +22,7 @@
 #include <mediacopier/FileOperationMoveJpeg.hpp>
 #include <mediacopier/FileRegister.hpp>
 
-#include <log4cplus/loggingmacros.h>
+#include <spdlog/spdlog.h>
 
 #include <atomic>
 #include <csignal>
@@ -46,19 +46,17 @@ static void abortable_wrapper(std::function<void()> abortable_function)
 template <typename T>
 static void execute(const MediaCopier::FileRegister& fileRegister)
 {
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("execute"));
-
     for (const auto& [destination, file] : fileRegister) {
         try {
             T operation{destination};
             file->accept(operation);
 
         }  catch (const MediaCopier::FileOperationError& err) {
-            LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + ": " + file->path().string()));
+            spdlog::warn(std::string{err.what()} + ": " + file->path().string());
         }
 
         if (operationCancelled.load()) {
-            LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Aborting execution"));
+            spdlog::info("Aborting execution");
             break;
         }
     }
@@ -68,8 +66,6 @@ namespace MediaCopier::Cli {
 
 void SequentialExecutor::run() const
 {
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("run"));
-
     if (!fs::is_directory(m_config.inputDir)) {
         throw MediaCopierError("Input folder does not exist");
     }
@@ -81,7 +77,7 @@ void SequentialExecutor::run() const
             try {
                 fileRegister.add(file);
             } catch (const FileInfoError& err) {
-                LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + ": " + file.path().string()));
+                spdlog::warn(std::string{err.what()} + ": " + file.path().string());
             }
         }
     }
@@ -90,33 +86,33 @@ void SequentialExecutor::run() const
         throw MediaCopierError("No files were found in " + m_config.inputDir.string());
     }
 
-    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Found " + std::to_string(fileRegister.size())) + " files");
+    spdlog::info("Found " + std::to_string(fileRegister.size()) + " files");
 
     switch (m_config.command)
     {
     case ConfigManager::Command::COPY:
-        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing COPY operation"));
+        spdlog::info("Executing COPY operation");
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationCopy>(fileRegister);
         });
         break;
 
     case ConfigManager::Command::MOVE:
-        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing MOVE operation"));
+        spdlog::info("Executing MOVE operation");
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationMove>(fileRegister);
         });
         break;
 
     case ConfigManager::Command::COPY_JPEG:
-        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing COPY operation (with JPEG awareness)"));
+        spdlog::info("Executing COPY operation (with JPEG awareness)");
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationCopyJpeg>(fileRegister);
         });
         break;
 
     case ConfigManager::Command::MOVE_JPEG:
-        LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Executing MOVE operation (with JPEG awareness)"));
+        spdlog::info("Executing MOVE operation (with JPEG awareness)");
         abortable_wrapper([fileRegister]() -> void {
             execute<FileOperationMoveJpeg>(fileRegister);
         });
@@ -126,7 +122,7 @@ void SequentialExecutor::run() const
         throw MediaCopierError("Unknown operation type");
     }
 
-    LOG4CPLUS_INFO(logger, LOG4CPLUS_TEXT("Execution finished"));
+    spdlog::info("Execution finished");
 }
 
 } // namespace MediaCopier::Cli

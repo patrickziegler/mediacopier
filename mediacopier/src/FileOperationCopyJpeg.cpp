@@ -20,7 +20,7 @@
 #include <mediacopier/FileInfoVideo.hpp>
 #include <mediacopier/FileOperationCopyJpeg.hpp>
 
-#include <log4cplus/loggingmacros.h>
+#include <spdlog/spdlog.h>
 
 #include <csetjmp>
 #include <iostream>
@@ -161,21 +161,19 @@ namespace MediaCopier {
 
 void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
 {
-    auto logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("copyJpeg"));
-
     if (file.orientation() == FileInfoImageJpeg::Orientation::ROT_0) {
         return copyFile(file);
     }
 
     if (fs::exists(m_destination)) {
-        LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT("Already exists: " + m_destination.filename().string()));
+        spdlog::warn("Already exists: " + m_destination.filename().string());
     }
 
     fs::create_directories(m_destination.parent_path());
     auto err = jpeg_copy_rotated(file, m_destination);
 
     if (err.value() > 0) {
-        LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(err.message() + ": " + file.path().filename().string()) + " -> " + m_destination.filename().string());
+        spdlog::warn(err.message() + ": " + file.path().filename().string() + " -> " + m_destination.filename().string());
         return copyFile(file);
     }
 
@@ -191,7 +189,7 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
         image->writeMetadata();
 
     }  catch (const Exiv2::Error& err) {
-        LOG4CPLUS_WARN(logger, LOG4CPLUS_TEXT(std::string{err.what()} + ": " + file.path().filename().string()));
+        spdlog::warn(std::string{err.what()} + ": " + file.path().filename().string());
         return copyFile(file);
     }
 }

@@ -48,7 +48,7 @@ Build an image and run it as a containerized build environment.
 ```sh
 docker build \
     --build-arg USER_NAME=$(whoami) \
-    --build-arg USER_ID=$(id -u) \
+    --build-arg USER_UID=$(id -u) \
     --build-arg USER_GID=$(id -g) \
     -t mediacopier-build .
 docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build

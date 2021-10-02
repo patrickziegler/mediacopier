@@ -1,7 +1,7 @@
 find_package(avformat REQUIRED)
 find_package(Exiv2 REQUIRED)
 find_package(JPEG REQUIRED)
-find_package(log4cplus REQUIRED)
+find_package(spdlog REQUIRED)
 
 set(TARGET_NAME ${MEDIACOPIER_LIB_TARGET_NAME})
 
@@ -43,7 +43,7 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     "${JPEG_LIBRARIES}")
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-    "${LOG4CPLUS_LIBRARY}")
+    spdlog::spdlog)
 
 set_target_properties(${TARGET_NAME} PROPERTIES
     VERSION ${CMAKE_PROJECT_VERSION}
