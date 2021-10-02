@@ -1,7 +1,9 @@
-find_package(avformat REQUIRED)
 find_package(exiv2 REQUIRED)
 find_package(JPEG REQUIRED)
+find_package(PkgConfig REQUIRED)
 find_package(spdlog REQUIRED)
+
+pkg_check_modules(AVFORMAT REQUIRED libavformat)
 
 set(TARGET_NAME ${MEDIACOPIER_LIB_TARGET_NAME})
 
@@ -33,13 +35,13 @@ target_include_directories(${TARGET_NAME} PUBLIC
 target_include_directories(${TARGET_NAME} PRIVATE
     "${CMAKE_SOURCE_DIR}/extern/date/include"
     "${CMAKE_SOURCE_DIR}/extern/libjpeg-turbo/"
-    "${AVFORMAT_INCLUDE_DIR}"
+    "${AVFORMAT_INCLUDE_DIRS}"
     "${JPEG_INCLUDE_DIRS}")
 
 target_link_libraries(${TARGET_NAME} PRIVATE
-    "${AVFORMAT_LIBRARY}"
-    exiv2lib
-    "${JPEG_LIBRARIES}")
+    "${AVFORMAT_LIBRARIES}"
+    "${JPEG_LIBRARIES}"
+    exiv2lib)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     spdlog::spdlog)

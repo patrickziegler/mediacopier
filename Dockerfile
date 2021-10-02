@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libjpeg-progs \
     libspdlog-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 ARG USER_NAME=dev
