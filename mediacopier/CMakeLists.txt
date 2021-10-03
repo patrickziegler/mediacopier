@@ -28,6 +28,8 @@ target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/src/FileRegister.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
+    "${AVFORMAT_INCLUDE_DIRS}"
+    "${LIBJPEG_INCLUDE_DIRS}"
     "${CMAKE_SOURCE_DIR}/extern/date/include")
 
 target_include_directories(${TARGET_NAME} PUBLIC
