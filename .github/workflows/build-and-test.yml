@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       env:
         DEBIAN_FRONTEND: "noninteractive"
-      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-dev libjpeg-progs libspdlog-dev pkg-config
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs libspdlog-dev libturbojpeg0-dev pkg-config
 
     - name: Checkout repository
       uses: actions/checkout@v2

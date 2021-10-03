@@ -13,9 +13,9 @@ RUN apt-get update && apt-get install -y \
     libexiv2-dev \
     libgtest-dev \
     libimage-exiftool-perl \
-    libjpeg-dev \
-    libjpeg-progs \
+    libjpeg-turbo-progs \
     libspdlog-dev \
+    libturbojpeg0-dev \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 

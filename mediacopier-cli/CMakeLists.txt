@@ -10,7 +10,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/src/cli/SequentialExecutor.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/main.cpp")
 
-target_include_directories(${TARGET_NAME} PUBLIC
+target_include_directories(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}")
 
 target_link_libraries(${TARGET_NAME} PRIVATE

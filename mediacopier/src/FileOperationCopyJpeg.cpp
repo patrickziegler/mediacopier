@@ -22,139 +22,97 @@
 
 #include <spdlog/spdlog.h>
 
-#include <csetjmp>
-#include <iostream>
-
 extern "C"
 {
-#include "jpeglib.h"
-#include "transupp.h"
+#include <turbojpeg.h>
 }
 
 namespace fs = std::filesystem;
 
-enum class JpegErrorValue {
-    UnknownTransformation,
-    ImageSizeError,
-    IOError,
-};
-
-struct JpegErrorCategory : public std::error_category
+static void jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path& dst)
 {
-    const char* name() const noexcept override
-    {
-        return "JpegError";
-    }
+    using unique_file_t = std::unique_ptr<std::FILE, decltype(&std::fclose)>;
+    using unique_buf_t = std::unique_ptr<unsigned char, decltype(&tjFree)>;
 
-    std::string message(int ev) const override
-    {
-        switch (static_cast<JpegErrorValue>(ev)) {
-        case JpegErrorValue::UnknownTransformation:
-            return "Unknown jpeg transformation";
-        case JpegErrorValue::ImageSizeError:
-            return "Image size not fit for transformation";
-        case JpegErrorValue::IOError:
-            return "Error reading / writing jpeg coefficients or image file";
-        default:
-            return "Unknown error";
-        }
-    }
-};
+    tjtransform xform;
+    memset(&xform, 0, sizeof(tjtransform));
 
-static std::error_code jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path& dst)
-{
-    FILE *f_in, *f_out;
-    jvirt_barray_ptr *c_coeff, *d_coeff;
-    jpeg_decompress_struct c_info;
-    jpeg_compress_struct d_info;
-    jpeg_error_mgr c_err, d_err;
-    jpeg_transform_info trans;
-
-    JpegErrorCategory cat;
-
-    trans.trim = false;
-    trans.crop = false;
-    trans.force_grayscale = false;
+    xform.options |= TJXOPT_PERFECT; // will cause tjTransform to return error when no perfect rotation is possible
 
     switch (static_cast<MediaCopier::FileInfoImageJpeg::Orientation>(file.orientation()))
     {
     case MediaCopier::FileInfoImageJpeg::Orientation::ROT_180:
-        trans.transform = JXFORM_ROT_180;
+        xform.op = TJXOP_ROT180;
         break;
     case MediaCopier::FileInfoImageJpeg::Orientation::ROT_90:
-        trans.transform = JXFORM_ROT_270;
+        xform.op = TJXOP_ROT270;
         break;
     case MediaCopier::FileInfoImageJpeg::Orientation::ROT_270:
-        trans.transform = JXFORM_ROT_90;
+        xform.op =  TJXOP_ROT90;
         break;
     default:
-        return std::error_code{static_cast<int>(JpegErrorValue::UnknownTransformation), cat};
+        throw MediaCopier::FileOperationError("Unknown jpeg transformation");
     }
 
-    // create source struct (decompress) and error handlers
+    // ----------------- read input file
 
-    c_info.err = jpeg_std_error(&c_err);
+    unsigned long inputBufSize = 0;
 
-    jpeg_create_decompress(&c_info);
+    unique_file_t inputFile(std::fopen(file.path().string().c_str(), "rb"), &std::fclose);
 
-    // create destination struct (compress) and error handlers
-
-    d_info.err = jpeg_std_error(&d_err);
-
-    jpeg_create_compress(&d_info);
-
-    // open file, read header and check image size
-
-    if ((f_in = fopen(file.path().c_str(), "rb")) == nullptr) {
-        jpeg_destroy_decompress(&c_info);
-        jpeg_destroy_compress(&d_info);
-        return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
+    if (!inputFile) {
+        throw MediaCopier::FileOperationError("Could not open file for reading");
     }
 
-    jpeg_stdio_src(&c_info, f_in);
-    jcopy_markers_setup(&c_info, JCOPYOPT_ALL);
-    jpeg_read_header(&c_info, true);
-
-    if (c_info.image_width % 16 > 0 || c_info.image_height % 16 > 0) {
-        fclose(f_in);
-        jpeg_destroy_decompress(&c_info);
-        jpeg_destroy_compress(&d_info);
-        return std::error_code{static_cast<int>(JpegErrorValue::ImageSizeError), cat};
+    if (fseek(inputFile.get(), 0, SEEK_END) < 0 || ((inputBufSize = ftell(inputFile.get())) < 0) || fseek(inputFile.get(), 0, SEEK_SET) < 0 || inputBufSize == 0) {
+        throw MediaCopier::FileOperationError("Could not determinte file size");
     }
 
-    // do transform
+    unique_buf_t inputBufPtr((unsigned char*) tjAlloc(inputBufSize), &tjFree);
 
-    jtransform_request_workspace(&c_info, &trans);
-
-    c_coeff = jpeg_read_coefficients(&c_info);
-    jpeg_copy_critical_parameters(&c_info, &d_info);
-
-    d_info.write_JFIF_header = false;
-    d_coeff = jtransform_adjust_parameters(&c_info, &d_info, c_coeff, &trans);
-
-    if ((f_out = fopen(dst.c_str(), "wb")) == nullptr) {
-        fclose(f_in);
-        jpeg_destroy_decompress(&c_info);
-        jpeg_destroy_compress(&d_info);
-        return std::error_code{static_cast<int>(JpegErrorValue::IOError), cat};
+    if (!inputBufPtr) {
+        throw MediaCopier::FileOperationError("Could not allocate input buffer");
     }
 
-    jpeg_stdio_dest(&d_info, f_out);
-    jpeg_write_coefficients(&d_info, d_coeff);
-    jcopy_markers_execute(&c_info, &d_info, JCOPYOPT_ALL);
+    if (fread(inputBufPtr.get(), inputBufSize, 1, inputFile.get()) < 1) {
+        throw MediaCopier::FileOperationError("Could not read from input file");
+    }
 
-    jtransform_execute_transformation(&c_info, &d_info, c_coeff, &trans);
+    // ----------------- execute transformation
 
-    jpeg_finish_compress(&d_info);
-    jpeg_destroy_compress(&d_info);
+    tjhandle tjInstance;
+    unsigned long outputBufSize = 0;
 
-    jpeg_finish_decompress(&c_info);
-    jpeg_destroy_decompress(&c_info);
+    if ((tjInstance = tjInitTransform()) == nullptr) {
+        throw MediaCopier::FileOperationError(std::string{"Could not initialize transformation: "} + tjGetErrorStr());
+    }
 
-    fclose(f_out);
-    fclose(f_in);
+    unsigned char * outputBuf = nullptr; // will be owned (and deleted) by outputBufPtr
 
-    return {};
+    int flags = 0;
+
+    if (tjTransform(tjInstance, inputBufPtr.get(), inputBufSize, 1, &outputBuf, &outputBufSize, &xform, flags) < 0) {
+        tjDestroy(tjInstance);
+        throw MediaCopier::FileOperationError(std::string{"Could not execute transformation: "} + tjGetErrorStr());
+    }
+
+    unique_buf_t outputBufPtr(outputBuf, &tjFree);
+
+    // ----------------- write output file
+
+    unique_file_t outputFile(std::fopen(dst.c_str(), "wb"), &std::fclose);
+
+    if (!outputFile) {
+        tjDestroy(tjInstance);
+        throw MediaCopier::FileOperationError("Could not open file for writing");
+    }
+
+    if (fwrite(outputBufPtr.get(), outputBufSize, 1, outputFile.get()) < 1) {
+        tjDestroy(tjInstance);
+        throw MediaCopier::FileOperationError("Could not write to output file");
+    }
+
+    tjDestroy(tjInstance);
 }
 
 namespace MediaCopier {
@@ -169,16 +127,10 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
         spdlog::warn("Already exists: " + m_destination.filename().string());
     }
 
-    fs::create_directories(m_destination.parent_path());
-    auto result = jpeg_copy_rotated(file, m_destination);
-
-    if (result.value() > 0) {
-        const auto message = result.message();
-        spdlog::warn(message + ": " + file.path().filename().string() + " -> " + m_destination.filename().string());
-        return copyFile(file);
-    }
-
     try {
+        fs::create_directories(m_destination.parent_path());
+        jpeg_copy_rotated(file, m_destination);
+
         std::unique_ptr<Exiv2::Image> image;
         image = Exiv2::ImageFactory::open(m_destination);
         image->readMetadata();
@@ -189,7 +141,11 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
         image->setExifData(exif);
         image->writeMetadata();
 
-    }  catch (const Exiv2::Error& err) {
+    } catch (const Exiv2::Error& err) {
+        spdlog::warn(std::string{err.what()} + ": " + file.path().filename().string());
+        return copyFile(file);
+
+    } catch (const std::runtime_error& err) {
         spdlog::warn(std::string{err.what()} + ": " + file.path().filename().string());
         return copyFile(file);
     }

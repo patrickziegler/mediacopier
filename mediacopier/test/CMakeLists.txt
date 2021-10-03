@@ -15,7 +15,7 @@ target_include_directories(${TARGET_NAME} PRIVATE
     "${CMAKE_SOURCE_DIR}/extern/date/include")
 
 target_link_libraries(${TARGET_NAME} PRIVATE
-    gtest gtest_main ${MEDIACOPIER_LIB_TARGET_NAME})
+    gtest gtest_main "${MEDIACOPIER_LIB_TARGET_NAME}")
 
 target_compile_definitions(${TARGET_NAME} PRIVATE "TEST_DATA_DIR=\"${TEST_DATA_DIR}\"")
 
