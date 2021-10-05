@@ -24,7 +24,7 @@
 
 namespace MediaCopier {
 
-FileInfoPtr FileInfoFactory::createFromPath(const std::filesystem::path& path)
+auto FileInfoFactory::createFromPath(const std::filesystem::path& path) -> FileInfoPtr
 {
     try {
         auto image = Exiv2::ImageFactory::open(path);
@@ -43,8 +43,10 @@ FileInfoPtr FileInfoFactory::createFromPath(const std::filesystem::path& path)
 
             return std::make_unique<FileInfoImage>(path, image->exifData());
         }
+
     } catch (const FileInfoError&) {
         return nullptr;
+
     } catch (const Exiv2::Error&) {
         // this was not an image file
     }

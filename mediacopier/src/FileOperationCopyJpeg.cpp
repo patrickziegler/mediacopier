@@ -29,10 +29,12 @@ extern "C"
 
 namespace fs = std::filesystem;
 
-static void jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path& dst)
+static auto jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path& dst) -> void
 {
     using unique_file_t = std::unique_ptr<std::FILE, decltype(&std::fclose)>;
     using unique_buf_t = std::unique_ptr<unsigned char, decltype(&tjFree)>;
+
+    // ----------------- prepare transformation parameters
 
     tjtransform xform;
     memset(&xform, 0, sizeof(tjtransform));
@@ -57,7 +59,6 @@ static void jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const 
     // ----------------- read input file
 
     unsigned long inputBufSize = 0;
-
     unique_file_t inputFile(std::fopen(file.path().string().c_str(), "rb"), &std::fclose);
 
     if (!inputFile) {
@@ -81,14 +82,13 @@ static void jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const 
     // ----------------- execute transformation
 
     tjhandle tjInstance;
-    unsigned long outputBufSize = 0;
 
     if ((tjInstance = tjInitTransform()) == nullptr) {
         throw MediaCopier::FileOperationError(std::string{"Could not initialize transformation: "} + tjGetErrorStr());
     }
 
+    unsigned long outputBufSize = 0;
     unsigned char * outputBuf = nullptr; // will be owned (and deleted) by outputBufPtr
-
     int flags = 0;
 
     if (tjTransform(tjInstance, inputBufPtr.get(), inputBufSize, 1, &outputBuf, &outputBufSize, &xform, flags) < 0) {
@@ -117,10 +117,11 @@ static void jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const 
 
 namespace MediaCopier {
 
-void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
+auto FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const -> void
 {
     if (file.orientation() == FileInfoImageJpeg::Orientation::ROT_0) {
-        return copyFile(file);
+        copyFile(file);
+        return;
     }
 
     if (fs::exists(m_destination)) {
@@ -141,27 +142,25 @@ void FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const
         image->setExifData(exif);
         image->writeMetadata();
 
-    } catch (const Exiv2::Error& err) {
-        spdlog::warn(std::string{err.what()} + ": " + file.path().filename().string());
-        return copyFile(file);
+        return;
 
-    } catch (const std::runtime_error& err) {
+    } catch (const std::exception& err) {
         spdlog::warn(std::string{err.what()} + ": " + file.path().filename().string());
-        return copyFile(file);
     }
+
+    copyFile(file);
 }
 
-void FileOperationCopyJpeg::visit(const FileInfoImage& file)
+auto FileOperationCopyJpeg::visit(const FileInfoImage& file) -> void
 {
     copyFile(file);
 }
 
-void FileOperationCopyJpeg::visit(const FileInfoImageJpeg& file)
+auto FileOperationCopyJpeg::visit(const FileInfoImageJpeg& file) -> void
 {
     copyJpeg(file);
 }
-
-void FileOperationCopyJpeg::visit(const FileInfoVideo& file)
+auto FileOperationCopyJpeg::visit(const FileInfoVideo& file) -> void
 {
     copyFile(file);
 }

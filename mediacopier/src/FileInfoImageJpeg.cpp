@@ -37,7 +37,7 @@ FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData
     m_orientation = static_cast<Orientation>(orientation);
 }
 
-void FileInfoImageJpeg::accept(AbstractFileOperation& operation) const
+auto FileInfoImageJpeg::accept(AbstractFileOperation& operation) const -> void
 {
     operation.visit(*this);
 }

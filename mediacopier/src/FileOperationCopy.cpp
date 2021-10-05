@@ -25,7 +25,7 @@ namespace fs = std::filesystem;
 
 namespace MediaCopier {
 
-void FileOperationCopy::copyFile(const AbstractFileInfo& file) const
+auto FileOperationCopy::copyFile(const AbstractFileInfo& file) const -> void
 {
     std::error_code err;
 
@@ -37,17 +37,17 @@ void FileOperationCopy::copyFile(const AbstractFileInfo& file) const
     }
 }
 
-void FileOperationCopy::visit(const FileInfoImage& file)
+auto FileOperationCopy::visit(const FileInfoImage& file) -> void
 {
     copyFile(file);
 }
 
-void FileOperationCopy::visit(const FileInfoImageJpeg& file)
+auto FileOperationCopy::visit(const FileInfoImageJpeg& file) -> void
 {
     copyFile(file);
 }
 
-void FileOperationCopy::visit(const FileInfoVideo& file)
+auto FileOperationCopy::visit(const FileInfoVideo& file) -> void
 {
     copyFile(file);
 }

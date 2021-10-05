@@ -55,7 +55,7 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     }
 }
 
-void FileInfoVideo::accept(AbstractFileOperation& operation) const
+auto FileInfoVideo::accept(AbstractFileOperation& operation) const -> void
 {
     operation.visit(*this);
 }

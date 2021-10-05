@@ -42,12 +42,12 @@ protected:
     std::filesystem::path m_testDataDir = TEST_DATA_DIR;
     std::filesystem::path m_testDataDirOrig = m_testDataDir / "original";
 
-    void checkFileValid(std::filesystem::path&& path) {
+    auto checkFileValid(std::filesystem::path&& path) -> void {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_EQ(file.get(), nullptr);
     }
 
-    void checkFileInfoType(std::filesystem::path&& path, FileInfoType type) {
+    auto checkFileInfoType(std::filesystem::path&& path, FileInfoType type) -> void {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 
@@ -55,7 +55,7 @@ protected:
         ASSERT_TRUE(m_typeDetector.lastType() == type);
     };
 
-    void checkFileInfoJpegAttrs(std::filesystem::path&& path, FileInfoImageJpeg::Orientation orientation, std::string dateTimeOriginal) {
+    auto checkFileInfoJpegAttrs(std::filesystem::path&& path, FileInfoImageJpeg::Orientation orientation, std::string dateTimeOriginal) -> void {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 
@@ -66,7 +66,7 @@ protected:
         ASSERT_EQ(fileJpeg->timestamp(), timestamp);
     }
 
-    void checkFileInfoAttrs(std::filesystem::path&& path, std::string dateTimeOriginal) {
+    auto checkFileInfoAttrs(std::filesystem::path&& path, std::string dateTimeOriginal) -> void {
         const auto& file = FileInfoFactory::createFromPath(path);
         ASSERT_NE(file.get(), nullptr);
 

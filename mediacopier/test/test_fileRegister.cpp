@@ -27,7 +27,7 @@ class FileRegisterTests : public CommonTestFixtures {
 protected:
     using CommonTestFixtures::SetUp;
 
-    void executeCopyOperation(const fs::path& srcPath)
+    auto executeCopyOperation(const fs::path& srcPath) -> void
     {
         fs::remove_all(m_dstBaseDir);
 

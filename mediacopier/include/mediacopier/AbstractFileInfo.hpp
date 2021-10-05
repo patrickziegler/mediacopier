@@ -27,9 +27,9 @@ public:
     AbstractFileInfo(std::filesystem::path path)
         : m_path{std::move(path)} {}
     virtual ~AbstractFileInfo() = default;
-    virtual void accept(AbstractFileOperation& operation) const = 0;
-    std::filesystem::path path() const { return m_path; }
-    std::chrono::system_clock::time_point timestamp() const { return m_timestamp; }
+    virtual auto accept(AbstractFileOperation& operation) const -> void = 0;
+    auto path() const -> std::filesystem::path { return m_path; }
+    auto timestamp() const -> std::chrono::system_clock::time_point { return m_timestamp; }
 protected:
     std::filesystem::path m_path;
     std::chrono::system_clock::time_point m_timestamp;

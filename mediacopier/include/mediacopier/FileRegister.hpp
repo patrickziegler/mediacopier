@@ -28,13 +28,13 @@ using FileInfoMap = std::unordered_map<std::string, std::shared_ptr<AbstractFile
 class FileRegister {
 public:
     explicit FileRegister(std::filesystem::path destination, std::string pattern);
-    void add(const std::filesystem::path& path);
-    void reset();
-    FileInfoMap::const_iterator begin() const;
-    FileInfoMap::const_iterator end() const;
-    size_t size() const;
+    auto add(const std::filesystem::path& path) -> void;
+    auto reset() -> void;
+    auto begin() const -> FileInfoMap::const_iterator;
+    auto end() const -> FileInfoMap::const_iterator;
+    auto size() const -> size_t;
 private:
-    std::filesystem::path getDestinationPath(const MediaCopier::AbstractFileInfo& file, size_t id, bool useSubsec) const;
+    auto getDestinationPath(const MediaCopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path;
     std::filesystem::path m_destdir;
     std::string m_pattern;
     FileInfoMap m_register;

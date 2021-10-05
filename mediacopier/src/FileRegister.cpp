@@ -27,7 +27,7 @@
 
 namespace fs = std::filesystem;
 
-static bool is_duplicate(fs::path file1, fs::path file2)
+static auto is_duplicate(fs::path file1, fs::path file2) -> bool
 {
     const std::streamsize buffer_size = 1024;
     std::vector<char> buffer(buffer_size, '\0');
@@ -48,6 +48,7 @@ static bool is_duplicate(fs::path file1, fs::path file2)
             return false;
         }
     }
+
     return true;
 }
 
@@ -58,7 +59,7 @@ FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdi
     m_destdir /= ""; // this will append a trailing directory separator when necessary
 }
 
-void FileRegister::add(const std::filesystem::path& path)
+auto FileRegister::add(const std::filesystem::path& path) -> void
 {
     size_t id = 0;
 
@@ -99,27 +100,27 @@ void FileRegister::add(const std::filesystem::path& path)
     throw FileInfoError{"Unable to find unique filename"};
 }
 
-void FileRegister::reset()
+auto FileRegister::reset() -> void
 {
     m_register.clear();
 }
 
-FileInfoMap::const_iterator FileRegister::begin() const
+auto FileRegister::begin() const -> FileInfoMap::const_iterator
 {
     return m_register.begin();
 }
 
-FileInfoMap::const_iterator FileRegister::end() const
+auto FileRegister::end() const -> FileInfoMap::const_iterator
 {
     return m_register.end();
 }
 
-size_t FileRegister::size() const
+auto FileRegister::size() const -> size_t
 {
     return m_register.size();
 }
 
-std::filesystem::path FileRegister::getDestinationPath(const MediaCopier::AbstractFileInfo& file, size_t id, bool useSubsec) const
+auto FileRegister::getDestinationPath(const MediaCopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path
 {
     std::stringstream ss;
     ss << m_destdir.string();
@@ -138,7 +139,6 @@ std::filesystem::path FileRegister::getDestinationPath(const MediaCopier::Abstra
     }
 
     ss << file.path().extension().string();
-
     return {ss.str()};
 }
 

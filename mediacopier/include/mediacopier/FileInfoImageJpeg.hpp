@@ -33,8 +33,8 @@ public:
         ROT_90,
     };
     FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif);
-    void accept(AbstractFileOperation& operation) const override;
-    Orientation orientation() const { return m_orientation; }
+    auto accept(AbstractFileOperation& operation) const -> void override;
+    auto orientation() const -> Orientation { return m_orientation; }
 private:
     Orientation m_orientation = Orientation::ROT_0;
 };

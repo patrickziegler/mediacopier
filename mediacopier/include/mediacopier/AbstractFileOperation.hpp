@@ -25,9 +25,9 @@ class FileInfoVideo;
 class AbstractFileOperation {
 public:
     virtual ~AbstractFileOperation() = default;
-    virtual void visit(const FileInfoImage& file) = 0;
-    virtual void visit(const FileInfoImageJpeg& file) = 0;
-    virtual void visit(const FileInfoVideo& file) = 0;
+    virtual auto visit(const FileInfoImage& file) -> void = 0;
+    virtual auto visit(const FileInfoImageJpeg& file) -> void = 0;
+    virtual auto visit(const FileInfoVideo& file) -> void = 0;
 };
 
 } // namespace MediaCopier

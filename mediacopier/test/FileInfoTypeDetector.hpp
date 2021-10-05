@@ -32,22 +32,22 @@ enum class FileInfoType {
 
 class FileInfoTypeDetector : public AbstractFileOperation {
 public:
-    void visit(const FileInfoImage& /*file*/)
+    auto visit(const FileInfoImage& /*file*/) -> void
     {
         m_lastType = FileInfoType::FileInfoImage;
     }
 
-    void visit(const FileInfoImageJpeg& /*file*/)
+    auto visit(const FileInfoImageJpeg& /*file*/) -> void
     {
         m_lastType = FileInfoType::FileInfoImageJpeg;
     }
 
-    void visit(const FileInfoVideo& /*file*/)
+    auto visit(const FileInfoVideo& /*file*/) -> void
     {
         m_lastType = FileInfoType::FileInfoVideo;
     }
 
-    FileInfoType lastType() const
+    auto lastType() const -> FileInfoType
     {
         return m_lastType;
     }

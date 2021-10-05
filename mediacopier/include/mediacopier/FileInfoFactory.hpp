@@ -26,7 +26,7 @@ using FileInfoPtr = std::unique_ptr<AbstractFileInfo>;
 
 class FileInfoFactory {
 public:
-    static FileInfoPtr createFromPath(const std::filesystem::path& path);
+    static auto createFromPath(const std::filesystem::path& path) -> FileInfoPtr;
 };
 
 } // namespace MediaCopier

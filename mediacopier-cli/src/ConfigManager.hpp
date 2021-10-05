@@ -20,8 +20,7 @@
 
 namespace MediaCopier::Cli {
 
-class ConfigManager {
-public:
+struct ConfigManager {
     enum class Command {
         COPY,
         MOVE,

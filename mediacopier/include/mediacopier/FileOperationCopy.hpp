@@ -24,11 +24,11 @@ namespace MediaCopier {
 class FileOperationCopy : public AbstractFileOperation {
 public:
     explicit FileOperationCopy(std::filesystem::path destination) : m_destination{std::move(destination)} {}
-    void visit(const FileInfoImage& file) override;
-    void visit(const FileInfoImageJpeg& file) override;
-    void visit(const FileInfoVideo& file) override;
+    auto visit(const FileInfoImage& file) -> void override;
+    auto visit(const FileInfoImageJpeg& file) -> void override;
+    auto visit(const FileInfoVideo& file) -> void override;
 protected:
-    void copyFile(const AbstractFileInfo& file) const;
+    auto copyFile(const AbstractFileInfo& file) const -> void;
     std::filesystem::path m_destination;
 };
 
