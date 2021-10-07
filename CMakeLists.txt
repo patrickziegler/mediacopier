@@ -11,6 +11,7 @@ list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 option(ENABLE_COVERAGE "Activate flags for gcov on compilation" OFF)
 option(ENABLE_CLI "Include command line interface" ON)
 option(ENABLE_TEST "Include test targets" OFF)
+option(INSTALL_DEV_FILES "Install library headers and cmake targets" OFF)
 
 if(${ENABLE_COVERAGE})
     include(TestCoverage)

@@ -11,3 +11,5 @@ target_sources(${TARGET_NAME} PRIVATE
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     ${MEDIACOPIER_LIB_TARGET_NAME})
+
+install(TARGETS ${TARGET_NAME})
