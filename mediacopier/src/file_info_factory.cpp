@@ -14,15 +14,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/Error.hpp>
-#include <mediacopier/FileInfoFactory.hpp>
-#include <mediacopier/FileInfoImage.hpp>
-#include <mediacopier/FileInfoImageJpeg.hpp>
-#include <mediacopier/FileInfoVideo.hpp>
+#include <mediacopier/error.hpp>
+#include <mediacopier/file_info_factory.hpp>
+#include <mediacopier/file_info_image.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
+#include <mediacopier/file_info_video.hpp>
 
 #include <spdlog/spdlog.h>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 auto FileInfoFactory::createFromPath(const std::filesystem::path& path) -> FileInfoPtr
 {
@@ -60,4 +60,4 @@ auto FileInfoFactory::createFromPath(const std::filesystem::path& path) -> FileI
     return nullptr;
 }
 
-} // namespace MediaCopier
+} // namespace mediacopier

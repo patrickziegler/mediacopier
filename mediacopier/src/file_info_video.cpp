@@ -14,10 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mediacopier/abstract_file_operation.hpp>
+#include <mediacopier/error.hpp>
+#include <mediacopier/file_info_video.hpp>
+
 #include <date/date.h>
-#include <mediacopier/AbstractFileOperation.hpp>
-#include <mediacopier/Error.hpp>
-#include <mediacopier/FileInfoVideo.hpp>
 
 extern "C"
 {
@@ -26,7 +27,7 @@ extern "C"
 
 #include <sstream>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path}
 {
@@ -60,4 +61,4 @@ auto FileInfoVideo::accept(AbstractFileOperation& operation) const -> void
     operation.visit(*this);
 }
 
-} // namespace MediaCopier
+} // namespace mediacopier

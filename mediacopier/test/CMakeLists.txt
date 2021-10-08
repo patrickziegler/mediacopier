@@ -7,9 +7,9 @@ set(TARGET_NAME mediacopier-unittest)
 add_executable(${TARGET_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/test_fileInfoClasses.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test_fileOperationClasses.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/test_fileRegister.cpp")
+    "${CMAKE_CURRENT_LIST_DIR}/test_file_info_classes.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test_file_operation_classes.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test_file_register.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
     "${CMAKE_SOURCE_DIR}/extern/date/include")

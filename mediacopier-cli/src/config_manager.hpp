@@ -1,4 +1,4 @@
-/* Copyright (C) 2020-2021 Patrick Ziegler
+/* Copyright (C) 2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,31 +14,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/FileInfoImage.hpp>
-#include <mediacopier/FileInfoImageJpeg.hpp>
-#include <mediacopier/FileInfoVideo.hpp>
-#include <mediacopier/FileOperationMove.hpp>
+#pragma once
 
-namespace fs = std::filesystem;
+#include <filesystem>
 
-namespace MediaCopier {
+namespace mediacopier::cli {
 
-auto FileOperationMove::visit(const FileInfoImage& file) -> void
-{
-    copyFile(file);
-    fs::remove(file.path());
-}
+struct ConfigManager {
+    enum class Command {
+        COPY,
+        MOVE,
+        COPY_JPEG,
+        MOVE_JPEG
+    };
+    ConfigManager(int argc, char *argv[]);
+    Command command;
+    std::filesystem::path inputDir;
+    std::filesystem::path outputDir;
+    std::string pattern = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
+};
 
-auto FileOperationMove::visit(const FileInfoImageJpeg& file) -> void
-{
-    copyFile(file);
-    fs::remove(file.path());
-}
-
-auto FileOperationMove::visit(const FileInfoVideo& file) -> void
-{
-    copyFile(file);
-    fs::remove(file.path());
-}
-
-} // namespace MediaCopier
+} // namespace mediacopier::cli

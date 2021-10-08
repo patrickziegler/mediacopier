@@ -17,15 +17,15 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mediacopier)
 
 target_sources(${TARGET_NAME} PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileInfoFactory.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileInfoImage.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileInfoImageJpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileInfoVideo.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileOperationCopy.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileOperationCopyJpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileOperationMove.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileOperationMoveJpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/FileRegister.cpp")
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_factory.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_image.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_image_jpeg.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_video.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_copy.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_copy_jpeg.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_move.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_move_jpeg.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_register.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
     "${AVFORMAT_INCLUDE_DIRS}"
@@ -59,7 +59,7 @@ if(${INSTALL_DEV_FILES})
     set(TARGETS_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/mediacopier)
 
     # install headers
-    install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/include/" "${CMAKE_CURRENT_BINARY_DIR}/include/" DESTINATION include)
+    install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/include/" DESTINATION include)
 
     # install library (and flag the target for export)
     install(

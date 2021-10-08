@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include "FileInfoTypeDetector.hpp"
+#include "file_info_type_detector.hpp"
 
-#include <mediacopier/FileInfoFactory.hpp>
+#include <mediacopier/file_info_factory.hpp>
 
 #include <date/date.h>
 #include <gtest/gtest.h>
@@ -35,7 +35,7 @@ static auto parse_timestamp(std::string timestamp) -> const std::chrono::system_
     return ts; // right result was verified manually
 };
 
-namespace MediaCopier::Test {
+namespace mediacopier::test {
 
 class CommonTestFixtures : public ::testing::Test {
 protected:
@@ -78,4 +78,4 @@ private:
     FileInfoTypeDetector m_typeDetector;
 };
 
-} // namespace MediaCopier::Test
+} // namespace mediacopier::test

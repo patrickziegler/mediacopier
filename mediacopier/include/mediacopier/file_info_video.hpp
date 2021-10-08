@@ -16,18 +16,14 @@
 
 #pragma once
 
-namespace MediaCopier {
+#include <mediacopier/abstract_file_info.hpp>
 
-class FileInfoImage;
-class FileInfoImageJpeg;
-class FileInfoVideo;
+namespace mediacopier {
 
-class AbstractFileOperation {
+class FileInfoVideo : public AbstractFileInfo {
 public:
-    virtual ~AbstractFileOperation() = default;
-    virtual auto visit(const FileInfoImage& file) -> void = 0;
-    virtual auto visit(const FileInfoImageJpeg& file) -> void = 0;
-    virtual auto visit(const FileInfoVideo& file) -> void = 0;
+    explicit FileInfoVideo(std::filesystem::path path);
+    auto accept(AbstractFileOperation& operation) const -> void override;
 };
 
-} // namespace MediaCopier
+} // namespace mediacopier

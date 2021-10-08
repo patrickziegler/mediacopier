@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Patrick Ziegler
+/* Copyright (C) 2020-2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,22 +16,27 @@
 
 #pragma once
 
-#include <filesystem>
+#include <mediacopier/file_info_image.hpp>
 
-namespace MediaCopier::Cli {
+namespace mediacopier {
 
-struct ConfigManager {
-    enum class Command {
-        COPY,
-        MOVE,
-        COPY_JPEG,
-        MOVE_JPEG
+class FileInfoImageJpeg : public FileInfoImage {
+public:
+    enum class Orientation {
+        ROT_0 = 1,
+        ROT_0_MIRRORED,
+        ROT_180,
+        ROT_180_MIRRORED,
+        ROT_90_MIRRORED,
+        ROT_270,
+        ROT_270_MIRRORED,
+        ROT_90,
     };
-    ConfigManager(int argc, char *argv[]);
-    Command command;
-    std::filesystem::path inputDir;
-    std::filesystem::path outputDir;
-    std::string pattern = "%Y/%m/%d/IMG_%Y%m%d_%H%M%S_";
+    FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif);
+    auto accept(AbstractFileOperation& operation) const -> void override;
+    auto orientation() const -> Orientation { return m_orientation; }
+private:
+    Orientation m_orientation = Orientation::ROT_0;
 };
 
-} // namespace MediaCopier::Cli
+} // namespace mediacopier

@@ -19,7 +19,7 @@
 #include <filesystem>
 #include <unordered_map>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 class AbstractFileInfo;
 
@@ -34,10 +34,10 @@ public:
     auto end() const -> FileInfoMap::const_iterator;
     auto size() const -> size_t;
 private:
-    auto getDestinationPath(const MediaCopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path;
+    auto getDestinationPath(const mediacopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path;
     std::filesystem::path m_destdir;
     std::string m_pattern;
     FileInfoMap m_register;
 };
 
-} // namespace MediaCopier
+} // namespace mediacopier

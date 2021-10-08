@@ -16,23 +16,24 @@
 
 #pragma once
 
-#include <filesystem>
+#include <stdexcept>
 
-namespace MediaCopier {
+namespace mediacopier {
 
-class AbstractFileOperation;
-
-class AbstractFileInfo {
-public:
-    AbstractFileInfo(std::filesystem::path path)
-        : m_path{std::move(path)} {}
-    virtual ~AbstractFileInfo() = default;
-    virtual auto accept(AbstractFileOperation& operation) const -> void = 0;
-    auto path() const -> std::filesystem::path { return m_path; }
-    auto timestamp() const -> std::chrono::system_clock::time_point { return m_timestamp; }
-protected:
-    std::filesystem::path m_path;
-    std::chrono::system_clock::time_point m_timestamp;
+class MediaCopierError : public std::runtime_error {
+    using std::runtime_error::runtime_error;
 };
 
-} // namespace MediaCopier
+class FileInfoError : public MediaCopierError {
+    using MediaCopierError::MediaCopierError;
+};
+
+class FileInfoImageJpegError : public MediaCopierError {
+    using MediaCopierError::MediaCopierError;
+};
+
+class FileOperationError : public MediaCopierError {
+    using MediaCopierError::MediaCopierError;
+};
+
+} // namespace mediacopier

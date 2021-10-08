@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include <mediacopier/AbstractFileOperation.hpp>
-#include <mediacopier/FileInfoImage.hpp>
-#include <mediacopier/FileInfoImageJpeg.hpp>
-#include <mediacopier/FileInfoVideo.hpp>
+#include <mediacopier/abstract_file_operation.hpp>
+#include <mediacopier/file_info_image.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
+#include <mediacopier/file_info_video.hpp>
 
-namespace MediaCopier::Test {
+namespace mediacopier::test {
 
 enum class FileInfoType {
     None,
@@ -56,4 +56,4 @@ private:
     FileInfoType m_lastType = FileInfoType::None;
 };
 
-} // namespace MediaCopier
+} // namespace mediacopier

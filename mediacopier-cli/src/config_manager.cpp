@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "ConfigManager.hpp"
+#include "config_manager.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -23,7 +23,7 @@
 
 namespace fs = std::filesystem;
 
-namespace MediaCopier::Cli {
+namespace mediacopier::cli {
 
 ConfigManager::ConfigManager(int argc, char *argv[])
 {
@@ -88,4 +88,4 @@ ConfigManager::ConfigManager(int argc, char *argv[])
     }
 }
 
-} // namespace MediaCopier::Cli
+} // namespace mediacopier::cli

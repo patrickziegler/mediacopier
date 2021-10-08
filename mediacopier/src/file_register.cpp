@@ -14,10 +14,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/Error.hpp>
-#include <mediacopier/FileInfoFactory.hpp>
-#include <mediacopier/FileRegister.hpp>
+#include <mediacopier/abstract_file_info.hpp>
+#include <mediacopier/error.hpp>
+#include <mediacopier/file_info_factory.hpp>
+#include <mediacopier/file_register.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -52,7 +52,7 @@ static auto is_duplicate(fs::path file1, fs::path file2) -> bool
     return true;
 }
 
-namespace MediaCopier {
+namespace mediacopier {
 
 FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdir{std::move(destination)}, m_pattern{std::move(pattern)}
 {
@@ -120,7 +120,7 @@ auto FileRegister::size() const -> size_t
     return m_register.size();
 }
 
-auto FileRegister::getDestinationPath(const MediaCopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path
+auto FileRegister::getDestinationPath(const mediacopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path
 {
     std::stringstream ss;
     ss << m_destdir.string();
@@ -142,4 +142,4 @@ auto FileRegister::getDestinationPath(const MediaCopier::AbstractFileInfo& file,
     return {ss.str()};
 }
 
-} // namespace MediaCopier
+} // namespace mediacopier

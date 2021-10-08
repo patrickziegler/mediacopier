@@ -14,11 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/Error.hpp>
-#include <mediacopier/FileInfoImage.hpp>
-#include <mediacopier/FileInfoImageJpeg.hpp>
-#include <mediacopier/FileInfoVideo.hpp>
-#include <mediacopier/FileOperationCopyJpeg.hpp>
+#include <mediacopier/error.hpp>
+#include <mediacopier/file_info_image.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
+#include <mediacopier/file_info_video.hpp>
+#include <mediacopier/file_operation_copy_jpeg.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -29,7 +29,7 @@ extern "C"
 
 namespace fs = std::filesystem;
 
-static auto jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const fs::path& dst) -> void
+static auto jpeg_copy_rotated(const mediacopier::FileInfoImageJpeg& file, const fs::path& dst) -> void
 {
     using unique_file_t = std::unique_ptr<std::FILE, decltype(&std::fclose)>;
     using unique_buf_t = std::unique_ptr<unsigned char, decltype(&tjFree)>;
@@ -41,19 +41,19 @@ static auto jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const 
 
     xform.options |= TJXOPT_PERFECT; // will cause tjTransform to return error when no perfect rotation is possible
 
-    switch (static_cast<MediaCopier::FileInfoImageJpeg::Orientation>(file.orientation()))
+    switch (static_cast<mediacopier::FileInfoImageJpeg::Orientation>(file.orientation()))
     {
-    case MediaCopier::FileInfoImageJpeg::Orientation::ROT_180:
+    case mediacopier::FileInfoImageJpeg::Orientation::ROT_180:
         xform.op = TJXOP_ROT180;
         break;
-    case MediaCopier::FileInfoImageJpeg::Orientation::ROT_90:
+    case mediacopier::FileInfoImageJpeg::Orientation::ROT_90:
         xform.op = TJXOP_ROT270;
         break;
-    case MediaCopier::FileInfoImageJpeg::Orientation::ROT_270:
+    case mediacopier::FileInfoImageJpeg::Orientation::ROT_270:
         xform.op =  TJXOP_ROT90;
         break;
     default:
-        throw MediaCopier::FileOperationError("Unknown jpeg transformation");
+        throw mediacopier::FileOperationError("Unknown jpeg transformation");
     }
 
     // ----------------- read input file
@@ -62,21 +62,21 @@ static auto jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const 
     unique_file_t inputFile(std::fopen(file.path().string().c_str(), "rb"), &std::fclose);
 
     if (!inputFile) {
-        throw MediaCopier::FileOperationError("Could not open file for reading");
+        throw mediacopier::FileOperationError("Could not open file for reading");
     }
 
     if (fseek(inputFile.get(), 0, SEEK_END) < 0 || ((inputBufSize = ftell(inputFile.get())) < 0) || fseek(inputFile.get(), 0, SEEK_SET) < 0 || inputBufSize == 0) {
-        throw MediaCopier::FileOperationError("Could not determinte file size");
+        throw mediacopier::FileOperationError("Could not determinte file size");
     }
 
     unique_buf_t inputBufPtr((unsigned char*) tjAlloc(inputBufSize), &tjFree);
 
     if (!inputBufPtr) {
-        throw MediaCopier::FileOperationError("Could not allocate input buffer");
+        throw mediacopier::FileOperationError("Could not allocate input buffer");
     }
 
     if (fread(inputBufPtr.get(), inputBufSize, 1, inputFile.get()) < 1) {
-        throw MediaCopier::FileOperationError("Could not read from input file");
+        throw mediacopier::FileOperationError("Could not read from input file");
     }
 
     // ----------------- execute transformation
@@ -84,7 +84,7 @@ static auto jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const 
     tjhandle tjInstance;
 
     if ((tjInstance = tjInitTransform()) == nullptr) {
-        throw MediaCopier::FileOperationError(std::string{"Could not initialize transformation: "} + tjGetErrorStr());
+        throw mediacopier::FileOperationError(std::string{"Could not initialize transformation: "} + tjGetErrorStr());
     }
 
     unsigned long outputBufSize = 0;
@@ -93,7 +93,7 @@ static auto jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const 
 
     if (tjTransform(tjInstance, inputBufPtr.get(), inputBufSize, 1, &outputBuf, &outputBufSize, &xform, flags) < 0) {
         tjDestroy(tjInstance);
-        throw MediaCopier::FileOperationError(std::string{"Could not execute transformation: "} + tjGetErrorStr());
+        throw mediacopier::FileOperationError(std::string{"Could not execute transformation: "} + tjGetErrorStr());
     }
 
     unique_buf_t outputBufPtr(outputBuf, &tjFree);
@@ -104,18 +104,18 @@ static auto jpeg_copy_rotated(const MediaCopier::FileInfoImageJpeg& file, const 
 
     if (!outputFile) {
         tjDestroy(tjInstance);
-        throw MediaCopier::FileOperationError("Could not open file for writing");
+        throw mediacopier::FileOperationError("Could not open file for writing");
     }
 
     if (fwrite(outputBufPtr.get(), outputBufSize, 1, outputFile.get()) < 1) {
         tjDestroy(tjInstance);
-        throw MediaCopier::FileOperationError("Could not write to output file");
+        throw mediacopier::FileOperationError("Could not write to output file");
     }
 
     tjDestroy(tjInstance);
 }
 
-namespace MediaCopier {
+namespace mediacopier {
 
 auto FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const -> void
 {
@@ -165,4 +165,4 @@ auto FileOperationCopyJpeg::visit(const FileInfoVideo& file) -> void
     copyFile(file);
 }
 
-} // namespace MediaCopier
+} // namespace mediacopier

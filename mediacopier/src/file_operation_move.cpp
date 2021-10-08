@@ -14,42 +14,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/Error.hpp>
-#include <mediacopier/FileInfoImageJpeg.hpp>
-#include <mediacopier/FileInfoVideo.hpp>
-#include <mediacopier/FileOperationCopy.hpp>
-
-#include <fstream>
+#include <mediacopier/file_info_image.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
+#include <mediacopier/file_info_video.hpp>
+#include <mediacopier/file_operation_move.hpp>
 
 namespace fs = std::filesystem;
 
-namespace MediaCopier {
+namespace mediacopier {
 
-auto FileOperationCopy::copyFile(const AbstractFileInfo& file) const -> void
-{
-    std::error_code err;
-
-    fs::create_directories(m_destination.parent_path());
-    fs::copy_file(file.path(), m_destination, fs::copy_options::overwrite_existing, err);
-
-    if (err.value() > 0) {
-        throw FileOperationError{err.message()};
-    }
-}
-
-auto FileOperationCopy::visit(const FileInfoImage& file) -> void
+auto FileOperationMove::visit(const FileInfoImage& file) -> void
 {
     copyFile(file);
+    fs::remove(file.path());
 }
 
-auto FileOperationCopy::visit(const FileInfoImageJpeg& file) -> void
+auto FileOperationMove::visit(const FileInfoImageJpeg& file) -> void
 {
     copyFile(file);
+    fs::remove(file.path());
 }
 
-auto FileOperationCopy::visit(const FileInfoVideo& file) -> void
+auto FileOperationMove::visit(const FileInfoVideo& file) -> void
 {
     copyFile(file);
+    fs::remove(file.path());
 }
 
-} // namespace MediaCopier
+} // namespace mediacopier

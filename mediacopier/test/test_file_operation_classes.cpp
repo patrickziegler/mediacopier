@@ -14,15 +14,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/FileOperationMove.hpp>
-#include <mediacopier/FileOperationMoveJpeg.hpp>
-#include <mediacopier/FileRegister.hpp>
+#include <mediacopier/file_operation_move.hpp>
+#include <mediacopier/file_operation_move_jpeg.hpp>
+#include <mediacopier/file_register.hpp>
 
-#include "CommonTestFixtures.hpp"
+#include "common_test_fixtures.hpp"
 
 namespace fs = std::filesystem;
 
-namespace MediaCopier::Test {
+namespace mediacopier::test {
 
 template <typename T>
 static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDir) -> const fs::path
@@ -189,4 +189,4 @@ TEST_F(FileOperationTests, singleVideoAllOperations)
     checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
 }
 
-} // namespace MediaCopier::Test
+} // namespace mediacopier::test

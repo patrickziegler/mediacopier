@@ -16,17 +16,18 @@
 
 #pragma once
 
-#include <filesystem>
+namespace mediacopier {
 
-namespace MediaCopier {
+class FileInfoImage;
+class FileInfoImageJpeg;
+class FileInfoVideo;
 
-class AbstractFileInfo;
-
-using FileInfoPtr = std::unique_ptr<AbstractFileInfo>;
-
-class FileInfoFactory {
+class AbstractFileOperation {
 public:
-    static auto createFromPath(const std::filesystem::path& path) -> FileInfoPtr;
+    virtual ~AbstractFileOperation() = default;
+    virtual auto visit(const FileInfoImage& file) -> void = 0;
+    virtual auto visit(const FileInfoImageJpeg& file) -> void = 0;
+    virtual auto visit(const FileInfoVideo& file) -> void = 0;
 };
 
-} // namespace MediaCopier
+} // namespace mediacopier

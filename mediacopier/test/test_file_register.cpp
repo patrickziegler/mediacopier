@@ -14,14 +14,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "CommonTestFixtures.hpp"
+#include "common_test_fixtures.hpp"
 
-#include <mediacopier/FileRegister.hpp>
-#include <mediacopier/FileOperationCopyJpeg.hpp>
+#include <mediacopier/file_register.hpp>
+#include <mediacopier/file_operation_copy_jpeg.hpp>
 
 namespace fs = std::filesystem;
 
-namespace MediaCopier::Test {
+namespace mediacopier::test {
 
 class FileRegisterTests : public CommonTestFixtures {
 protected:
@@ -82,4 +82,4 @@ TEST_F(FileRegisterTests, multipleAddDifferentSource)
     ASSERT_EQ(dst.size(), 2);
 }
 
-} // namespace MediaCopier::Test
+} // namespace mediacopier::test

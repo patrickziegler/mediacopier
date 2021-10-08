@@ -14,10 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mediacopier/abstract_file_operation.hpp>
+#include <mediacopier/error.hpp>
+#include <mediacopier/file_info_image.hpp>
+
 #include <date/date.h>
-#include <mediacopier/AbstractFileOperation.hpp>
-#include <mediacopier/Error.hpp>
-#include <mediacopier/FileInfoImage.hpp>
 
 static constexpr const std::array<char[29], 4> keysDateTime = {
     "Exif.Photo.DateTimeOriginal",
@@ -32,7 +33,7 @@ static constexpr const std::array<char[31], 3> keysSubSec = {
     "Exif.Photo.SubSecTime"
 };
 
-namespace MediaCopier {
+namespace mediacopier {
 
 FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) : AbstractFileInfo{std::move(path)}
 {
@@ -72,4 +73,4 @@ auto FileInfoImage::accept(AbstractFileOperation& operation) const -> void
     operation.visit(*this);
 }
 
-} // namespace MediaCopier
+} // namespace mediacopier

@@ -14,11 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "CommonTestFixtures.hpp"
+#include "common_test_fixtures.hpp"
 
 namespace fs = std::filesystem;
 
-namespace MediaCopier::Test {
+namespace mediacopier::test {
 
 class FileInfoTests : public CommonTestFixtures {
     using CommonTestFixtures::SetUp;
@@ -60,4 +60,4 @@ TEST_F(FileInfoTests, unkownFileType)
     checkFileValid(m_testDataDirOrig / "dummy.txt");
 }
 
-} // namespace MediaCopier::Test
+} // namespace mediacopier::test

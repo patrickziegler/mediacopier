@@ -14,11 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/AbstractFileOperation.hpp>
-#include <mediacopier/Error.hpp>
-#include <mediacopier/FileInfoImageJpeg.hpp>
+#include <mediacopier/abstract_file_operation.hpp>
+#include <mediacopier/error.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
 
-namespace MediaCopier {
+namespace mediacopier {
 
 FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif) : FileInfoImage{std::move(path), exif}
 {
@@ -42,4 +42,4 @@ auto FileInfoImageJpeg::accept(AbstractFileOperation& operation) const -> void
     operation.visit(*this);
 }
 
-} // namespace MediaCopier
+} // namespace mediacopier

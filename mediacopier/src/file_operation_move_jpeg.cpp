@@ -14,17 +14,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/file_info_image.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
+#include <mediacopier/file_info_video.hpp>
+#include <mediacopier/file_operation_move_jpeg.hpp>
 
-#include <exiv2/exiv2.hpp>
-#include <mediacopier/AbstractFileInfo.hpp>
+namespace fs = std::filesystem;
 
-namespace MediaCopier {
+namespace mediacopier {
 
-class FileInfoImage : public AbstractFileInfo {
-public:
-    FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif);
-    auto accept(AbstractFileOperation& operation) const -> void override;
-};
+auto FileOperationMoveJpeg::visit(const FileInfoImage& file) -> void
+{
+    copyFile(file);
+    fs::remove(file.path());
+}
 
-} // namespace MediaCopier
+auto FileOperationMoveJpeg::visit(const FileInfoImageJpeg& file) -> void
+{
+    copyJpeg(file);
+    fs::remove(file.path());
+}
+
+auto FileOperationMoveJpeg::visit(const FileInfoVideo& file) -> void
+{
+    copyFile(file);
+    fs::remove(file.path());
+}
+
+} // namespace mediacopier

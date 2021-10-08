@@ -6,7 +6,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mediacopier)
 
 target_sources(${TARGET_NAME} PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/src/ConfigManager.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/config_manager.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/main.cpp")
 
 target_link_libraries(${TARGET_NAME} PRIVATE

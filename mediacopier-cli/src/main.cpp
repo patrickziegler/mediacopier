@@ -14,13 +14,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "ConfigManager.hpp"
+#include "config_manager.hpp"
 
-#include <mediacopier/AbstractFileInfo.hpp>
-#include <mediacopier/Error.hpp>
-#include <mediacopier/FileOperationMove.hpp>
-#include <mediacopier/FileOperationMoveJpeg.hpp>
-#include <mediacopier/FileRegister.hpp>
+#include <mediacopier/abstract_file_info.hpp>
+#include <mediacopier/error.hpp>
+#include <mediacopier/file_operation_move.hpp>
+#include <mediacopier/file_operation_move_jpeg.hpp>
+#include <mediacopier/file_register.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -44,7 +44,7 @@ static auto abortable_wrapper(std::function<void()> abortable_function) -> void
     std::signal(SIGINT, SIG_DFL);
 }
 
-namespace MediaCopier::Cli {
+namespace mediacopier::cli {
 
 template <typename T>
 static auto execute_operation(const FileRegister& fileRegister) -> void
@@ -127,15 +127,16 @@ static auto run(const fs::path& inputDir, const fs::path& outputDir, const std::
     return 0;
 }
 
-} // namespace MediaCopier::Cli
+} // namespace mediacopier::cli
 
 int main(int argc, char *argv[])
 {
-    using namespace MediaCopier::Cli;
+    using namespace mediacopier::cli;
 
     try {
         ConfigManager config{argc, argv};
         return run(config.inputDir, config.outputDir, config.pattern, config.command);
+
     } catch (const std::exception& err) {
         spdlog::error(err.what());
         return 1;
