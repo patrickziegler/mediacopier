@@ -11,7 +11,7 @@ configure_file(
     "${CMAKE_CURRENT_LIST_DIR}/version.hpp.in"
     "${CMAKE_CURRENT_BINARY_DIR}/include/mediacopier/version.hpp")
 
-if (${BUILD_SHARED_LIB})
+if (${ENABLE_SHARED_LIB})
     add_library(${TARGET_NAME} SHARED)
     set_target_properties(${TARGET_NAME} PROPERTIES
         VERSION ${CMAKE_PROJECT_VERSION}
@@ -93,7 +93,7 @@ if(${INSTALL_DEV_FILES})
             "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
         DESTINATION "${TARGETS_INSTALL_DIR}")
 
-elseif(${BUILD_SHARED_LIB})
+elseif(${ENABLE_SHARED_LIB})
     # install library
     install(TARGETS ${TARGET_NAME})
 
