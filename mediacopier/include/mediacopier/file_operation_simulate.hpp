@@ -16,8 +16,10 @@
 
 #pragma once
 
+#include <mediacopier/abstract_file_info.hpp>
 #include <mediacopier/abstract_file_operation.hpp>
-#include <mediacopier/file_register.hpp>
+
+#include <filesystem>
 
 namespace mediacopier {
 

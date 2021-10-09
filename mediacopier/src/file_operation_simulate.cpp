@@ -14,17 +14,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/error.hpp>
 #include <mediacopier/file_info_image.hpp>
 #include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/file_info_video.hpp>
 #include <mediacopier/file_operation_simulate.hpp>
 
 #include <spdlog/spdlog.h>
-
-#include <fstream>
-
-namespace fs = std::filesystem;
 
 namespace mediacopier {
 

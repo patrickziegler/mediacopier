@@ -20,8 +20,6 @@
 #include <mediacopier/file_info_video.hpp>
 #include <mediacopier/file_operation_copy.hpp>
 
-#include <fstream>
-
 namespace fs = std::filesystem;
 
 namespace mediacopier {

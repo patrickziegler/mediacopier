@@ -50,7 +50,7 @@ static auto jpeg_copy_rotated(const mediacopier::FileInfoImageJpeg& file, const 
         xform.op = TJXOP_ROT270;
         break;
     case mediacopier::FileInfoImageJpeg::Orientation::ROT_270:
-        xform.op =  TJXOP_ROT90;
+        xform.op = TJXOP_ROT90;
         break;
     default:
         throw mediacopier::FileOperationError("Unknown jpeg transformation");

@@ -56,7 +56,7 @@ ConfigManager::ConfigManager(int argc, char *argv[])
 
     if (posArgs.size() < 3) {
         std::cout << MEDIACOPIER_PROJECT_NAME << " v" << MEDIACOPIER_VERSION
-                  << ", Copyright (C) 2020-2021 Patrick Ziegler\n"
+                  << ", Copyright (C) 2020-2021 Patrick Ziegler\n\n"
                   << "Usage: mediacopier COMMAND SRC DST [options]\n"
                   << "\nAvailable commands:\n"
                   << "  copy   : Copy files from SRC directory to DST\n"
