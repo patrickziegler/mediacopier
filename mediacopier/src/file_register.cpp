@@ -19,6 +19,7 @@
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
 
+#include <date/date.h>
 #include <spdlog/spdlog.h>
 
 #include <random>
@@ -122,24 +123,17 @@ auto FileRegister::size() const -> size_t
 
 auto FileRegister::getDestinationPath(const mediacopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path
 {
-    std::stringstream ss;
-    ss << m_destdir.string();
+    std::ostringstream os;
+    os << m_destdir.string();
 
-    auto ts = std::chrono::system_clock::to_time_t(file.timestamp());
-    ss << std::put_time(std::gmtime(&ts), m_pattern.c_str());
-
-    if (useSubsec) {
-        // '% 1000000' because we search for us "on top" of the number of seconds
-        auto us = std::chrono::duration_cast<std::chrono::microseconds>(file.timestamp().time_since_epoch()) % 1000000;
-        ss << std::setfill('0') << std::setw(6) << us.count();
-    }
+    date::to_stream(os, m_pattern.c_str(), file.timestamp());
 
     if (id > 0) {
-        ss << "_" << id;
+        os << "_" << id;
     }
 
-    ss << file.path().extension().string();
-    return {ss.str()};
+    os << file.path().extension().string();
+    return {os.str()};
 }
 
 } // namespace mediacopier

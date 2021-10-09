@@ -61,10 +61,11 @@ ConfigManager::ConfigManager(int argc, char *argv[])
                   << "\nAvailable commands:\n"
                   << "  copy   : Copy files from SRC directory to DST\n"
                   << "  move   : The same as 'copy', but removing successfully copied files\n"
+                  << "  sim    : Simulate operation, show source and destination paths\n"
                   << "\nOptions and arguments:\n"
                   << "  -h     : Show this help message and exit\n"
-                  << "  -f FMT : Set the base format to be used for new filenames\n"
-                  << "           (default: " << pattern << ")\n";
+                  << "  -f FMT : Set the base format to be used for new filenames (default: " << pattern << ")\n"
+                  << "           as defined in https://howardhinnant.github.io/date/date.html#to_stream_formatting\n\n";
         std::exit(0);
     }
 
@@ -82,6 +83,8 @@ ConfigManager::ConfigManager(int argc, char *argv[])
         command = Command::COPY_JPEG;
     } else if (op == "move") {
         command = Command::MOVE_JPEG;
+    } else if (op == "sim") {
+        command = Command::SIMULATE;
     } else {
         std::cerr << "Unknown operation '" << op << "'" << std::endl;
         std::exit(1);

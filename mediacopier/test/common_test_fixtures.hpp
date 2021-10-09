@@ -25,7 +25,7 @@
 
 #include <chrono>
 
-const constexpr char* DEFAULT_PATTERN = "%Y/%m/%d/TEST_%Y%m%d_%H%M%S_";
+const constexpr char* DEFAULT_PATTERN = "%Y/%m/%d/TEST_%Y%m%d_%H%M%S";
 
 static auto parse_timestamp(std::string timestamp) -> const std::chrono::system_clock::time_point
 {

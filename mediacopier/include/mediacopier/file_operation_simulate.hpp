@@ -16,23 +16,20 @@
 
 #pragma once
 
-#include <filesystem>
+#include <mediacopier/abstract_file_operation.hpp>
+#include <mediacopier/file_register.hpp>
 
-namespace mediacopier::cli {
+namespace mediacopier {
 
-struct ConfigManager {
-    enum class Command {
-        COPY,
-        MOVE,
-        COPY_JPEG,
-        MOVE_JPEG,
-        SIMULATE
-    };
-    ConfigManager(int argc, char *argv[]);
-    Command command;
-    std::filesystem::path inputDir;
-    std::filesystem::path outputDir;
-    std::string pattern = "%Y/%u/IMG_%Y%m%d_%H%M%S";
+class FileOperationSimulate : public AbstractFileOperation {
+public:
+    explicit FileOperationSimulate(std::filesystem::path destination) : m_destination{std::move(destination)} {}
+    auto visit(const FileInfoImage& file) -> void override;
+    auto visit(const FileInfoImageJpeg& file) -> void override;
+    auto visit(const FileInfoVideo& file) -> void override;
+protected:
+    auto dumpFilePaths(const AbstractFileInfo& file) const -> void;
+    std::filesystem::path m_destination;
 };
 
-} // namespace mediacopier::cli
+} // namespace mediacopier

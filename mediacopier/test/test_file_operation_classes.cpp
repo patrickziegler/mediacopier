@@ -80,7 +80,7 @@ protected:
 TEST_F(FileOperationTests, singleImageJpeg0ImageAllOperations)
 {
     std::string srcName = "lena64_rot0.jpg";
-    std::string dstName = "2019/02/05/TEST_20190205_121032_123456.jpg";
+    std::string dstName = "2019/02/05/TEST_20190205_121032.123456000.jpg";
     std::string timestamp = "2019-02-05 12:10:32.123456";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;
@@ -96,7 +96,7 @@ TEST_F(FileOperationTests, singleImageJpeg0ImageAllOperations)
 TEST_F(FileOperationTests, singleImageJpeg90ImageAllOperations)
 {
     std::string srcName = "lena64_rot90.jpg";
-    std::string dstName = "2019/02/05/TEST_20190205_121132_000000.jpg";
+    std::string dstName = "2019/02/05/TEST_20190205_121132.000000000.jpg";
     std::string timestamp = "2019-02-05 12:11:32";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_90;
@@ -112,7 +112,7 @@ TEST_F(FileOperationTests, singleImageJpeg90ImageAllOperations)
 TEST_F(FileOperationTests, singleImageJpeg180ImageAllOperations)
 {
     std::string srcName = "lena64_rot180.jpg";
-    std::string dstName = "2019/02/05/TEST_20190205_121232_123400.jpg";
+    std::string dstName = "2019/02/05/TEST_20190205_121232.123400000.jpg";
     std::string timestamp = "2019-02-05 12:12:32.1234";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_180;
@@ -128,7 +128,7 @@ TEST_F(FileOperationTests, singleImageJpeg180ImageAllOperations)
 TEST_F(FileOperationTests, singleImageJpeg270ImageAllOperations)
 {
     std::string srcName = "lena64_rot270.jpg";
-    std::string dstName = "2019/02/05/TEST_20190205_121332_123000.jpg";
+    std::string dstName = "2019/02/05/TEST_20190205_121332.123000000.jpg";
     std::string timestamp = "2019-02-05 12:13:32.123";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_270;
@@ -144,7 +144,7 @@ TEST_F(FileOperationTests, singleImageJpeg270ImageAllOperations)
 TEST_F(FileOperationTests, singleImageJpeg90WrongSizeImageAllOperations)
 {
     std::string srcName = "lena50_rot90.jpg";
-    std::string dstName = "2018/05/05/TEST_20180505_061132_000000.jpg";
+    std::string dstName = "2018/05/05/TEST_20180505_061132.000000000.jpg";
     std::string timestamp = "2018-05-05 06:11:32";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_90;
@@ -160,7 +160,7 @@ TEST_F(FileOperationTests, singleImageJpeg90WrongSizeImageAllOperations)
 TEST_F(FileOperationTests, singleImageAllOperations)
 {
     std::string srcName = "lena16_rot90.tiff";
-    std::string dstName = "2019/02/05/TEST_20190205_120932_000000.tiff";
+    std::string dstName = "2019/02/05/TEST_20190205_120932.000000000.tiff";
     std::string timestamp = "2019-02-05 12:09:32";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;
@@ -176,7 +176,7 @@ TEST_F(FileOperationTests, singleImageAllOperations)
 TEST_F(FileOperationTests, singleVideoAllOperations)
 {
     std::string srcName = "roundhay_garden_scene.mp4";
-    std::string dstName = "2018/01/01/TEST_20180101_010101_000000.mp4";
+    std::string dstName = "2018/01/01/TEST_20180101_010101.000000000.mp4";
     std::string timestamp = "2018-01-01 01:01:01";
 
     const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;

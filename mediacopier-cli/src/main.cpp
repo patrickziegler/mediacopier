@@ -20,6 +20,7 @@
 #include <mediacopier/error.hpp>
 #include <mediacopier/file_operation_move.hpp>
 #include <mediacopier/file_operation_move_jpeg.hpp>
+#include <mediacopier/file_operation_simulate.hpp>
 #include <mediacopier/file_register.hpp>
 
 #include <spdlog/spdlog.h>
@@ -116,6 +117,13 @@ static auto run(const fs::path& inputDir, const fs::path& outputDir, const std::
         spdlog::info("Executing MOVE operation (with JPEG awareness)");
         abortable_wrapper([fileRegister]() -> void {
             execute_operation<FileOperationMoveJpeg>(fileRegister);
+        });
+        break;
+
+    case ConfigManager::Command::SIMULATE:
+        spdlog::info("Executing SIMULATE operation");
+        abortable_wrapper([fileRegister]() -> void {
+            execute_operation<FileOperationSimulate>(fileRegister);
         });
         break;
 

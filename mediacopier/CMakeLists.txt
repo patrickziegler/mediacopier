@@ -32,6 +32,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_copy_jpeg.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_move.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_move_jpeg.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_simulate.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/file_register.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
