@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "config_manager.hpp"
+#include "config.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -25,7 +25,7 @@ namespace fs = std::filesystem;
 
 namespace mediacopier::cli {
 
-ConfigManager::ConfigManager(int argc, char *argv[])
+Config::Config(int argc, char *argv[])
 {
     std::vector<std::string> posArgs;
 

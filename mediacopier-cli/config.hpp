@@ -20,7 +20,7 @@
 
 namespace mediacopier::cli {
 
-struct ConfigManager {
+struct Config {
     enum class Command {
         COPY,
         MOVE,
@@ -28,7 +28,7 @@ struct ConfigManager {
         MOVE_JPEG,
         SIMULATE
     };
-    ConfigManager(int argc, char *argv[]);
+    Config(int argc, char *argv[]);
     Command command;
     std::filesystem::path inputDir;
     std::filesystem::path outputDir;

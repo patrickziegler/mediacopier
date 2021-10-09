@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "config_manager.hpp"
+#include "config.hpp"
 
 #include <mediacopier/abstract_file_info.hpp>
 #include <mediacopier/error.hpp>
@@ -66,7 +66,7 @@ static auto execute_operation(const FileRegister& fileRegister) -> void
     }
 }
 
-static auto run(const fs::path& inputDir, const fs::path& outputDir, const std::string& pattern, ConfigManager::Command command) -> int
+static auto run(const fs::path& inputDir, const fs::path& outputDir, const std::string& pattern, Config::Command command) -> int
 {
     if (!fs::is_directory(inputDir)) {
         throw MediaCopierError("Input folder does not exist");
@@ -92,35 +92,35 @@ static auto run(const fs::path& inputDir, const fs::path& outputDir, const std::
 
     switch (command)
     {
-    case ConfigManager::Command::COPY:
+    case Config::Command::COPY:
         spdlog::info("Executing COPY operation");
         abortable_wrapper([fileRegister]() -> void {
             execute_operation<FileOperationCopy>(fileRegister);
         });
         break;
 
-    case ConfigManager::Command::MOVE:
+    case Config::Command::MOVE:
         spdlog::info("Executing MOVE operation");
         abortable_wrapper([fileRegister]() -> void {
             execute_operation<FileOperationMove>(fileRegister);
         });
         break;
 
-    case ConfigManager::Command::COPY_JPEG:
+    case Config::Command::COPY_JPEG:
         spdlog::info("Executing COPY operation (with JPEG awareness)");
         abortable_wrapper([fileRegister]() -> void {
             execute_operation<FileOperationCopyJpeg>(fileRegister);
         });
         break;
 
-    case ConfigManager::Command::MOVE_JPEG:
+    case Config::Command::MOVE_JPEG:
         spdlog::info("Executing MOVE operation (with JPEG awareness)");
         abortable_wrapper([fileRegister]() -> void {
             execute_operation<FileOperationMoveJpeg>(fileRegister);
         });
         break;
 
-    case ConfigManager::Command::SIMULATE:
+    case Config::Command::SIMULATE:
         spdlog::info("Executing SIMULATE operation");
         abortable_wrapper([fileRegister]() -> void {
             execute_operation<FileOperationSimulate>(fileRegister);
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
     using namespace mediacopier::cli;
 
     try {
-        ConfigManager config{argc, argv};
+        Config config{argc, argv};
         return run(config.inputDir, config.outputDir, config.pattern, config.command);
 
     } catch (const std::exception& err) {
