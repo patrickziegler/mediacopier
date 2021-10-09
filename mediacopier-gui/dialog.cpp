@@ -21,8 +21,11 @@
 #include <QFileDialog>
 #include <QPushButton>
 #include <QThread>
+#include <QScreen>
 
-static constexpr const size_t DEFAULT_DIALOG_WIDTH = 600;
+#include <spdlog/sinks/qt_sinks.h>
+
+static constexpr const size_t DEFAULT_DIALOG_WIDTH = 800;
 static constexpr const size_t DEFAULT_DIALOG_HEIGHT = 600;
 
 using CMapItem = QPair<QString, Worker::Command>;
@@ -38,12 +41,14 @@ MediaCopierDialog::MediaCopierDialog(Worker *worker, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setWindowTitle(
-                QString{"%1 v%2"}.arg(
-                    mediacopier::MEDIACOPIER_PROJECT_NAME,
-                    mediacopier::MEDIACOPIER_VERSION));
+    m_logger = spdlog::qt_logger_mt("qt_logger", ui->textLog);
+    spdlog::set_default_logger(m_logger);
+    spdlog::set_pattern("[%l] %v");
+
+    this->setWindowTitle(mediacopier::MEDIACOPIER_PROJECT_NAME);
 
     this->resize(DEFAULT_DIALOG_WIDTH, DEFAULT_DIALOG_HEIGHT);
+    move(screen()->geometry().center() - frameGeometry().center());
 
     Q_FOREACH(CMapItem item, commands) {
         ui->comboCommand->addItem(item.first);
@@ -97,9 +102,6 @@ MediaCopierDialog::MediaCopierDialog(Worker *worker, QWidget *parent) :
     connect(m_worker, SIGNAL(operationFinished()),
             this, SLOT(onOperationFinished()));
 
-    connect(m_worker, SIGNAL(appendLog(QString)),
-            this, SLOT(onAppendLog(QString)));
-
     connect(m_worker, SIGNAL(bumpProgress()),
             this, SLOT(onBumpProgress()));
 
@@ -140,8 +142,12 @@ void MediaCopierDialog::onOpenOutputDirClicked()
 void MediaCopierDialog::onDialogControlClicked(QAbstractButton *button)
 {
     if (ui->buttonDialogControl->standardButton(button) == QDialogButtonBox::Ok) {
+        ui->textLog->setPlainText("");
+        ui->barProgress->setValue(0);
+
         m_btnOk->setEnabled(false);
         m_thread->start();
+
     } else if(!m_thread->isRunning()) {
         close();
     } else {
@@ -167,11 +173,6 @@ void MediaCopierDialog::onBaseFormatChanged(const QString& text)
 void MediaCopierDialog::onOperationChanged(int index)
 {
     m_worker->m_command = commands.at(index).second;
-}
-
-void MediaCopierDialog::onAppendLog(QString message)
-{
-    ui->textLog->appendPlainText(message);
 }
 
 void MediaCopierDialog::onBumpProgress()

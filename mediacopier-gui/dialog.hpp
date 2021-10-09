@@ -23,6 +23,8 @@
 
 #include <QDialog>
 
+#include <spdlog/spdlog.h>
+
 class QAbstractButton;
 class QPushButton;
 
@@ -45,7 +47,6 @@ private slots:
     void onOperationChanged(int index);
 
     // worker related slots
-    void onAppendLog(QString message);
     void onBumpProgress();
     void onResetProgress(int value);
     void onOperationFinished();
@@ -55,4 +56,5 @@ private:
     QThread* m_thread = nullptr;
     Worker* m_worker = nullptr;
     Ui::MediaCopierDialog *ui = nullptr;
+    std::shared_ptr<spdlog::logger> m_logger;
 };

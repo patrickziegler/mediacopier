@@ -40,11 +40,6 @@ static void execute(const FileInfoPtr& file, const std::string& destination)
     file->accept(operation);
 }
 
-Worker::Worker()
-{
-    // TODO: init spdlog to use emit emit appendLog here
-}
-
 void Worker::onOperationStarted()
 {
     using namespace mediacopier;
@@ -62,6 +57,8 @@ void Worker::onOperationStarted()
 
         FileRegister fileRegister{outputDir, m_pattern.toStdString()};
 
+        spdlog::info("** Scanning directories **");
+
         for (const auto& file : fs::recursive_directory_iterator(inputDir)) {
             if (file.is_regular_file()) {
                 try {
@@ -72,8 +69,12 @@ void Worker::onOperationStarted()
             }
         }
 
+        spdlog::info("Found " + std::to_string(fileRegister.size()) + " files");
         emit resetProgress(fileRegister.size());
+
         operationCancelled.store(false);
+
+        spdlog::info("** Start execution **");
 
         for (const auto& [destination, file] : fileRegister) {
 
@@ -108,7 +109,7 @@ void Worker::onOperationStarted()
         }
 
     } catch (const std::exception& err) {
-        emit appendLog(QString{"ERROR: %1"}.arg(err.what()));
+        spdlog::error(std::string{err.what()});
     }
 
     emit operationFinished();

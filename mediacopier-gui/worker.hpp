@@ -33,7 +33,7 @@ public:
         SIMULATE
     };
 
-    Worker();
+    Worker() = default;
     void cancelOperation();
 
 public:
@@ -46,7 +46,6 @@ public slots:
     void onOperationStarted();
 
 signals:
-    void appendLog(QString message);
     void bumpProgress();
     void resetProgress(int value);
     void operationFinished();
