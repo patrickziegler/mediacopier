@@ -16,53 +16,101 @@
 
 #include "worker.hpp"
 
-#include <chrono>
-#include <thread>
+#include <mediacopier/abstract_file_info.hpp>
+#include <mediacopier/error.hpp>
+#include <mediacopier/file_operation_move.hpp>
+#include <mediacopier/file_operation_move_jpeg.hpp>
+#include <mediacopier/file_operation_simulate.hpp>
+#include <mediacopier/file_register.hpp>
+
+#include <spdlog/spdlog.h>
+
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+using FileInfoPtr = std::shared_ptr<mediacopier::AbstractFileInfo>;
 
 static volatile std::atomic<bool> operationCancelled;
 
+template <typename T>
+static void execute(const FileInfoPtr& file, const std::string& destination)
+{
+    T operation{destination};
+    file->accept(operation);
+}
+
+Worker::Worker()
+{
+    // TODO: init spdlog to use emit emit appendLog here
+}
+
 void Worker::onOperationStarted()
 {
+    using namespace mediacopier;
+
     try {
-        operationCancelled.store(false);
+        fs::path inputDir{m_inputDir.toStdString()};
+        fs::path outputDir{m_outputDir.toStdString()};
 
-        size_t n = 10;
-        emit resetProgress(n);
+        // copy value to prevent unwanted modification during execution
+        auto command = m_command;
 
-        emit appendLog("input dir: " + m_inputDir);
-        emit appendLog("output dir: " + m_outputDir);
-        emit appendLog("pattern: " + m_pattern);
-
-        switch (m_command) {
-        case Command::COPY_JPEG:
-            emit appendLog("copy");
-            break;
-        case Command::MOVE_JPEG:
-            emit appendLog("move");
-            break;
-        case Command::SIMULATE:
-            emit appendLog("sim");
-            break;
-        default:
-            emit appendLog("Unkown operation");
-            goto done;
+        if (!fs::is_directory(inputDir)) {
+            throw MediaCopierError("Input folder does not exist");
         }
 
-        for (size_t i = 0; i < n; ++i) {
-            emit appendLog("iteration");
+        FileRegister fileRegister{outputDir, m_pattern.toStdString()};
+
+        for (const auto& file : fs::recursive_directory_iterator(inputDir)) {
+            if (file.is_regular_file()) {
+                try {
+                    fileRegister.add(file);
+                } catch (const FileInfoError& err) {
+                    spdlog::warn(std::string{err.what()} + ": " + file.path().string());
+                }
+            }
+        }
+
+        emit resetProgress(fileRegister.size());
+        operationCancelled.store(false);
+
+        for (const auto& [destination, file] : fileRegister) {
+
             if (operationCancelled.load()) {
-                emit appendLog("Operation aborted");
+                spdlog::info("Aborting execution");
                 break;
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            emit setProgress(i + 1);
+
+            try {
+                switch (command) {
+                case Command::COPY:
+                    execute<FileOperationCopy>(file, destination);
+                    break;
+                case Command::COPY_JPEG:
+                    execute<FileOperationCopyJpeg>(file, destination);
+                    break;
+                case Command::MOVE:
+                    execute<FileOperationMove>(file, destination);
+                    break;
+                case Command::MOVE_JPEG:
+                    execute<FileOperationMoveJpeg>(file, destination);
+                    break;
+                case Command::SIMULATE:
+                    execute<FileOperationSimulate>(file, destination);
+                    break;
+                }
+            }  catch (const FileOperationError& err) {
+                spdlog::warn(std::string{err.what()} + ": " + file->path().string());
+            }
+
+            emit bumpProgress();
         }
 
     } catch (const std::exception& err) {
-        emit appendLog(QString{"[ERROR] %1"}.arg(err.what()));
+        emit appendLog(QString{"ERROR: %1"}.arg(err.what()));
     }
 
-done:
     emit operationFinished();
 }
 

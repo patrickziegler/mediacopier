@@ -57,7 +57,7 @@ MediaCopierDialog::MediaCopierDialog(Worker *worker, QWidget *parent) :
     }
 
     // resyncing the selected operation
-    m_worker->m_command = commands.at(0).second;
+    m_worker->m_command = commands.at(ui->comboCommand->currentIndex()).second;
 
     ui->lineInputDir->setText(m_worker->m_inputDir);
     ui->lineOutputDir->setText(m_worker->m_outputDir);
@@ -100,8 +100,8 @@ MediaCopierDialog::MediaCopierDialog(Worker *worker, QWidget *parent) :
     connect(m_worker, SIGNAL(appendLog(QString)),
             this, SLOT(onAppendLog(QString)));
 
-    connect(m_worker, SIGNAL(setProgress(int)),
-            this, SLOT(onSetProgress(int)));
+    connect(m_worker, SIGNAL(bumpProgress()),
+            this, SLOT(onBumpProgress()));
 
     connect(m_worker, SIGNAL(resetProgress(int)),
             this, SLOT(onResetProgress(int)));
@@ -174,9 +174,10 @@ void MediaCopierDialog::onAppendLog(QString message)
     ui->textLog->appendPlainText(message);
 }
 
-void MediaCopierDialog::onSetProgress(int value)
+void MediaCopierDialog::onBumpProgress()
 {
-    ui->barProgress->setValue(value);
+    auto value = ui->barProgress->value();
+    ui->barProgress->setValue(value + 1);
 }
 
 void MediaCopierDialog::onResetProgress(int value)

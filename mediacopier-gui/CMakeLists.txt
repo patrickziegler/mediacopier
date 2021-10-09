@@ -1,4 +1,5 @@
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(spdlog REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -17,4 +18,4 @@ target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/worker.hpp")
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-    Qt5::Core Qt5::Widgets ${MEDIACOPIER_LIB_TARGET_NAME})
+    Qt5::Core Qt5::Widgets spdlog::spdlog ${MEDIACOPIER_LIB_TARGET_NAME})

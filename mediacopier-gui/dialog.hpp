@@ -46,7 +46,7 @@ private slots:
 
     // worker related slots
     void onAppendLog(QString message);
-    void onSetProgress(int value);
+    void onBumpProgress();
     void onResetProgress(int value);
     void onOperationFinished();
 
