@@ -19,3 +19,5 @@ target_sources(${TARGET_NAME} PRIVATE
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt5::Core Qt5::Widgets spdlog::spdlog ${MEDIACOPIER_LIB_TARGET_NAME})
+
+install(TARGETS ${TARGET_NAME})
