@@ -2,16 +2,23 @@ find_package(exiv2 REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(spdlog REQUIRED)
 
-pkg_check_modules(AVFORMAT REQUIRED libavformat)
+pkg_check_modules(AVFORMAT REQUIRED libavformat libavutil)
 pkg_check_modules(LIBJPEG REQUIRED libturbojpeg)
 
 set(TARGET_NAME ${MEDIACOPIER_LIB_TARGET_NAME})
 
 configure_file(
-    "${CMAKE_CURRENT_LIST_DIR}/src/version.hpp.in"
+    "${CMAKE_CURRENT_LIST_DIR}/version.hpp.in"
     "${CMAKE_CURRENT_BINARY_DIR}/include/mediacopier/version.hpp")
 
-add_library(${TARGET_NAME} SHARED)
+if (${BUILD_SHARED_LIB})
+    add_library(${TARGET_NAME} SHARED)
+    set_target_properties(${TARGET_NAME} PROPERTIES
+        VERSION ${CMAKE_PROJECT_VERSION}
+        SOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
+else()
+    add_library(${TARGET_NAME} STATIC)
+endif()
 
 set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mediacopier)
@@ -37,15 +44,11 @@ target_include_directories(${TARGET_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(${TARGET_NAME} PUBLIC
+target_link_libraries(${TARGET_NAME} PRIVATE
     "${AVFORMAT_LIBRARIES}"
     "${LIBJPEG_LIBRARIES}"
     exiv2lib
     spdlog::spdlog)
-
-set_target_properties(${TARGET_NAME} PROPERTIES
-    VERSION ${CMAKE_PROJECT_VERSION}
-    SOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
 
 if(${ENABLE_TEST})
     add_subdirectory(test)
@@ -59,7 +62,7 @@ if(${INSTALL_DEV_FILES})
     set(TARGETS_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/mediacopier)
 
     # install headers
-    install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/include/" DESTINATION include)
+    install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/include/" "${CMAKE_CURRENT_BINARY_DIR}/include/" DESTINATION include)
 
     # install library (and flag the target for export)
     install(
@@ -88,7 +91,9 @@ if(${INSTALL_DEV_FILES})
         FILES "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
             "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
         DESTINATION "${TARGETS_INSTALL_DIR}")
-else()
-    # install library only
+
+elseif(${BUILD_SHARED_LIB})
+    # install library
     install(TARGETS ${TARGET_NAME})
+
 endif()

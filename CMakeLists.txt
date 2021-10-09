@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+option(BUILD_SHARED_LIB "Build shared instead of static lib" OFF)
 option(ENABLE_COVERAGE "Activate flags for gcov on compilation" OFF)
 option(ENABLE_CLI "Include command line interface" ON)
 option(ENABLE_TEST "Include test targets" OFF)
