@@ -160,6 +160,7 @@ auto FileOperationCopyJpeg::visit(const FileInfoImageJpeg& file) -> void
 {
     copyJpeg(file);
 }
+
 auto FileOperationCopyJpeg::visit(const FileInfoVideo& file) -> void
 {
     copyFile(file);
