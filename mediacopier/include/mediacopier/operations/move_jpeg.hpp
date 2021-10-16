@@ -16,13 +16,13 @@
 
 #pragma once
 
-#include <mediacopier/file_operation_copy.hpp>
+#include <mediacopier/operations/copy_jpeg.hpp>
 
 namespace mediacopier {
 
-class FileOperationMove : public FileOperationCopy {
+class FileOperationMoveJpeg : public FileOperationCopyJpeg {
 public:
-    using FileOperationCopy::FileOperationCopy;
+    using FileOperationCopyJpeg::FileOperationCopyJpeg;
     auto visit(const FileInfoImage& file) -> void override;
     auto visit(const FileInfoImageJpeg& file) -> void override;
     auto visit(const FileInfoVideo& file) -> void override;

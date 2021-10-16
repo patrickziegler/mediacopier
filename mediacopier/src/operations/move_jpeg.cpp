@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Patrick Ziegler
+/* Copyright (C) 2020-2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,33 +14,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/file_info_image.hpp>
-#include <mediacopier/file_info_image_jpeg.hpp>
-#include <mediacopier/file_info_video.hpp>
-#include <mediacopier/file_operation_simulate.hpp>
+#include <mediacopier/files/image.hpp>
+#include <mediacopier/files/image_jpeg.hpp>
+#include <mediacopier/files/video.hpp>
+#include <mediacopier/operations/move_jpeg.hpp>
 
-#include <spdlog/spdlog.h>
+namespace fs = std::filesystem;
 
 namespace mediacopier {
 
-auto FileOperationSimulate::dumpFilePaths(const AbstractFileInfo& file) const -> void
+auto FileOperationMoveJpeg::visit(const FileInfoImage& file) -> void
 {
-    spdlog::info(m_destination.string() + " (from " + file.path().string() + ")");
+    copyFile(file);
+    fs::remove(file.path());
 }
 
-auto FileOperationSimulate::visit(const FileInfoImage& file) -> void
+auto FileOperationMoveJpeg::visit(const FileInfoImageJpeg& file) -> void
 {
-    dumpFilePaths(file);
+    copyJpeg(file);
+    fs::remove(file.path());
 }
 
-auto FileOperationSimulate::visit(const FileInfoImageJpeg& file) -> void
+auto FileOperationMoveJpeg::visit(const FileInfoVideo& file) -> void
 {
-    dumpFilePaths(file);
-}
-
-auto FileOperationSimulate::visit(const FileInfoVideo& file) -> void
-{
-    dumpFilePaths(file);
+    copyFile(file);
+    fs::remove(file.path());
 }
 
 } // namespace mediacopier

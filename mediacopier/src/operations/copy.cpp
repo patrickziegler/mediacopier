@@ -15,10 +15,10 @@
  */
 
 #include <mediacopier/error.hpp>
-#include <mediacopier/file_info_image.hpp>
-#include <mediacopier/file_info_image_jpeg.hpp>
-#include <mediacopier/file_info_video.hpp>
-#include <mediacopier/file_operation_copy.hpp>
+#include <mediacopier/files/image.hpp>
+#include <mediacopier/files/image_jpeg.hpp>
+#include <mediacopier/files/video.hpp>
+#include <mediacopier/operations/copy.hpp>
 
 namespace fs = std::filesystem;
 

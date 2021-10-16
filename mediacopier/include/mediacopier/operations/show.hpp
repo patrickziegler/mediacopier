@@ -1,4 +1,4 @@
-/* Copyright (C) 2020-2021 Patrick Ziegler
+/* Copyright (C) 2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,22 @@
 
 #pragma once
 
-#include <mediacopier/abstract_file_info.hpp>
+#include <mediacopier/files/abstract_file_info.hpp>
+#include <mediacopier/operations/abstract_file_operation.hpp>
 
-#include <exiv2/exiv2.hpp>
+#include <filesystem>
 
 namespace mediacopier {
 
-class FileInfoImage : public AbstractFileInfo {
+class FileOperationShow : public AbstractFileOperation {
 public:
-    FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif);
-    auto accept(AbstractFileOperation& operation) const -> void override;
+    explicit FileOperationShow(std::filesystem::path destination) : m_destination{std::move(destination)} {}
+    auto visit(const FileInfoImage& file) -> void override;
+    auto visit(const FileInfoImageJpeg& file) -> void override;
+    auto visit(const FileInfoVideo& file) -> void override;
+protected:
+    auto dumpFilePaths(const AbstractFileInfo& file) const -> void;
+    std::filesystem::path m_destination;
 };
 
 } // namespace mediacopier

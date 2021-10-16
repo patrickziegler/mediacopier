@@ -24,15 +24,15 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mediacopier)
 
 target_sources(${TARGET_NAME} PRIVATE
+    "${CMAKE_CURRENT_LIST_DIR}/src/files/image.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/files/image_jpeg.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/files/video.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/operations/copy.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/operations/copy_jpeg.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/operations/move.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/operations/move_jpeg.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/operations/show.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/file_info_factory.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_image.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_image_jpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_video.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_copy.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_copy_jpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_move.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_move_jpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_operation_simulate.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/file_register.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE

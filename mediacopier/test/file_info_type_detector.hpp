@@ -16,10 +16,10 @@
 
 #pragma once
 
-#include <mediacopier/abstract_file_operation.hpp>
-#include <mediacopier/file_info_image.hpp>
-#include <mediacopier/file_info_image_jpeg.hpp>
-#include <mediacopier/file_info_video.hpp>
+#include <mediacopier/files/image.hpp>
+#include <mediacopier/files/image_jpeg.hpp>
+#include <mediacopier/files/video.hpp>
+#include <mediacopier/operations/abstract_file_operation.hpp>
 
 namespace mediacopier::test {
 

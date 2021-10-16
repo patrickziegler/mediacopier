@@ -1,4 +1,4 @@
-/* Copyright (C) 2020-2021 Patrick Ziegler
+/* Copyright (C) 2021 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,20 +14,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/files/image.hpp>
+#include <mediacopier/files/image_jpeg.hpp>
+#include <mediacopier/files/video.hpp>
+#include <mediacopier/operations/show.hpp>
 
-#include <mediacopier/file_operation_copy.hpp>
+#include <spdlog/spdlog.h>
 
 namespace mediacopier {
 
-class FileOperationCopyJpeg : public FileOperationCopy {
-public:
-    using FileOperationCopy::FileOperationCopy;
-    auto visit(const FileInfoImage& file) -> void override;
-    auto visit(const FileInfoImageJpeg& file) -> void override;
-    auto visit(const FileInfoVideo& file) -> void override;
-protected:
-    auto copyJpeg(const FileInfoImageJpeg& file) const -> void;
-};
+auto FileOperationShow::dumpFilePaths(const AbstractFileInfo& file) const -> void
+{
+    spdlog::info(m_destination.string() + " (from " + file.path().string() + ")");
+}
+
+auto FileOperationShow::visit(const FileInfoImage& file) -> void
+{
+    dumpFilePaths(file);
+}
+
+auto FileOperationShow::visit(const FileInfoImageJpeg& file) -> void
+{
+    dumpFilePaths(file);
+}
+
+auto FileOperationShow::visit(const FileInfoVideo& file) -> void
+{
+    dumpFilePaths(file);
+}
 
 } // namespace mediacopier

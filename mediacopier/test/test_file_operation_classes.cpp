@@ -14,11 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/file_operation_move.hpp>
-#include <mediacopier/file_operation_move_jpeg.hpp>
-#include <mediacopier/file_register.hpp>
-
 #include "common_test_fixtures.hpp"
+
+#include <mediacopier/file_register.hpp>
+#include <mediacopier/operations/move.hpp>
+#include <mediacopier/operations/move_jpeg.hpp>
 
 namespace fs = std::filesystem;
 

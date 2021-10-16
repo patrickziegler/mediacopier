@@ -16,12 +16,12 @@
 
 #include "worker.hpp"
 
-#include <mediacopier/abstract_file_info.hpp>
 #include <mediacopier/error.hpp>
-#include <mediacopier/file_operation_move.hpp>
-#include <mediacopier/file_operation_move_jpeg.hpp>
-#include <mediacopier/file_operation_simulate.hpp>
 #include <mediacopier/file_register.hpp>
+#include <mediacopier/files/abstract_file_info.hpp>
+#include <mediacopier/operations/move.hpp>
+#include <mediacopier/operations/move_jpeg.hpp>
+#include <mediacopier/operations/show.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -98,7 +98,7 @@ void Worker::onOperationStarted()
                     execute<FileOperationMoveJpeg>(file, destination);
                     break;
                 case Command::SIMULATE:
-                    execute<FileOperationSimulate>(file, destination);
+                    execute<FileOperationShow>(file, destination);
                     break;
                 }
             }  catch (const FileOperationError& err) {

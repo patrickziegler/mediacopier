@@ -16,12 +16,12 @@
 
 #include "config.hpp"
 
-#include <mediacopier/abstract_file_info.hpp>
 #include <mediacopier/error.hpp>
-#include <mediacopier/file_operation_move.hpp>
-#include <mediacopier/file_operation_move_jpeg.hpp>
-#include <mediacopier/file_operation_simulate.hpp>
 #include <mediacopier/file_register.hpp>
+#include <mediacopier/files/abstract_file_info.hpp>
+#include <mediacopier/operations/move.hpp>
+#include <mediacopier/operations/move_jpeg.hpp>
+#include <mediacopier/operations/show.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -123,7 +123,7 @@ static auto run(const fs::path& inputDir, const fs::path& outputDir, const std::
     case Config::Command::SIMULATE:
         spdlog::info("Executing SIMULATE operation");
         abortable_wrapper([fileRegister]() -> void {
-            execute_operation<FileOperationSimulate>(fileRegister);
+            execute_operation<FileOperationShow>(fileRegister);
         });
         break;
 

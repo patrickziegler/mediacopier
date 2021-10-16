@@ -14,10 +14,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/abstract_file_info.hpp>
 #include <mediacopier/error.hpp>
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
+#include <mediacopier/files/abstract_file_info.hpp>
 
 #include <date/date.h>
 #include <spdlog/spdlog.h>
