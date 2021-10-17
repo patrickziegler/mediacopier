@@ -16,9 +16,11 @@
 
 #include "common_test_fixtures.hpp"
 
-#include <mediacopier/file_register.hpp>
+#include <mediacopier/file_info_factory.hpp>
+#include <mediacopier/file_info_register.hpp>
 #include <mediacopier/operations/move.hpp>
 #include <mediacopier/operations/move_jpeg.hpp>
+#include <mediacopier/operations/show.hpp>
 
 namespace fs = std::filesystem;
 
@@ -27,14 +29,12 @@ namespace mediacopier::test {
 template <typename T>
 static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDir) -> const fs::path
 {
-    FileRegister dst{dstBaseDir, DEFAULT_PATTERN};
-    dst.add(srcPath);
-    const auto& it = dst.begin();
-    const auto& dest = it->first;
-    const auto& file = it->second;
-    T op{dest};
-    file->accept(op);
-    return dest;
+    FileRegister destinationRegister{dstBaseDir, DEFAULT_PATTERN};
+    auto file = FileInfoFactory::createFromPath(srcPath);
+    auto path = destinationRegister.add(file).value();
+    T operation{path};
+    file->accept(operation);
+    return path;
 }
 
 class FileOperationTests : public CommonTestFixtures {
@@ -45,6 +45,10 @@ protected:
         fs::remove_all(m_dstBaseDir2);
 
         fs::path srcPath, dstPath;
+
+        // test show operation
+        srcPath = m_testDataDirOrig / srcName;
+        ASSERT_NO_THROW(execute_operation<FileOperationShow>(srcPath, m_dstBaseDir1));
 
         // copy src -> dst1
         srcPath = m_testDataDirOrig / srcName;

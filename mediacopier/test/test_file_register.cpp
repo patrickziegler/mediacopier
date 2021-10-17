@@ -16,7 +16,8 @@
 
 #include "common_test_fixtures.hpp"
 
-#include <mediacopier/file_register.hpp>
+#include <mediacopier/file_info_factory.hpp>
+#include <mediacopier/file_info_register.hpp>
 #include <mediacopier/operations/copy_jpeg.hpp>
 
 namespace fs = std::filesystem;
@@ -31,21 +32,18 @@ protected:
     {
         fs::remove_all(m_dstBaseDir);
 
+        auto file = FileInfoFactory::createFromPath(srcPath);
+
         FileRegister dst{m_dstBaseDir, DEFAULT_PATTERN};
-        dst.add(srcPath);
+        auto path1 = dst.add(file);
+        ASSERT_TRUE(path1.has_value());
 
         // both srcPath are binary equal, file should be ignored
-        dst.add(srcPath);
-        ASSERT_EQ(dst.size(), 1);
+        auto path2 = dst.add(file);
+        ASSERT_FALSE(path2.has_value());
 
-        for (const auto& [destination, file] : dst) {
-            FileOperationCopyJpeg op{destination};
-            file->accept(op);
-        }
-
-        // reset works as intended
-        dst.reset();
-        ASSERT_EQ(dst.size(), 0);
+        FileOperationCopyJpeg copy{path1.value()};
+        file->accept(copy);
     }
 
     fs::path m_dstBaseDir = m_testDataDir / "tmp";
@@ -60,8 +58,8 @@ TEST_F(FileRegisterTests, multipleAddSameSource)
     FileRegister dst{m_dstBaseDir, DEFAULT_PATTERN};
 
     // binary equal destination already exists, file should be ignored
-    dst.add(srcPath);
-    ASSERT_EQ(dst.size(), 0);
+    auto path = dst.add(to_file_info_ptr(srcPath));
+    ASSERT_FALSE(path.has_value());
 }
 
 TEST_F(FileRegisterTests, multipleAddDifferentSource)
@@ -73,13 +71,13 @@ TEST_F(FileRegisterTests, multipleAddDifferentSource)
 
     FileRegister dst{m_dstBaseDir, DEFAULT_PATTERN};
 
-    // file is added because destination is different
-    dst.add(srcPath);
-    ASSERT_EQ(dst.size(), 1);
+    // file is added because image at destination is different
+    auto path1 = dst.add(to_file_info_ptr(srcPath));
+    ASSERT_TRUE(path1.has_value());
 
-    // file is added because source is different
-    dst.add(srcPathMod);
-    ASSERT_EQ(dst.size(), 2);
+    // file is added because image at source is different
+    auto path2 = dst.add(to_file_info_ptr(srcPathMod));
+    ASSERT_TRUE(path2.has_value());
 }
 
 } // namespace mediacopier::test

@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     libgtest-dev \
     libimage-exiftool-perl \
     libjpeg-turbo-progs \
+    librange-v3-dev \
     libspdlog-dev \
     libturbojpeg0-dev \
     pkg-config \

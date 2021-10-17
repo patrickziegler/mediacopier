@@ -18,8 +18,17 @@
 
 #include <mediacopier/files/abstract_file_info.hpp>
 
+#include <filesystem>
+
 namespace mediacopier {
 
 auto to_file_info_ptr(const std::filesystem::path& path) -> FileInfoPtr;
+
+class FileInfoFactory {
+public:
+    static auto createFromPath(const std::filesystem::path path) -> FileInfoPtr {
+        return to_file_info_ptr(path);
+    }
+};
 
 } // namespace mediacopier
