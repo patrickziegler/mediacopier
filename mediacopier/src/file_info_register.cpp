@@ -15,9 +15,7 @@
  */
 
 #include <mediacopier/error.hpp>
-#include <mediacopier/file_info_factory.hpp>
-#include <mediacopier/file_register.hpp>
-#include <mediacopier/files/abstract_file_info.hpp>
+#include <mediacopier/file_info_register.hpp>
 
 #include <date/date.h>
 #include <spdlog/spdlog.h>
@@ -28,7 +26,7 @@
 
 namespace fs = std::filesystem;
 
-static auto is_duplicate(fs::path file1, fs::path file2) -> bool
+static auto is_duplicate(const fs::path& file1, const fs::path& file2) -> bool
 {
     const std::streamsize buffer_size = 1024;
     std::vector<char> buffer(buffer_size, '\0');
@@ -60,79 +58,52 @@ FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdi
     m_destdir /= ""; // this will append a trailing directory separator when necessary
 }
 
-auto FileRegister::add(const std::filesystem::path& path) -> void
+auto FileRegister::add(FileInfoPtr file) -> std::optional<std::filesystem::path>
 {
     size_t id = 0;
 
-    auto file = FileInfoFactory::createFromPath(path);
-
-    if (file == nullptr) {
-        throw FileInfoError{"Failed to parse metadata"};
-    }
-
     while (id < std::numeric_limits<size_t>::max()) {
-
-        auto destination = getDestinationPath(*file, id, true);
-        auto item = m_register.find(destination);
+        auto dest = constructDestinationPath(file, id);
+        auto item = m_register.find(dest);
 
         if (item != m_register.end()) {
             const auto& knownFile = item->second;
-            if (is_duplicate(path, knownFile->path())) {
-                spdlog::info("Duplicate: " + path.filename().string() + " same as " + knownFile->path().filename().string());
-                return;
+            if (is_duplicate(file->path(), knownFile->path())) {
+                spdlog::warn("Duplicate: " + file->path().filename().string() + " same as " + knownFile->path().filename().string());
+                return {};
             }
             ++id;
             continue;
         }
 
-        if (fs::exists(destination)) {
-            if (is_duplicate(path, destination)) {
-                spdlog::info("Already there: " + path.filename().string() + " same as " + destination.filename().string());
-                return;
+        if (fs::exists(dest)) {
+            if (is_duplicate(file->path(), dest)) {
+                spdlog::warn("Already there: " + file->path().filename().string() + " same as " + dest.filename().string());
+                return {};
             }
             ++id;
             continue;
         }
 
-        m_register[destination.string()] = std::move(file);
-        return;
+        m_register[dest.string()] = std::move(file);
+        return {std::move(dest)};
     }
 
     throw FileInfoError{"Unable to find unique filename"};
 }
 
-auto FileRegister::reset() -> void
-{
-    m_register.clear();
-}
-
-auto FileRegister::begin() const -> FileInfoMap::const_iterator
-{
-    return m_register.begin();
-}
-
-auto FileRegister::end() const -> FileInfoMap::const_iterator
-{
-    return m_register.end();
-}
-
-auto FileRegister::size() const -> size_t
-{
-    return m_register.size();
-}
-
-auto FileRegister::getDestinationPath(const mediacopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path
+auto FileRegister::constructDestinationPath(const FileInfoPtr& file, size_t id) const -> std::filesystem::path
 {
     std::ostringstream os;
     os << m_destdir.string();
 
-    date::to_stream(os, m_pattern.c_str(), file.timestamp());
+    date::to_stream(os, m_pattern.c_str(), file->timestamp());
 
     if (id > 0) {
         os << "_" << id;
     }
 
-    os << file.path().extension().string();
+    os << file->path().extension().string();
     return {os.str()};
 }
 

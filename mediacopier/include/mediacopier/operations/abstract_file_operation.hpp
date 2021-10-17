@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include <memory>
+
 namespace mediacopier {
 
 class FileInfoImage;
@@ -29,5 +31,7 @@ public:
     virtual auto visit(const FileInfoImageJpeg& file) -> void = 0;
     virtual auto visit(const FileInfoVideo& file) -> void = 0;
 };
+
+using FileOperationPtr = std::shared_ptr<AbstractFileOperation>;
 
 } // namespace mediacopier

@@ -16,25 +16,22 @@
 
 #pragma once
 
+#include <mediacopier/files/abstract_file_info.hpp>
+
 #include <filesystem>
+#include <optional>
 #include <unordered_map>
 
 namespace mediacopier {
 
-class AbstractFileInfo;
-
-using FileInfoMap = std::unordered_map<std::string, std::shared_ptr<AbstractFileInfo>>;
+using FileInfoMap = std::unordered_map<std::string, FileInfoPtr>;
 
 class FileRegister {
 public:
     explicit FileRegister(std::filesystem::path destination, std::string pattern);
-    auto add(const std::filesystem::path& path) -> void;
-    auto reset() -> void;
-    auto begin() const -> FileInfoMap::const_iterator;
-    auto end() const -> FileInfoMap::const_iterator;
-    auto size() const -> size_t;
+    auto add(FileInfoPtr file) -> std::optional<std::filesystem::path>;
 private:
-    auto getDestinationPath(const mediacopier::AbstractFileInfo& file, size_t id, bool useSubsec) const -> std::filesystem::path;
+    auto constructDestinationPath(const FileInfoPtr& file, size_t id) const -> std::filesystem::path;
     std::filesystem::path m_destdir;
     std::string m_pattern;
     FileInfoMap m_register;

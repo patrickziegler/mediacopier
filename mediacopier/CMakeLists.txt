@@ -33,7 +33,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/src/operations/move_jpeg.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/operations/show.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/src/file_info_factory.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_register.cpp")
+    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_register.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
     "${AVFORMAT_INCLUDE_DIRS}"

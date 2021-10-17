@@ -16,122 +16,66 @@
 
 #include "config.hpp"
 
-#include <mediacopier/error.hpp>
-#include <mediacopier/file_register.hpp>
-#include <mediacopier/files/abstract_file_info.hpp>
+#include <mediacopier/file_info_factory.hpp>
+#include <mediacopier/file_info_register.hpp>
 #include <mediacopier/operations/move.hpp>
 #include <mediacopier/operations/move_jpeg.hpp>
 #include <mediacopier/operations/show.hpp>
+
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/iterator_range.hpp>
 
 #include <spdlog/spdlog.h>
 
 #include <atomic>
 #include <csignal>
-#include <filesystem>
-#include <functional>
 
 namespace fs = std::filesystem;
 
-static volatile std::atomic<bool> operationCancelled;
+static volatile std::atomic<bool> operationCancelled(false);
 
-static auto abortable_wrapper(std::function<void()> abortable_function) -> void
-{
-    operationCancelled.store(false);
-    std::signal(SIGINT, [](int signal) -> void {
-        (void) signal;
-        operationCancelled.store(true);
-    });
-    abortable_function();
-    std::signal(SIGINT, SIG_DFL);
-}
+static auto is_regular_file(const fs::directory_entry& path) -> bool {
+    return fs::is_regular_file(path);
+};
 
 namespace mediacopier::cli {
 
-template <typename T>
-static auto execute_operation(const FileRegister& fileRegister) -> void
-{
-    for (const auto& [destination, file] : fileRegister) {
-        try {
-            T operation{destination};
-            file->accept(operation);
+template<typename T>
+static auto is_valid_ptr(const T& file) -> bool {
+    return file != nullptr;
+};
 
-        }  catch (const FileOperationError& err) {
-            spdlog::warn(std::string{err.what()} + ": " + file->path().string());
+template<typename T>
+static auto run(const Config& config) -> int
+{
+    auto mediaFiles = ranges::make_iterator_range(
+                fs::recursive_directory_iterator(config.inputDir),
+                fs::recursive_directory_iterator())
+            | ranges::views::filter(is_regular_file)
+            | ranges::views::transform(to_file_info_ptr)
+            | ranges::views::filter(is_valid_ptr<FileInfoPtr>);
+
+    FileRegister destinationRegister{config.outputDir, config.pattern};
+
+    std::signal(SIGINT, [](int) -> void {
+        operationCancelled.store(true);
+    });
+
+    for (auto file : mediaFiles) {
+        auto path = destinationRegister.add(file);
+
+        if (path.has_value()) {
+            T operation(path.value());
+            file->accept(operation);
         }
 
         if (operationCancelled.load()) {
-            spdlog::info("Aborting execution");
             break;
         }
     }
-}
 
-static auto run(const fs::path& inputDir, const fs::path& outputDir, const std::string& pattern, Config::Command command) -> int
-{
-    if (!fs::is_directory(inputDir)) {
-        throw MediaCopierError("Input folder does not exist");
-    }
-
-    FileRegister fileRegister{outputDir, pattern};
-
-    for (const auto& file : fs::recursive_directory_iterator(inputDir)) {
-        if (file.is_regular_file()) {
-            try {
-                fileRegister.add(file);
-            } catch (const FileInfoError& err) {
-                spdlog::warn(std::string{err.what()} + ": " + file.path().string());
-            }
-        }
-    }
-
-    if (fileRegister.size() < 1) {
-        throw MediaCopierError("No files were found in " + inputDir.string());
-    }
-
-    spdlog::info("Found " + std::to_string(fileRegister.size()) + " files");
-
-    switch (command)
-    {
-    case Config::Command::COPY:
-        spdlog::info("Executing COPY operation");
-        abortable_wrapper([fileRegister]() -> void {
-            execute_operation<FileOperationCopy>(fileRegister);
-        });
-        break;
-
-    case Config::Command::MOVE:
-        spdlog::info("Executing MOVE operation");
-        abortable_wrapper([fileRegister]() -> void {
-            execute_operation<FileOperationMove>(fileRegister);
-        });
-        break;
-
-    case Config::Command::COPY_JPEG:
-        spdlog::info("Executing COPY operation (with JPEG awareness)");
-        abortable_wrapper([fileRegister]() -> void {
-            execute_operation<FileOperationCopyJpeg>(fileRegister);
-        });
-        break;
-
-    case Config::Command::MOVE_JPEG:
-        spdlog::info("Executing MOVE operation (with JPEG awareness)");
-        abortable_wrapper([fileRegister]() -> void {
-            execute_operation<FileOperationMoveJpeg>(fileRegister);
-        });
-        break;
-
-    case Config::Command::SIMULATE:
-        spdlog::info("Executing SIMULATE operation");
-        abortable_wrapper([fileRegister]() -> void {
-            execute_operation<FileOperationShow>(fileRegister);
-        });
-        break;
-
-    default:
-        throw MediaCopierError("Unknown operation type");
-    }
-
-    spdlog::info("Execution finished");
+    std::signal(SIGINT, SIG_DFL);
     return 0;
 }
 
@@ -140,10 +84,33 @@ static auto run(const fs::path& inputDir, const fs::path& outputDir, const std::
 int main(int argc, char *argv[])
 {
     using namespace mediacopier::cli;
+    using namespace mediacopier;
 
     try {
         Config config{argc, argv};
-        return run(config.inputDir, config.outputDir, config.pattern, config.command);
+
+        switch(config.command) {
+
+        case Config::Command::COPY:
+            spdlog::info("Executing COPY operation");
+            return run<FileOperationCopy>(config);
+
+        case Config::Command::COPY_JPEG:
+            spdlog::info("Executing COPY operation (jpeg aware)");
+            return run<FileOperationCopyJpeg>(config);
+
+        case Config::Command::MOVE:
+            spdlog::info("Executing MOVE operation");
+            return run<FileOperationMove>(config);
+
+        case Config::Command::MOVE_JPEG:
+            spdlog::info("Executing MOVE operation (jpeg aware)");
+            return run<FileOperationMoveJpeg>(config);
+
+        case Config::Command::SHOW:
+            spdlog::info("Executing SHOW operation");
+            return run<FileOperationShow>(config);
+        }
 
     } catch (const std::exception& err) {
         spdlog::error(err.what());

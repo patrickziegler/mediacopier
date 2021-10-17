@@ -26,7 +26,7 @@ struct Config {
         MOVE,
         COPY_JPEG,
         MOVE_JPEG,
-        SIMULATE
+        SHOW
     };
     Config(int argc, char *argv[]);
     Command command;

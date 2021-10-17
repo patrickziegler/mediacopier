@@ -16,17 +16,10 @@
 
 #pragma once
 
-#include <filesystem>
+#include <mediacopier/files/abstract_file_info.hpp>
 
 namespace mediacopier {
 
-class AbstractFileInfo;
-
-using FileInfoPtr = std::unique_ptr<AbstractFileInfo>;
-
-class FileInfoFactory {
-public:
-    static auto createFromPath(const std::filesystem::path& path) -> FileInfoPtr;
-};
+auto to_file_info_ptr(const std::filesystem::path& path) -> FileInfoPtr;
 
 } // namespace mediacopier

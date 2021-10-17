@@ -19,11 +19,15 @@
 #include <mediacopier/files/image_jpeg.hpp>
 #include <mediacopier/files/video.hpp>
 
+#include <exiv2/exiv2.hpp>
+
 #include <spdlog/spdlog.h>
+
+namespace fs = std::filesystem;
 
 namespace mediacopier {
 
-auto FileInfoFactory::createFromPath(const std::filesystem::path& path) -> FileInfoPtr
+auto to_file_info_ptr(const fs::path& path) -> FileInfoPtr
 {
     try {
         auto image = Exiv2::ImageFactory::open(path);
@@ -33,30 +37,30 @@ auto FileInfoFactory::createFromPath(const std::filesystem::path& path) -> FileI
 
             if (image->mimeType() == "image/jpeg") {
                 try {
-                    return std::make_unique<FileInfoImageJpeg>(path, image->exifData());
+                    return std::make_shared<FileInfoImageJpeg>(path, image->exifData());
 
                 }  catch (const FileInfoImageJpegError& err) {
                     spdlog::warn(std::string{err.what()} + ": " + path.string());
                 }
             }
 
-            return std::make_unique<FileInfoImage>(path, image->exifData());
+            return std::make_shared<FileInfoImage>(path, image->exifData());
         }
 
     } catch (const FileInfoError&) {
-        return nullptr;
+        return {};
 
     } catch (const Exiv2::Error&) {
         // this was not an image file
     }
 
     try {
-        return std::make_unique<FileInfoVideo>(path);
+        return std::make_shared<FileInfoVideo>(path);
     }  catch (const FileInfoError&) {
         // this was not a video file
     }
 
-    return nullptr;
+    return {};
 }
 
 } // namespace mediacopier

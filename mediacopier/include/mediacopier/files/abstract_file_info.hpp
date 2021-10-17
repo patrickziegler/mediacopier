@@ -35,4 +35,6 @@ protected:
     std::chrono::system_clock::time_point m_timestamp;
 };
 
+using FileInfoPtr = std::shared_ptr<AbstractFileInfo>;
+
 } // namespace mediacopier
