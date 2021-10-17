@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml/badge.svg?branch=master)](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml?query=branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/patrickziegler/MediaCopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/MediaCopier?branch=master)
+![C++ Version](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
 
 ### Features
 This software searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
