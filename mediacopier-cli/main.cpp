@@ -41,33 +41,35 @@ static auto is_regular_file(const fs::directory_entry& path) -> bool {
 
 namespace mediacopier::cli {
 
-template<typename T>
-static auto is_valid_ptr(const T& file) -> bool {
+static auto is_valid(const FileInfoPtr& file) -> bool {
     return file != nullptr;
 };
 
 template<typename T>
 static auto run(const Config& config) -> int
 {
-    auto mediaFiles = ranges::make_iterator_range(
-                fs::recursive_directory_iterator(config.inputDir),
-                fs::recursive_directory_iterator())
-            | ranges::views::filter(is_regular_file)
-            | ranges::views::transform(to_file_info_ptr)
-            | ranges::views::filter(is_valid_ptr<FileInfoPtr>);
+    using namespace ranges;
 
-    FileRegister destinationRegister{config.outputDir, config.pattern};
-
+    // register callback for graceful shutdown via CTRL-C
     std::signal(SIGINT, [](int) -> void {
         operationCancelled.store(true);
     });
 
-    for (auto file : mediaFiles) {
-        auto path = destinationRegister.add(file);
+    FileRegister dest{config.outputDir, config.pattern};
+
+    for (auto file : make_iterator_range(
+             fs::recursive_directory_iterator(config.inputDir),
+             fs::recursive_directory_iterator()
+             )
+         | views::filter(is_regular_file)
+         | views::transform(to_file_info_ptr)
+         | views::filter(is_valid)) {
+
+        auto path = dest.add(file);
 
         if (path.has_value()) {
-            T operation(path.value());
-            file->accept(operation);
+            T op(path.value());
+            file->accept(op);
         }
 
         if (operationCancelled.load()) {
