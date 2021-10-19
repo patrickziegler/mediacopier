@@ -40,7 +40,7 @@ jobs:
         CXX: ${{matrix.config.CXX}}
         BUILD_DIR: "build-coverage/"
       run: |
-        cmake -B ${BUILD_DIR} -DENABLE_COVERAGE=ON
+        cmake -B ${BUILD_DIR} -DENABLE_TEST_COVERAGE=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}
         cmake --build ${BUILD_DIR} --target coverage
       if: matrix.config.CC == 'gcc'

@@ -8,14 +8,14 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-option(ENABLE_COVERAGE "Activate flags for gcov on compilation" OFF)
 option(ENABLE_CLI "Build command line interface" ON)
 option(ENABLE_GUI "Build graphical user interface" OFF)
 option(ENABLE_SHARED_LIB "Build shared instead of static lib" OFF)
 option(ENABLE_TEST "Include test targets" OFF)
+option(ENABLE_TEST_COVERAGE "Activate flags for gcov on compilation" OFF)
 option(INSTALL_DEV_FILES "Install library headers and cmake targets" OFF)
 
-if(${ENABLE_COVERAGE})
+if(${ENABLE_TEST_COVERAGE})
     include(TestCoverage)
     set(ENABLE_TEST ON)
 endif()
