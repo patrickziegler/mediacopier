@@ -21,6 +21,7 @@
 #include <mediacopier/file_info_factory.hpp>
 
 #include <date/date.h>
+
 #include <gtest/gtest.h>
 
 #include <chrono>

@@ -15,7 +15,6 @@
  */
 
 #include <mediacopier/error.hpp>
-#include <mediacopier/files/image.hpp>
 #include <mediacopier/files/image_jpeg.hpp>
 #include <mediacopier/files/video.hpp>
 #include <mediacopier/operations/copy.hpp>

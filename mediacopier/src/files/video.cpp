@@ -14,9 +14,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mediacopier/abstract_file_operation.hpp>
 #include <mediacopier/error.hpp>
 #include <mediacopier/files/video.hpp>
-#include <mediacopier/operations/abstract_file_operation.hpp>
 
 #include <date/date.h>
 

@@ -14,7 +14,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/files/image.hpp>
 #include <mediacopier/files/image_jpeg.hpp>
 #include <mediacopier/files/video.hpp>
 #include <mediacopier/operations/show.hpp>

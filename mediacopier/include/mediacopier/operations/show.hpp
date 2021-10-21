@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <mediacopier/files/abstract_file_info.hpp>
-#include <mediacopier/operations/abstract_file_operation.hpp>
+#include <mediacopier/abstract_file_info.hpp>
+#include <mediacopier/abstract_file_operation.hpp>
 
 #include <filesystem>
 
