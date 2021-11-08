@@ -23,7 +23,7 @@
 
 namespace fs = std::filesystem;
 
-namespace mediacopier::cli {
+namespace mediacopier {
 
 Config::Config(int argc, char *argv[])
 {
@@ -91,4 +91,4 @@ Config::Config(int argc, char *argv[])
     }
 }
 
-} // namespace mediacopier::cli
+} // namespace mediacopier

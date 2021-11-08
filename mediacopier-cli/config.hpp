@@ -18,7 +18,7 @@
 
 #include <filesystem>
 
-namespace mediacopier::cli {
+namespace mediacopier {
 
 struct Config {
     enum class Command {
@@ -35,4 +35,4 @@ struct Config {
     std::string pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S";
 };
 
-} // namespace mediacopier::cli
+} // namespace mediacopier
