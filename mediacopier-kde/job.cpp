@@ -20,8 +20,9 @@
 
 MediaCopierJob::MediaCopierJob(const Worker::Command& command,
                                const std::filesystem::path& srcDir,
-                               const std::filesystem::path& dstDir) :
-    m_worker{command, srcDir, dstDir}
+                               const std::filesystem::path& dstDir,
+                               const std::string& pattern) :
+    m_worker{command, srcDir, dstDir, pattern}
 {
     setCapabilities(Killable | Suspendable);
     setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));

@@ -75,7 +75,7 @@ public:
     Worker(const Command& command,
            std::filesystem::path inputDir,
            std::filesystem::path outputDir,
-           std::string pattern = "%Y/%u/IMG_%Y%m%d_%H%M%S");
+           std::string pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S");
 
     size_t fileCount() const { return m_fileCount; };
 
