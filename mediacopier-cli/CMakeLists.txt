@@ -2,11 +2,12 @@ find_package(range-v3 REQUIRED)
 find_package(spdlog REQUIRED)
 
 set(TARGET_NAME mediacopier-cli)
+set(EXEC_NAME mediacopier)
 
 add_executable(${TARGET_NAME})
 
 set_target_properties(${TARGET_NAME} PROPERTIES
-    OUTPUT_NAME mediacopier)
+    OUTPUT_NAME ${EXEC_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/config.cpp"

@@ -25,9 +25,9 @@ MediaCopierJob::MediaCopierJob(const Worker::Command& command,
     m_worker{command, srcDir, dstDir, pattern}
 {
     setCapabilities(Killable | Suspendable);
-    setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));
-    setProperty("immediateProgressReporting", true);
     setProgressUnit(Files);
+    setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));
+    setProperty("immediateProgressReporting", command != Worker::Command::SHOW);
 
     qRegisterMetaType<Status>("Status");
 

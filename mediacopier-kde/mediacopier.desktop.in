@@ -1,0 +1,11 @@
+[Desktop Entry]
+Actions=mediacopier
+MimeType=inode/directory;
+ServiceTypes=KonqPopupMenu/Plugin
+Type=Service
+
+[Desktop Action mediacopier]
+Exec=@CMAKE_INSTALL_PREFIX@/bin/@EXECUTABLE_NAME@ "%U"
+Icon=folder-copy
+Name=Copy media files to ...
+Name[de]=Medien kopieren nach ...

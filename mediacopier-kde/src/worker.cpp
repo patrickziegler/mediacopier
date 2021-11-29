@@ -50,8 +50,7 @@ auto check_operation_state()
             return true;
         }
         if (operationSuspended.load()) {
-            std::this_thread::sleep_for(
-                        std::chrono::milliseconds(DEFAULT_WAIT_MS));
+            std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_WAIT_MS));
             continue;
         }
         break;
@@ -173,22 +172,30 @@ void Worker::run()
         case Command::COPY:
             spdlog::info("Executing COPY operation..");
             execute<mc::FileOperationCopy>();
+            break;
 
         case Command::COPY_JPEG:
             spdlog::info("Executing COPY operation (jpeg aware)..");
             execute<mc::FileOperationCopyJpeg>();
+            break;
 
         case Command::MOVE:
             spdlog::info("Executing MOVE operation");
             execute<mc::FileOperationMove>();
+            break;
 
         case Command::MOVE_JPEG:
             spdlog::info("Executing MOVE operation (jpeg aware)..");
             execute<mc::FileOperationMoveJpeg>();
+            break;
 
         case Command::SHOW:
             spdlog::info("Executing SHOW operation..");
             execute<mc::FileOperationShow>();
+            break;
+
+        default:
+            spdlog::error("Unknown operation..");
         }
 
         Q_EMIT finished();
