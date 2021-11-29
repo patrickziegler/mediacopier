@@ -28,7 +28,8 @@ class MediaCopierJob : public KJob
 public:
     MediaCopierJob(const Worker::Command& command,
                    const std::filesystem::path& srcDir,
-                   const std::filesystem::path& dstDir);
+                   const std::filesystem::path& dstDir,
+                   const std::string& pattern);
 
     void start() override;
 

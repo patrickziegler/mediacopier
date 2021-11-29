@@ -16,28 +16,90 @@
 
 #include "job.hpp"
 
+#include <mediacopier/version.hpp>
+
 #include <KUiServerV2JobTracker>
+
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QFileDialog>
-#include <QThread>
+
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
+    app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
     app.setDesktopFileName("org.kde.dolphin");
 
-    QString dir = QFileDialog::getExistingDirectory(
-                0, "Open Directory", QDir::currentPath(),
-                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QCommandLineParser parser;
 
-    auto job = new MediaCopierJob{Worker::Command::SHOW,
-            "/home/patrick/workspace/tools/tmp/",
-            dir.toStdString()};
+    parser.setApplicationDescription(
+                app.applicationName() +
+                ", Copyright (C) 2020-2021 Patrick Ziegler");
+
+    parser.addPositionalArgument(
+                "SRC", "Input directory", "[SRC");
+
+    parser.addPositionalArgument(
+                "DST", "Output directory", "[DST]]");
+
+    QCommandLineOption optCommand(
+                "c", "Available commands: copy (default), move, show",
+                "command", "copy");
+
+    QCommandLineOption optPattern(
+                "f", "Base format to be used for new filenames",
+                "pattern", "%Y/%W/IMG_%Y%m%d_%H%M%S");
+
+    parser.addOptions({optCommand, optPattern});
+    parser.addVersionOption();
+    parser.addHelpOption();
+    parser.process(app);
+
+    auto optValueCommand = parser.value("c").toLower();
+    auto optValuePattern = parser.value("f").toLower().toStdString();
+
+    auto askForDirectory = [](QString title) {
+        return QFileDialog::getExistingDirectory(
+                    0, title, QDir::currentPath(),
+                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks).toStdString();
+    };
+
+    fs::path inputDir, outputDir;
+
+    if (parser.positionalArguments().length() > 0) {
+        inputDir = parser.positionalArguments().at(0).toStdString();
+    } else {
+        inputDir = askForDirectory("Input Directory");
+    }
+
+    if (parser.positionalArguments().length() > 1) {
+        outputDir = parser.positionalArguments().at(1).toStdString();
+    } else {
+        outputDir = askForDirectory("Output Directory");
+    }
+
+    Worker::Command command;
+
+    if (optValueCommand == "copy") {
+        command = Worker::Command::COPY_JPEG;
+    } else if (optValueCommand == "move") {
+        command = Worker::Command::MOVE_JPEG;
+    } else if (optValueCommand == "show") {
+        command = Worker::Command::SHOW;
+    }
+
+    auto job = new MediaCopierJob{command, inputDir, outputDir, optValuePattern};
 
     QObject::connect(job, &MediaCopierJob::finished, &app, &QGuiApplication::quit);
 
     KUiServerV2JobTracker tracker;
-    tracker.registerJob(job); // takes ownership
+    tracker.registerJob(job); // takes ownership of job
 
     job->start();
 
