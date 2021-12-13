@@ -20,6 +20,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include <KLocalizedString>
 #include <KUiServerV2JobTracker>
 
 #include <QApplication>
@@ -34,6 +35,9 @@ int main(int argc, char *argv[])
 {
     try {
         QApplication app(argc, argv);
+
+        // reusing translations from kio
+        KLocalizedString::setApplicationDomain("kio5");
 
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
@@ -83,12 +87,12 @@ int main(int argc, char *argv[])
         if (parser.positionalArguments().length() > 0)
             inputDir = parser.positionalArguments().at(0).toStdString();
         else
-            inputDir = askForDirectory(QObject::tr("Input Directory"));
+            inputDir = askForDirectory(i18n("Source"));
 
         if (parser.positionalArguments().length() > 1)
             outputDir = parser.positionalArguments().at(1).toStdString();
         else
-            outputDir = askForDirectory(QObject::tr("Output Directory"));
+            outputDir = askForDirectory(i18n("Destination"));
 
         Worker::Command command;
 

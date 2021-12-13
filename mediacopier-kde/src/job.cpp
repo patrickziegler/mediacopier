@@ -16,6 +16,8 @@
 
 #include "job.hpp"
 
+#include <KLocalizedString>
+
 #include <QVariant>
 
 MediaCopierJob::MediaCopierJob(const Worker::Command& command,
@@ -45,11 +47,11 @@ void MediaCopierJob::start() {
 }
 
 void MediaCopierJob::update(Status info) {
-    description(this, tr("Copying"),
+    description(this, i18n("Copy"),
                 qMakePair<QString, QString>(
-                    tr("Source"), QString::fromStdString(info.inputPath())),
+                    i18n("Source"), QString::fromStdString(info.inputPath())),
                 qMakePair<QString, QString>(
-                    tr("Destination"), QString::fromStdString(info.outputPath())));
+                    i18n("Destination"), QString::fromStdString(info.outputPath())));
     setTotalAmount(Files, info.fileCount());
     setProcessedAmount(Files, info.progress());
 }

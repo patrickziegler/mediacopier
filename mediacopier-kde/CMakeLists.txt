@@ -1,4 +1,5 @@
 find_package(KF5JobWidgets REQUIRED)
+find_package(KF5I18n REQUIRED)
 find_package(spdlog REQUIRED)
 
 include(GNUInstallDirs)
@@ -19,7 +20,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "src/job.hpp" "src/job.cpp" "src/main.cpp" "src/worker.cpp" "src/worker.hpp")
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-    KF5::JobWidgets spdlog::spdlog
+    KF5::I18n KF5::JobWidgets spdlog::spdlog
     ${MEDIACOPIER_LIB_TARGET_NAME})
 
 install(TARGETS ${TARGET_NAME})
