@@ -19,17 +19,15 @@
 #include "worker.hpp"
 
 #include <KJob>
-#include <QThread>
 
 class MediaCopierJob : public KJob
 {
     Q_OBJECT
 
 public:
-    MediaCopierJob(const Worker::Command& command,
-                   const std::filesystem::path& srcDir,
-                   const std::filesystem::path& dstDir,
-                   const std::string& pattern);
+    MediaCopierJob(
+            std::shared_ptr<Worker> worker,
+            const std::filesystem::path& dstDir);
 
     void start() override;
 
@@ -43,6 +41,5 @@ protected:
     bool doResume() override;
 
 private:
-    QThread m_thread;
-    Worker m_worker;
+    std::shared_ptr<Worker> m_worker;
 };

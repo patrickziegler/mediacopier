@@ -17,6 +17,7 @@
 #pragma once
 
 #include <QObject>
+#include <QThread>
 
 #include <filesystem>
 
@@ -77,28 +78,24 @@ public:
            std::filesystem::path outputDir,
            std::string pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S");
 
-    size_t fileCount() const { return m_fileCount; };
-
-    bool kill();
-    bool suspend();
-    bool resume();
-
-private:
-    template<typename T> void execute();
-
-public Q_SLOTS:
-    void initialize();
-    void run();
+    void start();
+    void kill();
+    void suspend();
+    void resume();
 
 Q_SIGNALS:
     void status(Status info);
-    void initialized();
+    void execDone();
     void finished();
 
+public Q_SLOTS:
+    void exec();
+    void quit();
+
 private:
+    QThread m_thread;
     const Command m_command;
     const std::filesystem::path m_inputDir;
     const std::filesystem::path m_outputDir;
     const std::string m_pattern;
-    size_t m_fileCount = 0;
 };

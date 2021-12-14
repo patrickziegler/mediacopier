@@ -14,14 +14,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "job.hpp"
+#include "worker.hpp"
 
 #include <mediacopier/version.hpp>
 
 #include <spdlog/spdlog.h>
 
-#include <KLocalizedString>
+#ifdef ENABLE_KDE
+#include "job.hpp"
 #include <KUiServerV2JobTracker>
+#endif
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -35,9 +37,6 @@ int main(int argc, char *argv[])
 {
     try {
         QApplication app(argc, argv);
-
-        // reusing translations from kio
-        KLocalizedString::setApplicationDomain("kio5");
 
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
@@ -87,12 +86,12 @@ int main(int argc, char *argv[])
         if (parser.positionalArguments().length() > 0)
             inputDir = parser.positionalArguments().at(0).toStdString();
         else
-            inputDir = askForDirectory(i18n("Source"));
+            inputDir = askForDirectory(QObject::tr("Source"));
 
         if (parser.positionalArguments().length() > 1)
             outputDir = parser.positionalArguments().at(1).toStdString();
         else
-            outputDir = askForDirectory(i18n("Destination"));
+            outputDir = askForDirectory(QObject::tr("Destination"));
 
         Worker::Command command;
 
@@ -103,14 +102,16 @@ int main(int argc, char *argv[])
         else if (optValueCommand == "show")
             command = Worker::Command::SHOW;
 
-        auto job = new MediaCopierJob{command, inputDir, outputDir, optValuePattern};
+        auto worker = std::make_shared<Worker>(command, inputDir, outputDir, optValuePattern);
 
-        QObject::connect(job, &MediaCopierJob::finished, &app, &QGuiApplication::quit);
+        QObject::connect(worker.get(), &Worker::finished, &app, &QGuiApplication::quit);
 
+#ifdef ENABLE_KDE
         KUiServerV2JobTracker tracker;
-        tracker.registerJob(job); // takes ownership of job
+        tracker.registerJob(new MediaCopierJob(worker, outputDir)); // takes ownership of job
+#endif
 
-        job->start();
+        worker->start();
 
         return app.exec();
 
