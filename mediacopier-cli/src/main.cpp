@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QFileDialog>
+#include <QTranslator>
 
 #include <filesystem>
 
@@ -37,6 +38,15 @@ int main(int argc, char *argv[])
 {
     try {
         QApplication app(argc, argv);
+
+        QTranslator translator;
+        auto translationLoaded = translator.load(":/translations/lang.qm");
+
+        if (translationLoaded) {
+            app.installTranslator(&translator);
+        } else if (!QLocale::system().name().startsWith("en")) {
+            spdlog::warn("Error loading the translation");
+        }
 
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
@@ -86,12 +96,12 @@ int main(int argc, char *argv[])
         if (parser.positionalArguments().length() > 0)
             inputDir = parser.positionalArguments().at(0).toStdString();
         else
-            inputDir = askForDirectory(QObject::tr("Source"));
+            inputDir = askForDirectory(QObject::tr("Source folder"));
 
         if (parser.positionalArguments().length() > 1)
             outputDir = parser.positionalArguments().at(1).toStdString();
         else
-            outputDir = askForDirectory(QObject::tr("Destination"));
+            outputDir = askForDirectory(QObject::tr("Destination folder"));
 
         Worker::Command command;
 
@@ -110,7 +120,6 @@ int main(int argc, char *argv[])
         KUiServerV2JobTracker tracker;
         tracker.registerJob(new MediaCopierJob(worker, outputDir)); // takes ownership of job
 #endif
-
         worker->start();
 
         return app.exec();

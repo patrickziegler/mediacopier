@@ -2,14 +2,18 @@
 find_package(spdlog REQUIRED)
 
 
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets LinguistTools)
 
 set(CMAKE_AUTOMOC ON)
 #set(CMAKE_AUTOUIC ON)
-#set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTORCC ON)
 
 set(TARGET_NAME mediacopier-cli)
 set(EXEC_NAME mediacopier)
+set(RESOURCES_FILE resources.qrc)
+
+qt5_create_translation(QM_FILES src/ lang/lang_de.ts OPTIONS "-noobsolete")
+configure_file("${RESOURCES_FILE}.in" "${CMAKE_BINARY_DIR}/${RESOURCES_FILE}")
 
 add_executable(${TARGET_NAME})
 
@@ -17,10 +21,12 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXEC_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/main.cpp" "src/worker.cpp" "src/worker.hpp")
+    "src/main.cpp" "src/worker.cpp" "src/worker.hpp"
+    ${QM_FILES} "${CMAKE_BINARY_DIR}/${RESOURCES_FILE}")
 
 target_link_libraries(${TARGET_NAME} PUBLIC
-    Qt5::Core Qt5::Widgets spdlog::spdlog ${MEDIACOPIER_LIB_TARGET_NAME})
+    Qt5::Core Qt5::Widgets spdlog::spdlog
+    ${MEDIACOPIER_LIB_TARGET_NAME})
 
 install(TARGETS ${TARGET_NAME})
 
@@ -42,9 +48,9 @@ if(ENABLE_KDE)
 
     set(DESKTOP_FILE_NAME mediacopier.desktop)
 
-    configure_file("etc/${DESKTOP_FILE_NAME}.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/etc/${DESKTOP_FILE_NAME}")
+    configure_file("${DESKTOP_FILE_NAME}.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}")
 
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/etc/${DESKTOP_FILE_NAME}"
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/kservices5/ServiceMenus")
 endif()

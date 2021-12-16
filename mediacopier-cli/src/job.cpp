@@ -16,16 +16,13 @@
 
 #include "job.hpp"
 
-#include <KLocalizedString>
+#include <QVariant>
 
 MediaCopierJob::MediaCopierJob(
         std::shared_ptr<Worker> worker,
         const std::filesystem::path& dstDir) :
     m_worker{std::move(worker)}
 {
-    // reusing translations from kio
-    KLocalizedString::setApplicationDomain("kio5");
-
     setCapabilities(Killable | Suspendable);
     setProgressUnit(Files);
     setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));
@@ -42,11 +39,11 @@ void MediaCopierJob::start()
 
 void MediaCopierJob::update(Status info)
 {
-    description(this, i18n("Copy"),
+    description(this, tr("Copy"),
                 qMakePair<QString, QString>(
-                    i18n("Source"), QString::fromStdString(info.inputPath())),
+                    tr("Source"), QString::fromStdString(info.inputPath())),
                 qMakePair<QString, QString>(
-                    i18n("Destination"), QString::fromStdString(info.outputPath())));
+                    tr("Destination"), QString::fromStdString(info.outputPath())));
     setTotalAmount(Files, info.fileCount());
     setProcessedAmount(Files, info.progress());
 }
