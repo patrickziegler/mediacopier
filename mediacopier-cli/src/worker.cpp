@@ -30,6 +30,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <csignal>
 #include <thread>
 
 namespace fs = std::filesystem;
@@ -189,8 +190,14 @@ void Worker::resume()
 
 void Worker::exec()
 {
+    // register callback for graceful shutdown via CTRL-C
+    std::signal(SIGINT, [](int) -> void {
+        operationCancelled.store(true);
+    });
+
     try {
         auto _exec = mc::create_executor(m_command);
+
         mc::FileRegister destRegister{m_outputDir, m_pattern};
         size_t progress = 1;
 
@@ -206,11 +213,14 @@ void Worker::exec()
             }
             ++progress;
         }
-        Q_EMIT execDone();
 
     } catch (const std::exception& err) {
         spdlog::error(err.what());
     }
+
+    std::signal(SIGINT, SIG_DFL);
+
+    Q_EMIT execDone();
 }
 
 void Worker::quit()
