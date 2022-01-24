@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Patrick Ziegler
+/* Copyright (C) 2021-2022 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,34 +100,34 @@ auto executor()
     };
 }
 
-auto create_executor(Worker::Command command)
+auto create_executor(Config::Command command)
 {
     std::function<void(const FileInfoPtr&, const fs::path&)> _exec;
 
     // dispatch necessary as Q_OBJECT does not allow templated classes
     switch(command) {
 
-    case Worker::Command::COPY:
+    case Config::Command::COPY:
         spdlog::info("Executing COPY operation..");
         _exec = executor<FileOperationCopy>();
         break;
 
-    case Worker::Command::COPY_JPEG:
+    case Config::Command::COPY_JPEG:
         spdlog::info("Executing COPY operation (jpeg aware)..");
         _exec = executor<FileOperationCopyJpeg>();
         break;
 
-    case Worker::Command::MOVE:
+    case Config::Command::MOVE:
         spdlog::info("Executing MOVE operation");
         _exec = executor<FileOperationMove>();
         break;
 
-    case Worker::Command::MOVE_JPEG:
+    case Config::Command::MOVE_JPEG:
         spdlog::info("Executing MOVE operation (jpeg aware)..");
         _exec = executor<FileOperationMoveJpeg>();
         break;
 
-    case Worker::Command::SHOW:
+    case Config::Command::SHOW:
         spdlog::info("Executing SHOW operation..");
         _exec = executor<FileOperationShow>();
         break;
@@ -141,14 +141,7 @@ auto create_executor(Worker::Command command)
 
 } // namespace mediacopier
 
-Worker::Worker(const Command& command,
-               fs::path inputDir,
-               fs::path outputDir,
-               std::string pattern) :
-    m_command(command),
-    m_inputDir{std::move(inputDir)},
-    m_outputDir{std::move(outputDir)},
-    m_pattern{std::move(pattern)}
+Worker::Worker(Config config) : m_config{std::move(config)}
 {
     qRegisterMetaType<Status>("Status");
 
@@ -196,16 +189,16 @@ void Worker::exec()
     });
 
     try {
-        auto _exec = mc::create_executor(m_command);
+        auto _exec = mc::create_executor(m_config.command());
 
-        mc::FileRegister destRegister{m_outputDir, m_pattern};
+        mc::FileRegister destRegister{m_config.outputDir(), m_config.pattern()};
         size_t progress = 1;
 
         spdlog::info("Checking input folder..");
-        size_t fileCount = ranges::distance(mc::valid_media_files(m_inputDir));
+        size_t fileCount = ranges::distance(mc::valid_media_files(m_config.inputDir()));
 
         spdlog::info("Starting execution..");
-        for (auto file : mc::valid_media_files(m_inputDir)) {
+        for (auto file : mc::valid_media_files(m_config.inputDir())) {
             auto path = destRegister.add(file);
             if (path.has_value()) {
                 Q_EMIT status({file->path(), path.value(), fileCount, progress});
@@ -213,6 +206,8 @@ void Worker::exec()
             }
             ++progress;
         }
+
+        spdlog::info("Done");
 
     } catch (const std::exception& err) {
         spdlog::error(err.what());

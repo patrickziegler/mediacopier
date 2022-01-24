@@ -1,0 +1,57 @@
+/* Copyright (C) 2022 Patrick Ziegler
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#pragma once
+
+#include <QApplication>
+
+#include <filesystem>
+
+class Config {
+public:
+    enum class Command
+    {
+        COPY,
+        MOVE,
+        COPY_JPEG,
+        MOVE_JPEG,
+        SHOW
+    };
+
+    Config(const QApplication& app);
+    ~Config();
+
+    bool readConfigFile();
+    bool writeConfigFile() const noexcept;
+
+    void setCommand(const Command& command);
+    void setCommand(const QString& command);
+    void setPattern(const QString& pattern);
+    void setInputDir(const QString& inputDir);
+    void setOutputDir(const QString& outputDir);
+
+    const Command& command() const { return m_command; }
+    const std::string& pattern() const { return m_pattern; }
+    const std::filesystem::path& inputDir() const { return m_inputDir; }
+    const std::filesystem::path& outputDir() const { return m_outputDir; }
+
+private:
+    bool m_useGui = false;
+    Command m_command = Command::COPY;
+    std::string m_pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S";
+    std::filesystem::path m_inputDir;
+    std::filesystem::path m_outputDir;
+};

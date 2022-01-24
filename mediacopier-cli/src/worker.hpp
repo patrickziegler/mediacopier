@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Patrick Ziegler
+/* Copyright (C) 2021-2022 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,9 @@
 
 #pragma once
 
-#include <QObject>
 #include <QThread>
 
-#include <filesystem>
+#include "config.hpp"
 
 class Status {
 public:
@@ -59,8 +58,8 @@ private:
     const size_t m_progress = 0;
 };
 
-class Worker : public QObject
-{
+class Worker : public QObject {
+
     Q_OBJECT
 
 public:
@@ -73,10 +72,7 @@ public:
     };
 
     Worker() = delete;
-    Worker(const Command& command,
-           std::filesystem::path inputDir,
-           std::filesystem::path outputDir,
-           std::string pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S");
+    Worker(Config config);
 
     void start();
     void kill();
@@ -94,8 +90,5 @@ public Q_SLOTS:
 
 private:
     QThread m_thread;
-    const Command m_command;
-    const std::filesystem::path m_inputDir;
-    const std::filesystem::path m_outputDir;
-    const std::string m_pattern;
+    Config m_config;
 };

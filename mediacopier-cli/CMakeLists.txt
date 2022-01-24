@@ -1,27 +1,27 @@
-
 find_package(spdlog REQUIRED)
-
-
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets LinguistTools)
 
 set(CMAKE_AUTOMOC ON)
 #set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-set(TARGET_NAME mediacopier-cli)
-set(EXEC_NAME mediacopier)
+qt5_create_translation(QM_FILES src/ lang/lang_de.ts OPTIONS "-noobsolete")
+
 set(RESOURCES_FILE resources.qrc)
 
-qt5_create_translation(QM_FILES src/ lang/lang_de.ts OPTIONS "-noobsolete")
 configure_file("${RESOURCES_FILE}.in" "${CMAKE_BINARY_DIR}/${RESOURCES_FILE}")
 
+set(TARGET_NAME mediacopier-cli)
+
 add_executable(${TARGET_NAME})
+
+set(EXEC_NAME mediacopier)
 
 set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXEC_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/main.cpp" "src/worker.cpp" "src/worker.hpp"
+    "src/config.cpp" "src/config.hpp" "src/main.cpp" "src/worker.cpp" "src/worker.hpp"
     ${QM_FILES} "${CMAKE_BINARY_DIR}/${RESOURCES_FILE}")
 
 target_link_libraries(${TARGET_NAME} PUBLIC

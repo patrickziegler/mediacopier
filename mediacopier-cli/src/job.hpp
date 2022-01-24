@@ -20,8 +20,8 @@
 
 #include <KJob>
 
-class MediaCopierJob : public KJob
-{
+class MediaCopierJob : public KJob {
+
     Q_OBJECT
 
 public:

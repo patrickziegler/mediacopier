@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Patrick Ziegler
+/* Copyright (C) 2021-2022 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,7 @@
 #endif
 
 #include <QApplication>
-#include <QCommandLineParser>
-#include <QFileDialog>
 #include <QTranslator>
-
-#include <filesystem>
 
 namespace fs = std::filesystem;
 
@@ -40,85 +36,27 @@ int main(int argc, char *argv[])
         QApplication app(argc, argv);
 
         QTranslator translator;
-        auto translationLoaded = translator.load(":/translations/lang.qm");
 
-        if (translationLoaded) {
+        if (translator.load(":/translations/lang.qm"))
             app.installTranslator(&translator);
-        } else if (!QLocale::system().name().startsWith("en")) {
+        else if (!QLocale::system().name().startsWith("en"))
             spdlog::warn("Error loading the translation");
-        }
 
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
         app.setDesktopFileName("org.kde.dolphin");
 
-        QCommandLineParser parser;
+        spdlog::set_level(spdlog::level::trace);
 
-        parser.setApplicationDescription(
-                    app.applicationName() +
-                    ", Copyright (C) 2020-2021 Patrick Ziegler");
+        Config config{app};
 
-        parser.addPositionalArgument(
-                    "SRC", "Input directory", "[SRC");
-
-        parser.addPositionalArgument(
-                    "DST", "Output directory", "[DST]]");
-
-        QCommandLineOption optCommand(
-                    "c", "Available commands: copy (default), move, show",
-                    "command", "copy");
-
-        QCommandLineOption optPattern(
-                    "f", "Base format to be used for new filenames",
-                    "pattern", "%Y/%W/IMG_%Y%m%d_%H%M%S");
-
-        parser.addOptions({optCommand, optPattern});
-        parser.addVersionOption();
-        parser.addHelpOption();
-        parser.process(app);
-
-        auto optValueCommand = parser.value("c").toLower();
-        auto optValuePattern = parser.value("f").toStdString();
-
-        auto askForDirectory = [](QString title) {
-            auto dir = QFileDialog::getExistingDirectory(
-                        0, title, QDir::currentPath(),
-                        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-            if (dir.isEmpty())
-                throw std::runtime_error("Aborted by user");
-
-            return dir.toStdString();
-        };
-
-        fs::path inputDir, outputDir;
-
-        if (parser.positionalArguments().length() > 0)
-            inputDir = parser.positionalArguments().at(0).toStdString();
-        else
-            inputDir = askForDirectory(QObject::tr("Source folder"));
-
-        if (parser.positionalArguments().length() > 1)
-            outputDir = parser.positionalArguments().at(1).toStdString();
-        else
-            outputDir = askForDirectory(QObject::tr("Destination folder"));
-
-        Worker::Command command;
-
-        if (optValueCommand == "copy")
-            command = Worker::Command::COPY_JPEG;
-        else if (optValueCommand == "move")
-            command = Worker::Command::MOVE_JPEG;
-        else if (optValueCommand == "show")
-            command = Worker::Command::SHOW;
-
-        auto worker = std::make_shared<Worker>(command, inputDir, outputDir, optValuePattern);
+        auto worker = std::make_shared<Worker>(config);
 
         QObject::connect(worker.get(), &Worker::finished, &app, &QGuiApplication::quit);
 
 #ifdef ENABLE_KDE
         KUiServerV2JobTracker tracker;
-        tracker.registerJob(new MediaCopierJob(worker, outputDir)); // takes ownership of job
+        tracker.registerJob(new MediaCopierJob(worker, config.outputDir())); // takes ownership of job
 #endif
         worker->start();
 
