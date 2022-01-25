@@ -161,10 +161,12 @@ void Worker::kill()
 {
     spdlog::info("Cancelling operation..");
     operationCancelled.store(true);
+
+    // block until request was recognized
     while(operationCancelled.load()) {
-        // blocking until request was recognized
         std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_WAIT_MS));
     }
+
     m_thread.quit();
     m_thread.wait();
 }
@@ -196,12 +198,13 @@ void Worker::exec()
 
         spdlog::info("Checking input folder..");
         size_t fileCount = ranges::distance(mc::valid_media_files(m_config.inputDir()));
+        const auto cmd = m_config.commandString();
 
         spdlog::info("Starting execution..");
         for (auto file : mc::valid_media_files(m_config.inputDir())) {
             auto path = destRegister.add(file);
             if (path.has_value()) {
-                Q_EMIT status({file->path(), path.value(), fileCount, progress});
+                Q_EMIT status({cmd, file->path(), path.value(), fileCount, progress});
                 _exec(file, path.value());
             }
             ++progress;

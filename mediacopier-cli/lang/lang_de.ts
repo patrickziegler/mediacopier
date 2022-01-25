@@ -4,17 +4,12 @@
 <context>
     <name>MediaCopierJob</name>
     <message>
-        <location filename="../src/job.cpp" line="43"/>
-        <source>Copy</source>
-        <translation>Kopieren</translation>
-    </message>
-    <message>
-        <location filename="../src/job.cpp" line="45"/>
+        <location filename="../src/job.cpp" line="44"/>
         <source>Source</source>
         <translation>Quelle</translation>
     </message>
     <message>
-        <location filename="../src/job.cpp" line="47"/>
+        <location filename="../src/job.cpp" line="46"/>
         <source>Destination</source>
         <translation>Ziel</translation>
     </message>
@@ -30,6 +25,28 @@
         <location filename="../src/config.cpp" line="81"/>
         <source>Destination folder</source>
         <translation>Zielverzeichnis</translation>
+    </message>
+    <message>
+        <location filename="../src/config.cpp" line="167"/>
+        <location filename="../src/config.cpp" line="170"/>
+        <source>Copy</source>
+        <translation>Kopieren</translation>
+    </message>
+    <message>
+        <location filename="../src/config.cpp" line="173"/>
+        <location filename="../src/config.cpp" line="176"/>
+        <source>Move</source>
+        <translation>Verschieben</translation>
+    </message>
+    <message>
+        <location filename="../src/config.cpp" line="179"/>
+        <source>Show</source>
+        <translation>Zeigen</translation>
+    </message>
+    <message>
+        <location filename="../src/config.cpp" line="182"/>
+        <source>Unknown</source>
+        <translation>Unbekannt</translation>
     </message>
 </context>
 </TS>

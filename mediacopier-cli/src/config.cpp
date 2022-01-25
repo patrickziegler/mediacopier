@@ -158,3 +158,27 @@ void Config::setOutputDir(const QString& outputDir)
 {
     m_outputDir = outputDir.toStdString();
 }
+
+const QString Config::commandString() const
+{
+    switch(m_command) {
+
+    case Config::Command::COPY:
+        return QObject::tr("Copy");
+
+    case Config::Command::COPY_JPEG:
+        return QObject::tr("Copy");
+
+    case Config::Command::MOVE:
+        return QObject::tr("Move");
+
+    case Config::Command::MOVE_JPEG:
+        return QObject::tr("Move");
+
+    case Config::Command::SHOW:
+        return QObject::tr("Show");
+
+    default:
+        return QObject::tr("Unknown");
+    }
+}

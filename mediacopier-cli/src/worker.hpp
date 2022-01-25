@@ -23,16 +23,22 @@
 class Status {
 public:
     Status() {};
-    Status(std::filesystem::path inputPath,
+    Status(QString command,
+           std::filesystem::path inputPath,
            std::filesystem::path outputPath,
            size_t fileCount,
            size_t progress) :
+        m_command{std::move(command)},
         m_inputPath{std::move(inputPath)},
         m_outputPath{std::move(outputPath)},
         m_fileCount{std::move(fileCount)},
         m_progress{std::move(progress)}
     {
         // nothing to do here
+    }
+
+    const QString& command() const {
+        return m_command;
     }
 
     const std::filesystem::path& inputPath() const {
@@ -52,6 +58,7 @@ public:
     }
 
 private:
+    const QString m_command = "";
     const std::filesystem::path m_inputPath = "";
     const std::filesystem::path m_outputPath = "";
     const size_t m_fileCount = 0;
@@ -63,14 +70,6 @@ class Worker : public QObject {
     Q_OBJECT
 
 public:
-    enum class Command {
-        COPY,
-        MOVE,
-        COPY_JPEG,
-        MOVE_JPEG,
-        SHOW
-    };
-
     Worker() = delete;
     Worker(Config config);
 

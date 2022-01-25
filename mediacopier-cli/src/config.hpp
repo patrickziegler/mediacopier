@@ -43,6 +43,8 @@ public:
     void setInputDir(const QString& inputDir);
     void setOutputDir(const QString& outputDir);
 
+    const QString commandString() const;
+
     const Command& command() const { return m_command; }
     const std::string& pattern() const { return m_pattern; }
     const std::filesystem::path& inputDir() const { return m_inputDir; }

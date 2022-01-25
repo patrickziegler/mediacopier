@@ -61,6 +61,12 @@ All build-time dependencies are solved already.
 cmake -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
 ```
 
+## Translations
+
+```sh
+linguist-qt5 mediacopier-cli/lang/lang_de.ts
+```
+
 ## License
 
 This project is licensed under the GPL - see the [LICENSE](LICENSE) file for details

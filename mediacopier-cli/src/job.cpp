@@ -39,8 +39,7 @@ void MediaCopierJob::start()
 
 void MediaCopierJob::update(Status info)
 {
-    // TODO: Use command name as title
-    description(this, tr("Copy"),
+    description(this, info.command(),
                 qMakePair<QString, QString>(
                     tr("Source"), QString::fromStdString(info.inputPath())),
                 qMakePair<QString, QString>(
