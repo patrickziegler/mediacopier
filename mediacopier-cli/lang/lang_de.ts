@@ -17,34 +17,34 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/config.cpp" line="78"/>
+        <location filename="../src/config.cpp" line="76"/>
         <source>Source folder</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="81"/>
+        <location filename="../src/config.cpp" line="79"/>
         <source>Destination folder</source>
         <translation>Zielverzeichnis</translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="167"/>
-        <location filename="../src/config.cpp" line="170"/>
+        <location filename="../src/config.cpp" line="162"/>
+        <location filename="../src/config.cpp" line="165"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="173"/>
-        <location filename="../src/config.cpp" line="176"/>
+        <location filename="../src/config.cpp" line="168"/>
+        <location filename="../src/config.cpp" line="171"/>
         <source>Move</source>
         <translation>Verschieben</translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="179"/>
+        <location filename="../src/config.cpp" line="174"/>
         <source>Show</source>
         <translation>Zeigen</translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="182"/>
+        <location filename="../src/config.cpp" line="177"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>

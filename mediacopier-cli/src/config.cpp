@@ -20,8 +20,6 @@
 #include <QFileDialog>
 #include <QSettings>
 
-#include <spdlog/spdlog.h>
-
 namespace fs = std::filesystem;
 
 static constexpr const char* CONFIG_FILE = ".mediacopier";
@@ -93,13 +91,11 @@ Config::Config(const QApplication& app)
 
 Config::~Config()
 {
-    spdlog::trace("Destroying config object");
     writeConfigFile();
 }
 
 bool Config::readConfigFile()
 {
-    spdlog::trace("Reading config file");
     bool result = false;
     const auto file = m_outputDir / CONFIG_FILE;
     if (fs::is_regular_file(file)) {
@@ -114,7 +110,6 @@ bool Config::readConfigFile()
 
 bool Config::writeConfigFile() const noexcept
 {
-    spdlog::trace("Writing config file");
     bool result = false;
     if (fs::is_directory(m_outputDir)) {
         const auto file = m_outputDir / CONFIG_FILE;

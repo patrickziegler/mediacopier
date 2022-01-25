@@ -46,8 +46,6 @@ int main(int argc, char *argv[])
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
         app.setDesktopFileName("org.kde.dolphin");
 
-        spdlog::set_level(spdlog::level::trace);
-
         Config config{app};
 
         auto worker = std::make_shared<Worker>(config);

@@ -26,7 +26,7 @@ MediaCopierJob::MediaCopierJob(
     setCapabilities(Killable | Suspendable);
     setProgressUnit(Files);
     setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));
-    setProperty("immediateProgressReporting", true);
+    setProperty("immediateProgressReporting", false);
 
     QObject::connect(m_worker.get(), &Worker::status, this, &MediaCopierJob::update);
     QObject::connect(m_worker.get(), &Worker::finished, this, &MediaCopierJob::quit);
