@@ -1,4 +1,4 @@
-/* Copyright (C) 2020-2021 Patrick Ziegler
+/* Copyright (C) 2020-2022 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,26 +27,31 @@
 
 namespace fs = std::filesystem;
 
+constexpr static const size_t BUFFER_SIZE = 1024;
+constexpr static const size_t CHUNKS_MAX = 32;
+
 static auto is_duplicate(const fs::path& file1, const fs::path& file2) -> bool
 {
-    const std::streamsize buffer_size = 1024;
-    std::vector<char> buffer(buffer_size, '\0');
+    std::vector<char> buffer(BUFFER_SIZE, '\0');
 
     std::ifstream input1(file1.string(),  std::ios::in | std::ios::binary);
     std::ifstream input2(file2.string(),  std::ios::in | std::ios::binary);
 
     std::string chunk1, chunk2;
+    size_t chunks_left = CHUNKS_MAX;
 
-    while (!(input1.fail() || input2.fail())) {
-        input1.read(buffer.data(), buffer_size);
+    while (!(input1.fail() || input2.fail()) && chunks_left > 0) {
+        input1.read(buffer.data(), BUFFER_SIZE);
         chunk1 = {buffer.begin(), buffer.begin() + input1.gcount()};
 
-        input2.read(buffer.data(), buffer_size);
+        input2.read(buffer.data(), BUFFER_SIZE);
         chunk2 = {buffer.begin(), buffer.begin() + input2.gcount()};
 
         if (chunk1 != chunk2) {
             return false;
         }
+
+        --chunks_left;
     }
 
     return true;
@@ -70,7 +75,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<std::filesystem::path>
         if (item != m_register.end()) {
             const auto& knownFile = item->second;
             if (is_duplicate(file->path(), knownFile->path())) {
-                spdlog::warn("Duplicate: " + file->path().filename().string() + " same as " + knownFile->path().filename().string());
+                spdlog::warn("Duplicate: " + knownFile->path().filename().string() + " same as " + file->path().filename().string());
                 return {};
             }
             ++id;
@@ -79,7 +84,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<std::filesystem::path>
 
         if (fs::exists(dest)) {
             if (is_duplicate(file->path(), dest)) {
-                spdlog::warn("Already there: " + file->path().filename().string() + " same as " + dest.filename().string());
+                spdlog::warn("Already there: " + dest.filename().string()  + " same as " + file->path().filename().string());
                 return {};
             }
             ++id;
