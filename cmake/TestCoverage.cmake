@@ -46,10 +46,10 @@ add_custom_command(
     COMMAND lcov
                 --remove ${TRACEFILE}
                     "${CMAKE_SOURCE_DIR}/build/*"
+                    "${CMAKE_SOURCE_DIR}/build-coverage/*"
                     "${CMAKE_SOURCE_DIR}/extern/*"
                     "${CMAKE_SOURCE_DIR}/mediacopier/test/*"
                     "${CMAKE_SOURCE_DIR}/mediacopier-cli/*"
-                    "${CMAKE_SOURCE_DIR}/mediacopier-gui/*"
                 --output-file ${TRACEFILE}
 
     COMMAND genhtml ${TRACEFILE}

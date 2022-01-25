@@ -18,6 +18,8 @@ RUN apt-get update && apt-get install -y \
     libspdlog-dev \
     libturbojpeg0-dev \
     pkg-config \
+    qt5-default \
+    qttools5-dev \
     && rm -rf /var/lib/apt/lists/*
 
 ARG USER_NAME=dev
