@@ -1,11 +1,21 @@
 [Desktop Entry]
-Actions=mediacopier
-MimeType=inode/directory;
-ServiceTypes=KonqPopupMenu/Plugin
 Type=Service
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+MimeType=inode/directory;
+Actions=mediacopier-copy;mediacopier-move;
+X-KDE-Priority=TopLevel
+X-KDE-Submenu=Transfer media files
+X-KDE-Submenu[de]=Medien übertragen
+X-KDE-Priority=TopLevel
 
-[Desktop Action mediacopier]
-Exec=@CMAKE_INSTALL_PREFIX@/bin/@EXECUTABLE_NAME@ "%U"
-Icon=folder-copy
+[Desktop Action mediacopier-copy]
 Name=Copy media files to ...
 Name[de]=Medien kopieren nach ...
+Icon=folder-copy
+Exec=@CMAKE_INSTALL_PREFIX@/bin/@EXECUTABLE_NAME@ -c copy "%U"
+
+[Desktop Action mediacopier-move]
+Name=Move media files to ...
+Name[de]=Medien verschieben nach ...
+Icon=folder-move
+Exec=@CMAKE_INSTALL_PREFIX@/bin/@EXECUTABLE_NAME@ -c move "%U"

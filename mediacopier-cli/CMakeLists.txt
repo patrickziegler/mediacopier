@@ -15,10 +15,10 @@ set(TARGET_NAME mediacopier-cli)
 
 add_executable(${TARGET_NAME})
 
-set(EXEC_NAME mediacopier)
+set(EXECUTABLE_NAME mediacopier)
 
 set_target_properties(${TARGET_NAME} PROPERTIES
-    OUTPUT_NAME ${EXEC_NAME})
+    OUTPUT_NAME ${EXECUTABLE_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
     "src/core/config.cpp" "src/core/config.hpp" "src/main.cpp" "src/core/worker.cpp" "src/core/worker.hpp"
