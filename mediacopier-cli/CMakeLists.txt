@@ -21,7 +21,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXEC_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/config.cpp" "src/config.hpp" "src/main.cpp" "src/worker.cpp" "src/worker.hpp"
+    "src/core/config.cpp" "src/core/config.hpp" "src/main.cpp" "src/core/worker.cpp" "src/core/worker.hpp"
     ${QM_FILES} "${CMAKE_BINARY_DIR}/${RESOURCES_FILE}")
 
 target_link_libraries(${TARGET_NAME} PUBLIC
@@ -41,7 +41,7 @@ if(ENABLE_KDE)
     add_definitions(-DENABLE_KDE)
 
     target_sources(${TARGET_NAME} PRIVATE
-        "src/job.hpp" "src/job.cpp")
+        "src/kde/mediacopierjob.hpp" "src/kde/mediacopierjob.cpp")
 
     target_link_libraries(${TARGET_NAME} PUBLIC
         KF5::I18n KF5::JobWidgets)

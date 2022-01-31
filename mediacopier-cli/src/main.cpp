@@ -14,19 +14,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "worker.hpp"
+#include "core/worker.hpp"
 
 #include <mediacopier/version.hpp>
 
-#include <spdlog/spdlog.h>
-
 #ifdef ENABLE_KDE
-#include "job.hpp"
+#include "kde/mediacopierjob.hpp"
 #include <KUiServerV2JobTracker>
 #endif
 
 #include <QApplication>
 #include <QTranslator>
+
+#include <spdlog/spdlog.h>
 
 namespace fs = std::filesystem;
 

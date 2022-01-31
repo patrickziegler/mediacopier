@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Patrick Ziegler
+/* Copyright (C) 2021-2022 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,19 +16,17 @@
 
 #pragma once
 
-#include "worker.hpp"
+#include "../core/worker.hpp"
 
 #include <KJob>
 
 class MediaCopierJob : public KJob {
-
     Q_OBJECT
 
 public:
     MediaCopierJob(
             std::shared_ptr<Worker> worker,
             const std::filesystem::path& dstDir);
-
     void start() override;
 
 public Q_SLOTS:

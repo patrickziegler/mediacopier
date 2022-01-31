@@ -22,7 +22,7 @@ endif()
 
 set(MEDIACOPIER_LIB_TARGET_NAME mediacopier-lib)
 
-add_subdirectory(mediacopier)
+add_subdirectory(mediacopier-lib)
 
 if(${ENABLE_CLI})
     add_subdirectory(mediacopier-cli)

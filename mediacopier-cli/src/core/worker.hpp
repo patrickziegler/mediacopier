@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <QThread>
-
 #include "config.hpp"
+
+#include <QThread>
 
 class Status {
 public:
@@ -66,7 +66,6 @@ private:
 };
 
 class Worker : public QObject {
-
     Q_OBJECT
 
 public:
