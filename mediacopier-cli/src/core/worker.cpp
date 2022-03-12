@@ -198,7 +198,7 @@ void Worker::exec()
 
         spdlog::info("Checking input folder..");
         size_t fileCount = ranges::distance(mc::valid_media_files(m_config.inputDir()));
-        const auto cmd = m_config.commandString();
+        const auto cmd = Config::commandString(m_config.command());
 
         spdlog::info("Starting execution..");
         for (auto file : mc::valid_media_files(m_config.inputDir())) {

@@ -34,24 +34,25 @@ public:
     Config(const QApplication& app);
     ~Config();
 
-    bool readConfigFile();
+    bool readConfigFile() noexcept;
     bool writeConfigFile() const noexcept;
 
     void setCommand(const Command& command);
-    void setCommand(const QString& command);
+    bool setCommand(const QString& command);
     void setPattern(const QString& pattern);
     void setInputDir(const QString& inputDir);
     void setOutputDir(const QString& outputDir);
 
-    const QString commandString() const;
+    static const QString commandString(const Command& command);
 
     const Command& command() const { return m_command; }
     const std::string& pattern() const { return m_pattern; }
     const std::filesystem::path& inputDir() const { return m_inputDir; }
     const std::filesystem::path& outputDir() const { return m_outputDir; }
+    const bool& useGui() const { return m_showGui; }
 
 private:
-    bool m_useGui = false;
+    bool m_showGui = false;
     Command m_command = Command::COPY;
     std::string m_pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S";
     std::filesystem::path m_inputDir;

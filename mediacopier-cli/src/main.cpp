@@ -15,6 +15,7 @@
  */
 
 #include "core/worker.hpp"
+#include "gui/dialog.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -26,15 +27,34 @@
 #include <QApplication>
 #include <QTranslator>
 
-#include <spdlog/spdlog.h>
+int runCli(QApplication& app, Config& config)
+{
+    auto worker = std::make_shared<Worker>(config);
+    QObject::connect(worker.get(), &Worker::finished, &app, &QGuiApplication::quit);
 
-namespace fs = std::filesystem;
+#ifdef ENABLE_KDE
+    app.setDesktopFileName("org.kde.dolphin");
+    KUiServerV2JobTracker tracker;
+    // tracker takes ownership of new MediaCopierJob
+    tracker.registerJob(new MediaCopierJob(worker, config.outputDir()));
+#endif
+
+    worker->start();
+    return app.exec();
+}
+
+int runGui(QApplication& app, Config& config)
+{
+    spdlog::info("Using graphical user interface");
+    MediaCopierDialog dialog{&config};
+    dialog.show();
+    return app.exec();
+}
 
 int main(int argc, char *argv[])
 {
     try {
         QApplication app(argc, argv);
-
         QTranslator translator;
 
         if (translator.load(":/translations/lang.qm"))
@@ -44,21 +64,13 @@ int main(int argc, char *argv[])
 
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
-        app.setDesktopFileName("org.kde.dolphin");
 
         Config config{app};
 
-        auto worker = std::make_shared<Worker>(config);
-
-        QObject::connect(worker.get(), &Worker::finished, &app, &QGuiApplication::quit);
-
-#ifdef ENABLE_KDE
-        KUiServerV2JobTracker tracker;
-        tracker.registerJob(new MediaCopierJob(worker, config.outputDir())); // takes ownership of job
-#endif
-        worker->start();
-
-        return app.exec();
+        if (!config.useGui())
+            return runCli(app, config);
+        else
+            return runGui(app, config);
 
     } catch (const std::exception& err) {
         spdlog::error(err.what());

@@ -2,7 +2,7 @@ find_package(spdlog REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets LinguistTools)
 
 set(CMAKE_AUTOMOC ON)
-#set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 qt5_create_translation(QM_FILES src/ lang/lang_de.ts OPTIONS "-noobsolete")
@@ -21,7 +21,9 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXECUTABLE_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/core/config.cpp" "src/core/config.hpp" "src/main.cpp" "src/core/worker.cpp" "src/core/worker.hpp"
+    "src/core/config.cpp" "src/core/config.hpp" "src/core/worker.cpp" "src/core/worker.hpp"
+    "src/gui/dialog.cpp" "src/gui/dialog.hpp" "src/gui/dialog.ui"
+    "src/main.cpp"
     ${QM_FILES} "${CMAKE_BINARY_DIR}/${RESOURCES_FILE}")
 
 target_link_libraries(${TARGET_NAME} PUBLIC

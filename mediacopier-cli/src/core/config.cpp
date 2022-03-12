@@ -59,7 +59,10 @@ Config::Config(const QApplication& app)
                 "f", "Base format to be used for new filenames",
                 "pattern");
 
-    parser.addOptions({optCommand, optPattern});
+    QCommandLineOption optGui(
+                "g", "Show graphical user interface");
+
+    parser.addOptions({optCommand, optPattern, optGui});
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
@@ -70,14 +73,13 @@ Config::Config(const QApplication& app)
     if (parser.positionalArguments().length() > 1)
         setOutputDir(parser.positionalArguments().at(1));
 
-    if (!m_useGui) {
+    m_showGui = parser.isSet("g");
 
+    if (!m_showGui) {
         if (m_inputDir.empty())
             setInputDir(ask_for_directory(QObject::tr("Source folder")));
-
         if (m_outputDir.empty())
             setOutputDir(ask_for_directory(QObject::tr("Destination folder")));
-
     }
 
     readConfigFile();
@@ -85,8 +87,11 @@ Config::Config(const QApplication& app)
     if (parser.isSet("f"))
         setPattern(parser.value("f"));
 
-    if (parser.isSet("c"))
-        setCommand(parser.value("c"));
+    if (parser.isSet("c")) {
+        const auto cmd = parser.value("c");
+        if (!setCommand(cmd))
+            throw std::runtime_error("No such command '" + cmd.toStdString() + "'");
+    }
 }
 
 Config::~Config()
@@ -94,7 +99,7 @@ Config::~Config()
     writeConfigFile();
 }
 
-bool Config::readConfigFile()
+bool Config::readConfigFile() noexcept
 {
     bool result = false;
     const auto file = m_outputDir / CONFIG_FILE;
@@ -126,9 +131,10 @@ void Config::setCommand(const Command& command)
     m_command = command;
 }
 
-void Config::setCommand(const QString& command)
+bool Config::setCommand(const QString& command)
 {
     auto cmd = command.toLower();
+
     if (cmd == "copy")
         m_command = Command::COPY_JPEG;
     else if (cmd == "move")
@@ -136,7 +142,9 @@ void Config::setCommand(const QString& command)
     else if (cmd == "show")
         m_command = Command::SHOW;
     else
-        throw std::runtime_error("No such command '" + cmd.toStdString() + "'");
+        return false;
+
+    return true;
 }
 
 void Config::setPattern(const QString& pattern)
@@ -154,9 +162,9 @@ void Config::setOutputDir(const QString& outputDir)
     m_outputDir = outputDir.toStdString();
 }
 
-const QString Config::commandString() const
+const QString Config::commandString(const Command& command)
 {
-    switch(m_command) {
+    switch(command) {
 
     case Config::Command::COPY:
         return QObject::tr("Copy");
