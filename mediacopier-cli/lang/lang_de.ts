@@ -61,35 +61,35 @@
     <name>QObject</name>
     <message>
         <location filename="../src/core/config.cpp" line="80"/>
-        <location filename="../src/gui/dialog.cpp" line="110"/>
+        <location filename="../src/gui/dialog.cpp" line="166"/>
         <source>Source folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/core/config.cpp" line="82"/>
-        <location filename="../src/gui/dialog.cpp" line="116"/>
+        <location filename="../src/gui/dialog.cpp" line="172"/>
         <source>Destination folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/config.cpp" line="170"/>
-        <location filename="../src/core/config.cpp" line="173"/>
+        <location filename="../src/core/config.cpp" line="165"/>
+        <location filename="../src/core/config.cpp" line="168"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/config.cpp" line="176"/>
-        <location filename="../src/core/config.cpp" line="179"/>
+        <location filename="../src/core/config.cpp" line="171"/>
+        <location filename="../src/core/config.cpp" line="174"/>
         <source>Move</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/config.cpp" line="182"/>
+        <location filename="../src/core/config.cpp" line="177"/>
         <source>Show</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/config.cpp" line="185"/>
+        <location filename="../src/core/config.cpp" line="180"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>

@@ -32,7 +32,6 @@ public:
     };
 
     Config(const QApplication& app);
-    ~Config();
 
     bool readConfigFile() noexcept;
     bool writeConfigFile() const noexcept;

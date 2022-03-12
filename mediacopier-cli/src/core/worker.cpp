@@ -75,20 +75,12 @@ auto valid_media_files(const fs::path& path)
         return file != nullptr;
     };
 
-    static auto is_not_cancelled = [](const FileInfoPtr& file) {
-        if (check_operation_state()) {
-            throw std::runtime_error("Operation was cancelled");
-        }
-        return true;
-    };
-
     return make_iterator_range(
                 fs::recursive_directory_iterator(path),
                 fs::recursive_directory_iterator())
             | views::filter(is_regular_file)
             | views::transform(to_file_info_ptr)
-            | views::filter(is_valid)
-            | views::filter(is_not_cancelled);
+            | views::filter(is_valid);
 }
 
 template <typename T>
@@ -166,9 +158,6 @@ void Worker::kill()
     while(operationCancelled.load()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_WAIT_MS));
     }
-
-    m_thread.quit();
-    m_thread.wait();
 }
 
 void Worker::suspend()
@@ -201,11 +190,16 @@ void Worker::exec()
         const auto cmd = Config::commandString(m_config.command());
 
         spdlog::info("Starting execution..");
+        m_config.writeConfigFile();
         for (auto file : mc::valid_media_files(m_config.inputDir())) {
             auto path = destRegister.add(file);
             if (path.has_value()) {
                 Q_EMIT status({cmd, file->path(), path.value(), fileCount, progress});
                 _exec(file, path.value());
+            }
+            if (check_operation_state()) {
+                spdlog::warn("Operation was cancelled");
+                break;
             }
             ++progress;
         }

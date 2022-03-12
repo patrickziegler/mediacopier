@@ -94,11 +94,6 @@ Config::Config(const QApplication& app)
     }
 }
 
-Config::~Config()
-{
-    writeConfigFile();
-}
-
 bool Config::readConfigFile() noexcept
 {
     bool result = false;

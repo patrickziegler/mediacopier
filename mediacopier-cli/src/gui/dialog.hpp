@@ -20,10 +20,10 @@
 #include "ui_dialog.h"
 
 #include <QDialog>
-
-#include <spdlog/spdlog.h>
+#include <QStateMachine>
 
 class Config;
+class Worker;
 
 class MediaCopierDialog : public QDialog
 {
@@ -34,19 +34,28 @@ public:
     ~MediaCopierDialog();
 
 private:
+    void initStateMachine();
     void syncConfig();
 
-private slots:
-    // dialog related slots
+public Q_SLOTS:
+    void aboutToQuit();
+
+private Q_SLOTS:
     void onOpenInputDirClicked();
     void onOpenOutputDirClicked();
     void onInputDirChanged(const QString& text);
     void onOutputDirChanged(const QString& text);
     void onBaseFormatChanged(const QString& text);
     void onCommandChanged(int index);
+    void startOperation();
+    void cancelOperation();
+
+Q_SIGNALS:
+    void operationDone();
 
 private:
-    Ui::MediaCopierDialog *ui = nullptr;
-    Config* m_config;
-    std::shared_ptr<spdlog::logger> m_logger;
+    Ui::MediaCopierDialog* ui = nullptr;
+    QStateMachine* fsm = nullptr;
+    Config* m_config = nullptr;
+    Worker* m_worker = nullptr;
 };
