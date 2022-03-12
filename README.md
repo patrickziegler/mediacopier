@@ -16,6 +16,9 @@ If the orientation is unkown or the dimensions are inconvenient they will be cop
 
 ### :hammer: Build and Install
 
+Direct dependencies:
+- spdlog >=[1.9.2](https://github.com/gabime/spdlog/releases/tag/v1.9.2)
+
 Clone this repository and create a build directory
 ```sh
 git clone --recursive https://github.com/patrickziegler/MediaCopier.git
