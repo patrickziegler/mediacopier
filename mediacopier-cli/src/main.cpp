@@ -27,6 +27,8 @@
 #include <QApplication>
 #include <QTranslator>
 
+#include <spdlog/spdlog.h>
+
 int runCli(QApplication& app, Config& config)
 {
     auto worker = std::make_shared<Worker>(config);
@@ -47,6 +49,7 @@ int runGui(QApplication& app, Config& config)
 {
     spdlog::info("Using graphical user interface");
     MediaCopierDialog dialog{&config};
+    QObject::connect(&app, &QApplication::aboutToQuit, &dialog, &MediaCopierDialog::aboutToQuit);
     dialog.show();
     return app.exec();
 }
