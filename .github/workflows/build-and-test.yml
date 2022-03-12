@@ -7,8 +7,8 @@ jobs:
     strategy:
       matrix:
         config:
-        - {name: "Ubuntu 20.04 (GCC)", os: "ubuntu-20.04", CC: "gcc", CXX: "g++"}
-        - {name: "Ubuntu 20.04 (Clang)", os: "ubuntu-20.04", CC: "clang", CXX: "clang++"}
+        - {name: "Ubuntu 22.04 (GCC)", os: "ubuntu-22.04", CC: "gcc", CXX: "g++"}
+        - {name: "Ubuntu 22.04 (Clang)", os: "ubuntu-22.04", CC: "clang", CXX: "clang++"}
 
     name: ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       env:
         DEBIAN_FRONTEND: "noninteractive"
-      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs librange-v3-dev libspdlog-dev libturbojpeg0-dev pkg-config qt5-default qttools5-dev
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs librange-v3-dev libspdlog-dev libturbojpeg0-dev pkg-config qtbase5-dev qttools5-dev
 
     - name: Checkout repository
       uses: actions/checkout@v2
