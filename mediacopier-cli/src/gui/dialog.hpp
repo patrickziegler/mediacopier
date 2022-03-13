@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include "../core/worker.hpp"
+
 #include <QDialog>
 
 namespace Ui {
@@ -23,9 +25,6 @@ class MediaCopierDialog;
 }
 
 class QStateMachine;
-
-class Config;
-class Worker;
 
 class MediaCopierDialog : public QDialog
 {
@@ -38,6 +37,7 @@ public:
 
 public Q_SLOTS:
     void aboutToQuit();
+    void update(Status info);
 
 private Q_SLOTS:
     void startOperation();

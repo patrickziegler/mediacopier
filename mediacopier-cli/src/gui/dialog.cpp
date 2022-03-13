@@ -15,8 +15,6 @@
  */
 
 #include "dialog.hpp"
-#include "../core/worker.hpp"
-#include "../core/config.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -109,12 +107,19 @@ void MediaCopierDialog::aboutToQuit()
         this->thread()->msleep(DEFAULT_WAIT_MS);
 }
 
+void MediaCopierDialog::update(Status info)
+{
+    ui->logProgressBar->setMaximum(info.fileCount());
+    ui->logProgressBar->setValue(info.progress());
+}
+
 void MediaCopierDialog::startOperation()
 {
     if (worker)
         delete worker;
 
     worker = new Worker{*config};
+    QObject::connect(worker, &Worker::status, this, &MediaCopierDialog::update);
     QObject::connect(worker, &Worker::finished, this, &MediaCopierDialog::operationDone);
 
     worker->start();
