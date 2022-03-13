@@ -56,9 +56,10 @@ MediaCopierParam::~MediaCopierParam()
     delete ui;
 }
 
-void MediaCopierParam::init(Config* config)
+void MediaCopierParam::init(std::shared_ptr<Config> config)
 {
-    this->config = config;
+    this->config = std::move(config);
+
     syncConfig();
 
     connect(ui->dirsInputDirButton, &QDialogButtonBox::clicked,

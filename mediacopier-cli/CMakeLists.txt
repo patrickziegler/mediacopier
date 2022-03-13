@@ -47,7 +47,8 @@ if(ENABLE_KDE)
     add_definitions(-DENABLE_KDE)
 
     target_sources(${TARGET_NAME} PRIVATE
-        "src/kde/mediacopierjob.hpp" "src/kde/mediacopierjob.cpp")
+        "src/kde/KMediaCopierDialog.cpp" "src/kde/KMediaCopierDialog.hpp" "src/kde/KMediaCopierDialog.ui"
+        "src/kde/KMediaCopierJob.hpp" "src/kde/KMediaCopierJob.cpp")
 
     target_link_libraries(${TARGET_NAME} PUBLIC
         KF5::I18n KF5::JobWidgets)

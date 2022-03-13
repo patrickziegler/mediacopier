@@ -31,7 +31,7 @@ class MediaCopierParam : public QFrame
 public:
     explicit MediaCopierParam(QWidget *parent = nullptr);
     ~MediaCopierParam();
-    void init(Config* config);
+    void init(std::shared_ptr<Config> config);
 
 private:
     void syncConfig();
@@ -46,5 +46,5 @@ private Q_SLOTS:
 
 private:
     Ui::MediaCopierParam *ui;
-    Config* config;
+    std::shared_ptr<Config> config;
 };
