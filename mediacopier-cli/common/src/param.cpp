@@ -15,7 +15,7 @@
  */
 
 #include "param.hpp"
-#include "../core/config.hpp"
+#include "config.hpp"
 
 #include <QAbstractButton>
 #include <QFileDialog>

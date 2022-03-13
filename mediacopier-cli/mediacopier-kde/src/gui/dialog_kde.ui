@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Patrick Ziegler</author>
  <class>KMediaCopierDialog</class>
  <widget class="QDialog" name="KMediaCopierDialog">
   <property name="geometry">
@@ -37,7 +38,7 @@
   <customwidget>
    <class>MediaCopierParam</class>
    <extends>QFrame</extends>
-   <header>src/gui/param.hpp</header>
+   <header>param.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
