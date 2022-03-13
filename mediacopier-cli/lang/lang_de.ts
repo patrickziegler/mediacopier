@@ -9,7 +9,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialog.ui" line="43"/>
+        <location filename="../src/gui/dialog.ui" line="49"/>
         <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
@@ -35,32 +35,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="26"/>
+        <location filename="../src/gui/param.ui" line="32"/>
         <source>Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="38"/>
+        <location filename="../src/gui/param.ui" line="44"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="61"/>
+        <location filename="../src/gui/param.ui" line="67"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="92"/>
+        <location filename="../src/gui/param.ui" line="104"/>
         <source>Parameter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="104"/>
+        <location filename="../src/gui/param.ui" line="116"/>
         <source>Operation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="114"/>
+        <location filename="../src/gui/param.ui" line="126"/>
         <source>Base Format</source>
         <translation type="unfinished"></translation>
     </message>
