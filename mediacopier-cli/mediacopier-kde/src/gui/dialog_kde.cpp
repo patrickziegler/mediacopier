@@ -27,7 +27,7 @@
 #include "ui_dialog_kde.h"
 
 static constexpr const size_t DEFAULT_DIALOG_WIDTH = 600;
-static constexpr const size_t DEFAULT_DIALOG_HEIGHT = 300;
+static constexpr const size_t DEFAULT_DIALOG_HEIGHT = 200;
 static constexpr const unsigned int DEFAULT_WAIT_MS = 200;
 
 KMediaCopierDialog::KMediaCopierDialog(QWidget *parent) :
