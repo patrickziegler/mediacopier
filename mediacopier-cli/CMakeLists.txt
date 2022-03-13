@@ -23,8 +23,12 @@ set_target_properties(${TARGET_NAME} PROPERTIES
 target_sources(${TARGET_NAME} PRIVATE
     "src/core/config.cpp" "src/core/config.hpp" "src/core/worker.cpp" "src/core/worker.hpp"
     "src/gui/dialog.cpp" "src/gui/dialog.hpp" "src/gui/dialog.ui"
+    "src/gui/param.cpp" "src/gui/param.hpp" "src/gui/param.ui"
     "src/main.cpp"
     ${QM_FILES} "${CMAKE_BINARY_DIR}/${RESOURCES_FILE}")
+
+target_include_directories(${TARGET_NAME} PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR})
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt5::Core Qt5::Widgets spdlog::spdlog

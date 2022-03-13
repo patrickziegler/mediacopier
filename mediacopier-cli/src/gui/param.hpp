@@ -16,39 +16,35 @@
 
 #pragma once
 
-#include <QDialog>
+#include <QFrame>
 
 namespace Ui {
-class MediaCopierDialog;
+class MediaCopierParam;
 }
 
-class QStateMachine;
-
 class Config;
-class Worker;
 
-class MediaCopierDialog : public QDialog
+class MediaCopierParam : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit MediaCopierDialog(QWidget *parent=nullptr);
-    ~MediaCopierDialog();
+    explicit MediaCopierParam(QWidget *parent = nullptr);
+    ~MediaCopierParam();
     void init(Config* config);
 
-public Q_SLOTS:
-    void aboutToQuit();
+private:
+    void syncConfig();
 
 private Q_SLOTS:
-    void startOperation();
-    void cancelOperation();
-
-Q_SIGNALS:
-    void operationDone();
+    void onOpenInputDirClicked();
+    void onOpenOutputDirClicked();
+    void onInputDirChanged(const QString& text);
+    void onOutputDirChanged(const QString& text);
+    void onBaseFormatChanged(const QString& text);
+    void onCommandChanged(int index);
 
 private:
-    Ui::MediaCopierDialog* ui = nullptr;
-    QStateMachine* fsm = nullptr;
-    Config* config = nullptr;
-    Worker* worker = nullptr;
+    Ui::MediaCopierParam *ui;
+    Config* config;
 };

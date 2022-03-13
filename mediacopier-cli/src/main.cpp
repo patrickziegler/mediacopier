@@ -48,7 +48,8 @@ int runCli(QApplication& app, Config& config)
 int runGui(QApplication& app, Config& config)
 {
     spdlog::info("Using graphical user interface");
-    MediaCopierDialog dialog{&config};
+    MediaCopierDialog dialog;
+    dialog.init(&config);
     QObject::connect(&app, &QApplication::aboutToQuit, &dialog, &MediaCopierDialog::aboutToQuit);
     dialog.show();
     return app.exec();
