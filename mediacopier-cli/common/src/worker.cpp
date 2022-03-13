@@ -190,7 +190,6 @@ void Worker::exec()
         const auto cmd = Config::commandString(m_config.command());
 
         spdlog::info("Starting execution..");
-        m_config.writeConfigFile();
         for (auto file : mc::valid_media_files(m_config.inputDir())) {
             auto path = destRegister.add(file);
             if (path.has_value()) {
@@ -203,7 +202,7 @@ void Worker::exec()
             }
             ++progress;
         }
-
+        m_config.writeConfigFile();
         spdlog::info("Done");
 
     } catch (const std::exception& err) {
