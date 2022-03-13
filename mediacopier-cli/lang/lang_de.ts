@@ -4,42 +4,12 @@
 <context>
     <name>MediaCopierDialog</name>
     <message>
-        <location filename="../src/gui/dialog.ui" line="14"/>
+        <location filename="../src/gui/dialog.ui" line="15"/>
         <source>Dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialog.ui" line="35"/>
-        <source>Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/dialog.ui" line="47"/>
-        <source>Input</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/dialog.ui" line="70"/>
-        <source>Output</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/dialog.ui" line="113"/>
-        <source>Parameter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/dialog.ui" line="125"/>
-        <source>Operation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/dialog.ui" line="135"/>
-        <source>Base Format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/dialog.ui" line="166"/>
+        <location filename="../src/gui/dialog.ui" line="43"/>
         <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
@@ -58,16 +28,54 @@
     </message>
 </context>
 <context>
+    <name>MediaCopierParam</name>
+    <message>
+        <location filename="../src/gui/param.ui" line="14"/>
+        <source>Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/param.ui" line="26"/>
+        <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/param.ui" line="38"/>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/param.ui" line="61"/>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/param.ui" line="92"/>
+        <source>Parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/param.ui" line="104"/>
+        <source>Operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/param.ui" line="114"/>
+        <source>Base Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../src/core/config.cpp" line="80"/>
-        <location filename="../src/gui/dialog.cpp" line="166"/>
+        <location filename="../src/gui/param.cpp" line="100"/>
         <source>Source folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/core/config.cpp" line="82"/>
-        <location filename="../src/gui/dialog.cpp" line="172"/>
+        <location filename="../src/gui/param.cpp" line="106"/>
         <source>Destination folder</source>
         <translation type="unfinished"></translation>
     </message>
