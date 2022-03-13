@@ -17,25 +17,12 @@
 #include "config.hpp"
 
 #include <QCommandLineParser>
-#include <QFileDialog>
 #include <QSettings>
 
 namespace fs = std::filesystem;
 
 static constexpr const char* CONFIG_FILE = ".mediacopier";
 static constexpr const char* KEY_PATTERN = "Core/pattern";
-
-auto ask_for_directory = [](const QString& title) -> QString
-{
-    auto dir = QFileDialog::getExistingDirectory(
-                0, title, QDir::currentPath(),
-                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-    if (dir.isEmpty())
-        throw std::runtime_error("Aborted by user");
-
-    return dir;
-};
 
 Config::Config(const QApplication& app)
 {
@@ -72,15 +59,6 @@ Config::Config(const QApplication& app)
 
     if (parser.positionalArguments().length() > 1)
         setOutputDir(parser.positionalArguments().at(1));
-
-    m_showGui = parser.isSet("g");
-
-    if (!m_showGui) {
-        if (m_inputDir.empty())
-            setInputDir(ask_for_directory(QObject::tr("Source folder")));
-        if (m_outputDir.empty())
-            setOutputDir(ask_for_directory(QObject::tr("Destination folder")));
-    }
 
     readConfigFile();
 

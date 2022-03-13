@@ -48,10 +48,8 @@ public:
     const std::string& pattern() const { return m_pattern; }
     const std::filesystem::path& inputDir() const { return m_inputDir; }
     const std::filesystem::path& outputDir() const { return m_outputDir; }
-    const bool& useGui() const { return m_showGui; }
 
 private:
-    bool m_showGui = false;
     Command m_command = Command::COPY;
     std::string m_pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S";
     std::filesystem::path m_inputDir;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Patrick Ziegler</author>
  <class>MediaCopierParam</class>
  <widget class="QFrame" name="MediaCopierParam">
   <property name="geometry">

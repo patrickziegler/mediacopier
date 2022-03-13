@@ -14,14 +14,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/worker.hpp"
 #include "gui/dialog.hpp"
 
+#include <worker.hpp>
 #include <mediacopier/version.hpp>
-
-#ifdef ENABLE_KDE
-#include "kde/KMediaCopierDialog.hpp"
-#endif
 
 #include <QApplication>
 #include <QTranslator>
@@ -34,7 +30,7 @@ int main(int argc, char *argv[])
         QApplication app(argc, argv);
         QTranslator translator;
 
-        if (translator.load(":/translations/lang.qm"))
+        if (translator.load(":/translations/lang.qm") && translator.load(":/translations/lang-common.qm"))
             app.installTranslator(&translator);
         else if (!QLocale::system().name().startsWith("en"))
             spdlog::warn("Error loading the translation");
@@ -43,7 +39,7 @@ int main(int argc, char *argv[])
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
 
         auto config = std::make_shared<Config>(app);
-        KMediaCopierDialog dialog;
+        MediaCopierDialog dialog;
         dialog.init(config, app);
         dialog.show();
         return app.exec();

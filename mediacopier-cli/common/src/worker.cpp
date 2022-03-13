@@ -196,7 +196,6 @@ void Worker::exec()
             if (path.has_value()) {
                 Q_EMIT status({cmd, file->path(), path.value(), fileCount, progress});
                 _exec(file, path.value());
-                std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_WAIT_MS));
             }
             if (check_operation_state()) {
                 spdlog::warn("Operation was cancelled");
