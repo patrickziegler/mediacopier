@@ -9,69 +9,62 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/param.ui" line="33"/>
-        <source>Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/param.ui" line="45"/>
+        <location filename="../src/param.ui" line="52"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/param.ui" line="68"/>
+        <location filename="../src/param.ui" line="45"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/param.ui" line="105"/>
+        <location filename="../src/param.ui" line="33"/>
         <source>Parameter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/param.ui" line="117"/>
-        <source>Operation</source>
+        <location filename="../src/param.ui" line="62"/>
+        <source>Pattern</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/param.ui" line="127"/>
-        <source>Base Format</source>
+        <location filename="../src/param.ui" line="98"/>
+        <source>Operation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/config.cpp" line="80"/>
         <location filename="../src/param.cpp" line="101"/>
         <source>Source folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="82"/>
         <location filename="../src/param.cpp" line="107"/>
         <source>Destination folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="165"/>
-        <location filename="../src/config.cpp" line="168"/>
+        <location filename="../src/config.cpp" line="143"/>
+        <location filename="../src/config.cpp" line="146"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="171"/>
-        <location filename="../src/config.cpp" line="174"/>
+        <location filename="../src/config.cpp" line="149"/>
+        <location filename="../src/config.cpp" line="152"/>
         <source>Move</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="177"/>
+        <location filename="../src/config.cpp" line="155"/>
         <source>Show</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="180"/>
+        <location filename="../src/config.cpp" line="158"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
