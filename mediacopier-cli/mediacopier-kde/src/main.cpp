@@ -27,13 +27,17 @@
 int main(int argc, char *argv[])
 {
     try {
-        QApplication app(argc, argv);
-        QTranslator translator;
+        Q_INIT_RESOURCE(resources_common);
 
-        if (translator.load(":/translations/lang.qm") && translator.load(":/translations/lang-common.qm"))
+        QApplication app(argc, argv);
+
+        QTranslator translator;
+        if (translator.load(":/translations/lang.qm"))
             app.installTranslator(&translator);
-        else if (!QLocale::system().name().startsWith("en"))
-            spdlog::warn("Error loading the translation");
+
+        QTranslator translator_common;
+        if (translator_common.load(":/translations/lang-common.qm"))
+            app.installTranslator(&translator_common);
 
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);

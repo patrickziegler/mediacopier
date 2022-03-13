@@ -32,12 +32,10 @@ const auto ask_for_directory = [](const QString& title) -> QString
                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 };
 
-using CommandMapItem = QPair<QString, Config::Command>;
-
-static const QList<CommandMapItem> commands = {
-    CommandMapItem(Config::commandString(Config::Command::COPY_JPEG), Config::Command::COPY_JPEG),
-    CommandMapItem(Config::commandString(Config::Command::MOVE_JPEG), Config::Command::MOVE_JPEG),
-    CommandMapItem(Config::commandString(Config::Command::SHOW), Config::Command::SHOW)
+static const QList<Config::Command> commands = {
+    Config::Command::COPY_JPEG,
+    Config::Command::MOVE_JPEG,
+    Config::Command::SHOW
 };
 
 MediaCopierParam::MediaCopierParam(QWidget *parent) :
@@ -46,8 +44,8 @@ MediaCopierParam::MediaCopierParam(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    Q_FOREACH(CommandMapItem item, commands) {
-        ui->paramCommand->addItem(item.first);
+    Q_FOREACH(Config::Command item, commands) {
+        ui->paramCommand->addItem(Config::commandString(item));
     }
 }
 
@@ -88,7 +86,7 @@ void MediaCopierParam::syncConfig()
     ui->paramBaseFormat->setText(config->pattern().c_str());
 
     for (size_t i = 0; i < commands.length(); ++i) {
-        if (commands.at(i).second == config->command()) {
+        if (commands.at(i) == config->command()) {
             ui->paramCommand->setCurrentIndex(i);
             break;
         }
@@ -97,14 +95,12 @@ void MediaCopierParam::syncConfig()
 
 void MediaCopierParam::onOpenInputDirClicked()
 {
-    ui->dirsInputDirText->setText(
-                ask_for_directory(QObject::tr("Source folder")));
+    ui->dirsInputDirText->setText(ask_for_directory(QObject::tr("Source folder")));
 }
 
 void MediaCopierParam::onOpenOutputDirClicked()
 {
-    ui->dirsOutputDirText->setText(
-                ask_for_directory(QObject::tr("Destination folder")));
+    ui->dirsOutputDirText->setText(ask_for_directory(QObject::tr("Destination folder")));
 }
 
 void MediaCopierParam::onInputDirChanged(const QString& text)
@@ -129,6 +125,6 @@ void MediaCopierParam::onBaseFormatChanged(const QString& text)
 
 void MediaCopierParam::onCommandChanged(int index)
 {
-    config->setCommand(commands.at(index).second);
-    spdlog::debug("Changed command to " + commands.at(index).first.toStdString());
+    config->setCommand(commands.at(index));
+    spdlog::debug("Changed command to " + Config::commandString(commands.at(index)).toStdString());
 }

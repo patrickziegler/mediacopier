@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/gui/dialog_kde.ui" line="15"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -14,12 +14,12 @@
     <message>
         <location filename="../src/gui/job.cpp" line="44"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Quelle</translation>
     </message>
     <message>
         <location filename="../src/gui/job.cpp" line="46"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Ziel</translation>
     </message>
 </context>
 </TS>

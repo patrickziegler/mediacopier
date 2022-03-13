@@ -22,8 +22,7 @@
 
 class Config {
 public:
-    enum class Command
-    {
+    enum class Command {
         COPY,
         MOVE,
         COPY_JPEG,

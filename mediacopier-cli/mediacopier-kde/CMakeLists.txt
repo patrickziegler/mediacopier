@@ -18,7 +18,7 @@ set(TARGET_NAME mediacopier-cli-kde)
 
 add_executable(${TARGET_NAME})
 
-set(EXECUTABLE_NAME kmediacopier)
+set(EXECUTABLE_NAME mediacopier-kde)
 
 set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXECUTABLE_NAME})

@@ -44,10 +44,8 @@ MediaCopierDialog::MediaCopierDialog(QWidget *parent) :
 
     auto logger = spdlog::qt_logger_mt("mediacopier", ui->logText);
     spdlog::set_default_logger(logger);
-    spdlog::set_level(spdlog::level::debug);
     logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
     logger->sinks().at(0).get()->set_pattern("[%l] %v");
-    logger->sinks().at(0).get()->set_level(spdlog::level::info);
 }
 
 MediaCopierDialog::~MediaCopierDialog()

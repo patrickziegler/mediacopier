@@ -6,67 +6,67 @@
     <message>
         <location filename="../src/param.ui" line="15"/>
         <source>Frame</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../src/param.ui" line="52"/>
-        <source>Input</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/param.ui" line="45"/>
-        <source>Output</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/param.ui" line="33"/>
+        <location filename="../src/param.ui" line="42"/>
         <source>Parameter</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../src/param.ui" line="62"/>
+        <location filename="../src/param.ui" line="54"/>
+        <source>Output</source>
+        <translation>Zielverzeichnis</translation>
+    </message>
+    <message>
+        <location filename="../src/param.ui" line="61"/>
+        <source>Input</source>
+        <translation>Quellverzeichnis</translation>
+    </message>
+    <message>
+        <location filename="../src/param.ui" line="71"/>
         <source>Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Schema</translation>
     </message>
     <message>
-        <location filename="../src/param.ui" line="98"/>
+        <location filename="../src/param.ui" line="107"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/param.cpp" line="101"/>
-        <source>Source folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/param.cpp" line="107"/>
-        <source>Destination folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/config.cpp" line="143"/>
         <location filename="../src/config.cpp" line="146"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieren</translation>
     </message>
     <message>
         <location filename="../src/config.cpp" line="149"/>
         <location filename="../src/config.cpp" line="152"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschieben</translation>
     </message>
     <message>
         <location filename="../src/config.cpp" line="155"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulation</translation>
     </message>
     <message>
         <location filename="../src/config.cpp" line="158"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannt</translation>
+    </message>
+    <message>
+        <location filename="../src/param.cpp" line="98"/>
+        <source>Source folder</source>
+        <translation>Quellverzeichnis</translation>
+    </message>
+    <message>
+        <location filename="../src/param.cpp" line="103"/>
+        <source>Destination folder</source>
+        <translation>Zielverzeichnis</translation>
     </message>
 </context>
 </TS>

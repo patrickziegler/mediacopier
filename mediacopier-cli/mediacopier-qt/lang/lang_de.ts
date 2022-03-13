@@ -6,12 +6,12 @@
     <message>
         <location filename="../src/gui/dialog.ui" line="15"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialog.ui" line="49"/>
+        <location filename="../src/gui/dialog.ui" line="55"/>
         <source>Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Protokoll</translation>
     </message>
 </context>
 </TS>
