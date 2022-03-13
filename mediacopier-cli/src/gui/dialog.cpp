@@ -18,10 +18,10 @@
 
 #include <mediacopier/version.hpp>
 
+#include <QApplication>
 #include <QFinalState>
 #include <QPushButton>
 #include <QScreen>
-#include <QStateMachine>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/qt_sinks.h>
@@ -38,7 +38,6 @@ MediaCopierDialog::MediaCopierDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::MediaCopierDialog)
 {
     ui->setupUi(this);
-
     this->setWindowTitle(mediacopier::MEDIACOPIER_PROJECT_NAME);
     this->resize(DEFAULT_DIALOG_WIDTH, DEFAULT_DIALOG_HEIGHT);
     move(screen()->geometry().center() - frameGeometry().center());
@@ -54,28 +53,24 @@ MediaCopierDialog::MediaCopierDialog(QWidget *parent) :
 MediaCopierDialog::~MediaCopierDialog()
 {
     delete ui;
-
-    // optional
-    if (fsm)
-        delete fsm;
-    if (worker)
-        delete worker;
 }
 
-void MediaCopierDialog::init(Config* config)
+void MediaCopierDialog::init(std::shared_ptr<Config> config, QApplication& app)
 {
-    this->config = config;
+    QObject::connect(&app, &QApplication::aboutToQuit, this, &MediaCopierDialog::aboutToQuit);
+
+    this->config = std::move(config);
     ui->param->init(this->config);
 
-    fsm = new QStateMachine();
+    fsm = std::make_unique<QStateMachine>();
 
-    auto s1 = new QState();
-    auto s2 = new QState();
-    auto s3 = new QState();
-    auto s4 = new QFinalState();
+    auto s1 = new QState();         // waiting for input
+    auto s2 = new QState();         // executing operation
+    auto s3 = new QState();         // aborting operation
+    auto s4 = new QFinalState();    // closing dialog
 
-    s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s4);
     s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::accepted, s2);
+    s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s4);
     s2->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s3);
     s2->addTransition(this, &MediaCopierDialog::rejected, s3);
     s2->addTransition(this, &MediaCopierDialog::operationDone, s1);
@@ -91,7 +86,7 @@ void MediaCopierDialog::init(Config* config)
 
     QObject::connect(s2, &QState::entered, this, &MediaCopierDialog::startOperation);
     QObject::connect(s3, &QState::entered, this, &MediaCopierDialog::cancelOperation);
-    QObject::connect(fsm, &QStateMachine::finished, this, &MediaCopierDialog::close);
+    QObject::connect(fsm.get(), &QStateMachine::finished, this, &MediaCopierDialog::close);
 
     fsm->addState(s1);
     fsm->addState(s2);
@@ -115,13 +110,9 @@ void MediaCopierDialog::update(Status info)
 
 void MediaCopierDialog::startOperation()
 {
-    if (worker)
-        delete worker;
-
-    worker = new Worker{*config};
-    QObject::connect(worker, &Worker::status, this, &MediaCopierDialog::update);
-    QObject::connect(worker, &Worker::finished, this, &MediaCopierDialog::operationDone);
-
+    worker = std::make_shared<Worker>(*config);
+    QObject::connect(worker.get(), &Worker::status, this, &MediaCopierDialog::update);
+    QObject::connect(worker.get(), &Worker::finished, this, &MediaCopierDialog::operationDone);
     worker->start();
 }
 

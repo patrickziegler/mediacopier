@@ -1,4 +1,4 @@
-/* Copyright (C) 2021-2022 Patrick Ziegler
+/* Copyright (C) 2022 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,36 @@
 
 #include "../core/worker.hpp"
 
-#include <KJob>
+#include <QDialog>
+#include <QStateMachine>
 
-class MediaCopierJob : public KJob {
+#include <KUiServerV2JobTracker>
+
+namespace Ui {
+class KMediaCopierDialog;
+}
+
+class QApplication;
+
+class KMediaCopierDialog : public QDialog
+{
     Q_OBJECT
 
 public:
-    MediaCopierJob(
-            std::shared_ptr<Worker> worker,
-            const std::filesystem::path& dstDir);
-    void start() override;
+    explicit KMediaCopierDialog(QWidget *parent = nullptr);
+    ~KMediaCopierDialog();
+    void init(std::shared_ptr<Config> config, QApplication& app);
 
-public Q_SLOTS:
-    void update(Status info);
-    void quit();
+private Q_SLOTS:
+    void startOperation();
 
-protected:
-    bool doKill() override;
-    bool doSuspend() override;
-    bool doResume() override;
+Q_SIGNALS:
+    void operationDone();
 
 private:
-    std::shared_ptr<Worker> m_worker;
+    Ui::KMediaCopierDialog *ui;
+    KUiServerV2JobTracker tracker;
+    std::shared_ptr<Config> config = nullptr;
+    std::shared_ptr<Worker> worker = nullptr;
+    std::unique_ptr<QStateMachine> fsm = nullptr;
 };

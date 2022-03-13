@@ -14,11 +14,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "mediacopierjob.hpp"
+#include "KMediaCopierJob.hpp"
 
 #include <QVariant>
 
-MediaCopierJob::MediaCopierJob(
+KMediaCopierJob::KMediaCopierJob(
         std::shared_ptr<Worker> worker,
         const std::filesystem::path& dstDir) :
     m_worker{std::move(worker)}
@@ -28,16 +28,16 @@ MediaCopierJob::MediaCopierJob(
     setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));
     setProperty("immediateProgressReporting", false);
 
-    QObject::connect(m_worker.get(), &Worker::status, this, &MediaCopierJob::update);
-    QObject::connect(m_worker.get(), &Worker::finished, this, &MediaCopierJob::quit);
+    QObject::connect(m_worker.get(), &Worker::status, this, &KMediaCopierJob::update);
+    QObject::connect(m_worker.get(), &Worker::finished, this, &KMediaCopierJob::quit);
 }
 
-void MediaCopierJob::start()
+void KMediaCopierJob::start()
 {
     // nothing to do here
 }
 
-void MediaCopierJob::update(Status info)
+void KMediaCopierJob::update(Status info)
 {
     description(this, info.command(),
                 qMakePair<QString, QString>(
@@ -48,24 +48,24 @@ void MediaCopierJob::update(Status info)
     setProcessedAmount(Files, info.progress());
 }
 
-void MediaCopierJob::quit()
+void KMediaCopierJob::quit()
 {
     emitResult();
 }
 
-bool MediaCopierJob::doKill()
+bool KMediaCopierJob::doKill()
 {
     m_worker->kill();
     return true;
 }
 
-bool MediaCopierJob::doSuspend()
+bool KMediaCopierJob::doSuspend()
 {
     m_worker->suspend();
     return true;
 }
 
-bool MediaCopierJob::doResume()
+bool KMediaCopierJob::doResume()
 {
     m_worker->resume();
     return true;
