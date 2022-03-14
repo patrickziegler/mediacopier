@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <QFrame>
+#include <QWidget>
 
 namespace Ui {
 class MediaCopierParam;
@@ -24,7 +24,7 @@ class MediaCopierParam;
 
 class Config;
 
-class MediaCopierParam : public QFrame
+class MediaCopierParam : public QWidget
 {
     Q_OBJECT
 

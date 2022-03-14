@@ -4,32 +4,22 @@
 <context>
     <name>MediaCopierParam</name>
     <message>
-        <location filename="../src/gui/param.ui" line="15"/>
-        <source>Frame</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/param.ui" line="42"/>
-        <source>Parameter</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/param.ui" line="54"/>
+        <location filename="../src/ui/param.ui" line="53"/>
         <source>Output</source>
         <translation>Zielverzeichnis</translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="61"/>
+        <location filename="../src/ui/param.ui" line="30"/>
         <source>Input</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="71"/>
+        <location filename="../src/ui/param.ui" line="76"/>
         <source>Pattern</source>
         <translation>Schema</translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="107"/>
+        <location filename="../src/ui/param.ui" line="83"/>
         <source>Operation</source>
         <translation></translation>
     </message>
@@ -59,12 +49,12 @@
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="../src/gui/param.cpp" line="98"/>
+        <location filename="../src/ui/param.cpp" line="98"/>
         <source>Source folder</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../src/gui/param.cpp" line="103"/>
+        <location filename="../src/ui/param.cpp" line="103"/>
         <source>Destination folder</source>
         <translation>Zielverzeichnis</translation>
     </message>

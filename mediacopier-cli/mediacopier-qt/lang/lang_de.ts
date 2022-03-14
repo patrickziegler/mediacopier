@@ -4,12 +4,7 @@
 <context>
     <name>MediaCopierDialog</name>
     <message>
-        <location filename="../src/ui/dialog.ui" line="15"/>
-        <source>Dialog</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/dialog.ui" line="55"/>
+        <location filename="../src/ui/dialog.ui" line="43"/>
         <source>Log</source>
         <translation>Protokoll</translation>
     </message>

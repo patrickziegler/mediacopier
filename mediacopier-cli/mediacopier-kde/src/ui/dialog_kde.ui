@@ -17,12 +17,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="MediaCopierParam" name="param">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
     </widget>
    </item>
    <item>

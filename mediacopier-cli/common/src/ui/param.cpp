@@ -39,7 +39,7 @@ static const QList<Config::Command> commands = {
 };
 
 MediaCopierParam::MediaCopierParam(QWidget *parent) :
-    QFrame(parent),
+    QWidget(parent),
     ui(new Ui::MediaCopierParam)
 {
     ui->setupUi(this);

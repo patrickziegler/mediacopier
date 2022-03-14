@@ -2,126 +2,108 @@
 <ui version="4.0">
  <author>Patrick Ziegler</author>
  <class>MediaCopierParam</class>
- <widget class="QFrame" name="MediaCopierParam">
+ <widget class="QWidget" name="MediaCopierParam">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>246</width>
-    <height>194</height>
+    <width>220</width>
+    <height>150</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Frame</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
-    <number>12</number>
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>12</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>12</number>
+    <number>0</number>
    </property>
-   <item>
-    <widget class="QLabel" name="label_2">
+   <item row="0" column="0">
+    <widget class="QLabel" name="dirsInputDirLabel">
+     <property name="text">
+      <string>Input</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="dirsInputDirText"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QDialogButtonBox" name="dirsInputDirButton">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Parameter</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Open</set>
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="0">
-      <widget class="QLabel" name="dirsOutputDirLabel">
-       <property name="text">
-        <string>Output</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="dirsInputDirLabel">
-       <property name="text">
-        <string>Input</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="dirsOutputDirText"/>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="paramBaseFormatLabel">
-       <property name="text">
-        <string>Pattern</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="dirsInputDirText"/>
-     </item>
-     <item row="1" column="2">
-      <widget class="QDialogButtonBox" name="dirsOutputDirButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Open</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QDialogButtonBox" name="dirsInputDirButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Open</set>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="paramCommandLabel">
-       <property name="text">
-        <string>Operation</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" colspan="2">
-      <widget class="QLineEdit" name="paramBaseFormat">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1" colspan="2">
-      <widget class="QComboBox" name="paramCommand"/>
-     </item>
-    </layout>
+   <item row="1" column="0">
+    <widget class="QLabel" name="dirsOutputDirLabel">
+     <property name="text">
+      <string>Output</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="dirsOutputDirText"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QDialogButtonBox" name="dirsOutputDirButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Open</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="paramBaseFormatLabel">
+     <property name="text">
+      <string>Pattern</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="paramCommandLabel">
+     <property name="text">
+      <string>Operation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
+    <widget class="QLineEdit" name="paramBaseFormat">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
+    <widget class="QComboBox" name="paramCommand"/>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>dirsInputDirText</tabstop>
+  <tabstop>dirsInputDirButton</tabstop>
+  <tabstop>dirsOutputDirText</tabstop>
+  <tabstop>dirsOutputDirButton</tabstop>
+  <tabstop>paramBaseFormat</tabstop>
+  <tabstop>paramCommand</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
