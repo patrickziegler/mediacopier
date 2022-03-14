@@ -20,7 +20,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXECUTABLE_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/gui/dialog.cpp" "src/gui/dialog.hpp" "src/gui/dialog.ui" "src/main.cpp"
+    "src/ui/dialog.cpp" "src/ui/dialog.hpp" "src/ui/dialog.ui" "src/main.cpp"
     ${QM_FILES} "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 
 target_link_libraries(${TARGET_NAME} PUBLIC

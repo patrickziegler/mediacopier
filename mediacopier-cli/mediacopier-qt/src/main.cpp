@@ -14,9 +14,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gui/dialog.hpp"
+#include "ui/dialog.hpp"
+#include "worker.hpp"
 
-#include <worker.hpp>
 #include <mediacopier/version.hpp>
 
 #include <QApplication>

@@ -16,39 +16,37 @@
 
 #pragma once
 
-#include <worker.hpp>
+#include "worker.hpp"
 
 #include <QDialog>
 #include <QStateMachine>
 
+#include <KUiServerV2JobTracker>
+
 namespace Ui {
-class MediaCopierDialog;
+class KMediaCopierDialog;
 }
 
 class QApplication;
 
-class MediaCopierDialog : public QDialog
+class KMediaCopierDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit MediaCopierDialog(QWidget *parent=nullptr);
-    ~MediaCopierDialog();
+    explicit KMediaCopierDialog(QWidget *parent = nullptr);
+    ~KMediaCopierDialog();
     void init(std::shared_ptr<Config> config, QApplication& app);
-
-public Q_SLOTS:
-    void aboutToQuit();
-    void update(Status info);
 
 private Q_SLOTS:
     void startOperation();
-    void cancelOperation();
 
 Q_SIGNALS:
     void operationDone();
 
 private:
-    Ui::MediaCopierDialog* ui;
+    Ui::KMediaCopierDialog *ui;
+    KUiServerV2JobTracker tracker;
     std::shared_ptr<Config> config = nullptr;
     std::shared_ptr<Worker> worker = nullptr;
     std::unique_ptr<QStateMachine> fsm = nullptr;

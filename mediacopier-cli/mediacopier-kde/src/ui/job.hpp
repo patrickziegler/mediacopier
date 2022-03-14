@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <worker.hpp>
+#include "worker.hpp"
 
 #include <KJob>
 

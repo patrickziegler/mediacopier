@@ -17,7 +17,7 @@ add_library(${TARGET_NAME} STATIC)
 
 target_sources(${TARGET_NAME} PRIVATE
     "src/config.cpp" "src/config.hpp" "src/worker.cpp" "src/worker.hpp"
-    "src/param.cpp" "src/param.hpp" "src/param.ui"
+    "src/ui/param.cpp" "src/ui/param.hpp" "src/ui/param.ui"
     ${QM_FILES} "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 
 target_include_directories(${TARGET_NAME} PUBLIC src/)

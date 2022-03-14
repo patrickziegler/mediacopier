@@ -24,7 +24,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXECUTABLE_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/gui/dialog_kde.cpp" "src/gui/dialog_kde.hpp" "src/gui/dialog_kde.ui" "src/gui/job.hpp" "src/gui/job.cpp" "src/main.cpp"
+    "src/ui/dialog_kde.cpp" "src/ui/dialog_kde.hpp" "src/ui/dialog_kde.ui" "src/ui/job.hpp" "src/ui/job.cpp" "src/main.cpp"
     ${QM_FILES} "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 
 target_link_libraries(${TARGET_NAME} PUBLIC
