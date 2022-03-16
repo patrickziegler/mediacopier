@@ -84,7 +84,7 @@ auto valid_media_files(const fs::path& path)
 }
 
 template <typename T>
-auto executor()
+auto create_executor()
 {
     return [](const FileInfoPtr& file, const fs::path& path) {
         T op(path);
@@ -92,43 +92,43 @@ auto executor()
     };
 }
 
-auto create_executor(Config::Command command)
+auto get_executor(Config::Command command)
 {
-    std::function<void(const FileInfoPtr&, const fs::path&)> _exec;
+    std::function<void(const FileInfoPtr&, const fs::path&)> executor;
 
     // dispatch necessary as Q_OBJECT does not allow templated classes
     switch(command) {
 
     case Config::Command::COPY:
         spdlog::info("Executing COPY operation..");
-        _exec = executor<FileOperationCopy>();
+        executor = create_executor<FileOperationCopy>();
         break;
 
     case Config::Command::COPY_JPEG:
         spdlog::info("Executing COPY operation (jpeg aware)..");
-        _exec = executor<FileOperationCopyJpeg>();
+        executor = create_executor<FileOperationCopyJpeg>();
         break;
 
     case Config::Command::MOVE:
         spdlog::info("Executing MOVE operation");
-        _exec = executor<FileOperationMove>();
+        executor = create_executor<FileOperationMove>();
         break;
 
     case Config::Command::MOVE_JPEG:
         spdlog::info("Executing MOVE operation (jpeg aware)..");
-        _exec = executor<FileOperationMoveJpeg>();
+        executor = create_executor<FileOperationMoveJpeg>();
         break;
 
     case Config::Command::SHOW:
         spdlog::info("Executing SHOW operation..");
-        _exec = executor<FileOperationShow>();
+        executor = create_executor<FileOperationShow>();
         break;
 
     default:
         throw std::runtime_error("Unknown operation..");
     }
 
-    return _exec;
+    return executor;
 }
 
 } // namespace mediacopier
@@ -180,29 +180,34 @@ void Worker::exec()
     });
 
     try {
-        auto _exec = mc::create_executor(m_config.command());
-
+        auto executor = mc::get_executor(m_config.command());
         mc::FileRegister destRegister{m_config.outputDir(), m_config.pattern()};
-        size_t progress = 1;
+        const auto cmd = Config::commandString(m_config.command());
+        fs::path lastPath = "";
+        size_t progress = 0;
 
         spdlog::info("Checking input folder..");
         size_t fileCount = ranges::distance(mc::valid_media_files(m_config.inputDir()));
-        const auto cmd = Config::commandString(m_config.command());
 
         spdlog::info("Starting execution..");
         for (auto file : mc::valid_media_files(m_config.inputDir())) {
             auto path = destRegister.add(file);
             if (path.has_value()) {
-                Q_EMIT status({cmd, file->path(), path.value(), fileCount, progress});
-                _exec(file, path.value());
+                lastPath = path.value();
+                Q_EMIT status({cmd, file->path(), lastPath, fileCount, progress});
+                executor(file, lastPath);
             }
             if (check_operation_state()) {
                 spdlog::warn("Operation was cancelled");
                 break;
             }
             ++progress;
+            Q_EMIT status({cmd, file->path(), lastPath, fileCount, progress});
         }
+
+        spdlog::info("Writing config..");
         m_config.writeConfigFile();
+
         spdlog::info("Done");
 
     } catch (const std::exception& err) {
