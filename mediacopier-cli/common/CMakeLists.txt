@@ -7,7 +7,7 @@ set(CMAKE_AUTORCC ON)
 
 qt5_create_translation(QM_FILES src/ lang/lang_de.ts OPTIONS "-noobsolete")
 
-set(RESOURCES_FILE resources_common.qrc)
+set(RESOURCES_FILE common.qrc)
 
 configure_file("${RESOURCES_FILE}.in" "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 

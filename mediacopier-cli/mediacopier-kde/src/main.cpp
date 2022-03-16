@@ -27,7 +27,7 @@
 int main(int argc, char *argv[])
 {
     try {
-        Q_INIT_RESOURCE(resources_common);
+        Q_INIT_RESOURCE(common);
 
         QApplication app(argc, argv);
 
