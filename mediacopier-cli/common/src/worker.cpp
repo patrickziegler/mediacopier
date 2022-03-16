@@ -182,7 +182,6 @@ void Worker::exec()
     try {
         auto executor = mc::get_executor(m_config.command());
         mc::FileRegister destRegister{m_config.outputDir(), m_config.pattern()};
-        const auto cmd = Config::commandString(m_config.command());
         fs::path lastPath = "";
         size_t progress = 0;
 
@@ -194,7 +193,7 @@ void Worker::exec()
             auto path = destRegister.add(file);
             if (path.has_value()) {
                 lastPath = path.value();
-                Q_EMIT status({cmd, file->path(), lastPath, fileCount, progress});
+                Q_EMIT status({m_config.command(), file->path(), lastPath, fileCount, progress});
                 executor(file, lastPath);
             }
             if (check_operation_state()) {
@@ -202,7 +201,7 @@ void Worker::exec()
                 break;
             }
             ++progress;
-            Q_EMIT status({cmd, file->path(), lastPath, fileCount, progress});
+            Q_EMIT status({m_config.command(), file->path(), lastPath, fileCount, progress});
         }
 
         spdlog::info("Writing config..");

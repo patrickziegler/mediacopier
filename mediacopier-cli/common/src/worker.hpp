@@ -23,7 +23,7 @@
 class Status {
 public:
     Status() {};
-    Status(QString command,
+    Status(Config::Command command,
            std::filesystem::path inputPath,
            std::filesystem::path outputPath,
            size_t fileCount,
@@ -37,7 +37,7 @@ public:
         // nothing to do here
     }
 
-    const QString& command() const {
+    const Config::Command& command() const {
         return m_command;
     }
 
@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    const QString m_command = "";
+    const Config::Command m_command = Config::Command::COPY;
     const std::filesystem::path m_inputPath = "";
     const std::filesystem::path m_outputPath = "";
     const size_t m_fileCount = 0;

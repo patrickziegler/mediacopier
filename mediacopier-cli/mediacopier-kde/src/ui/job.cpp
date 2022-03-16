@@ -39,7 +39,7 @@ void KMediaCopierJob::start()
 
 void KMediaCopierJob::update(Status info)
 {
-    description(this, info.command(),
+    description(this, Config::commandString(info.command()),
                 qMakePair<QString, QString>(
                     tr("Source"), QString::fromStdString(info.inputPath())),
                 qMakePair<QString, QString>(
