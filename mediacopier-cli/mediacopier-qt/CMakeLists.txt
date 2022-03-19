@@ -12,7 +12,7 @@ configure_file("${RESOURCES_FILE}.in" "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_F
 
 set(TARGET_NAME mediacopier-cli-qt)
 
-add_executable(${TARGET_NAME})
+add_executable(${TARGET_NAME} ${CLI_TARGET_FLAGS})
 
 set(EXECUTABLE_NAME mediacopier)
 

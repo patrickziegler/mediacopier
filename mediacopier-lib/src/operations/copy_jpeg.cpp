@@ -99,7 +99,8 @@ static auto jpeg_copy_rotated(const mediacopier::FileInfoImageJpeg& file, const 
 
     // ----------------- write output file
 
-    unique_file_t outputFile(std::fopen(dst.c_str(), "wb"), &std::fclose);
+    const char * c_path = reinterpret_cast<const char *>(dst.c_str());
+    unique_file_t outputFile(std::fopen(c_path, "wb"), &std::fclose);
 
     if (!outputFile) {
         tjDestroy(tjInstance);
@@ -132,7 +133,7 @@ auto FileOperationCopyJpeg::copyJpeg(const FileInfoImageJpeg& file) const -> voi
         jpeg_copy_rotated(file, m_destination);
 
         std::unique_ptr<Exiv2::Image> image;
-        image = Exiv2::ImageFactory::open(m_destination);
+        image = Exiv2::ImageFactory::open(m_destination.string());
         image->readMetadata();
 
         auto exif = image->exifData();

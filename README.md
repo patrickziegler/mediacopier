@@ -64,6 +64,21 @@ All build-time dependencies are solved already.
 cmake -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
 ```
 
+## Build Instructions for Windows
+
+Prepare the [vcpkg](https://github.com/microsoft/vcpkg#using-vcpkg-with-cmake) environment like described in a very helpful [article by Sam Elborai](https://sam.elborai.me/articles/vscode-cpp-dev-environment-2020/)
+```sh
+.\bootstrap-vcpkg.bat -disableMetrics
+.\vcpkg.exe install spdlog exiv2 libjpeg-turbo ffmpeg range-v3 qt5 --triplet=x64-windows
+.\vcpkg.exe list --triplet=x64-windows # check installed packages
+```
+
+Use the vcpkg toolchain file with cmake
+```sh
+cmake -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -B build -S .
+cmake --build build --config Release
+```
+
 ## Translations
 
 ```sh

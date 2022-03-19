@@ -34,7 +34,8 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionaryEntry* tag = nullptr;
 
-    if (avformat_open_input(&fmt_ctx, path.c_str(), nullptr, nullptr)) {
+    const char * c_path = reinterpret_cast<const char *>(path.c_str());
+    if (avformat_open_input(&fmt_ctx, c_path, nullptr, nullptr)) {
         throw FileInfoError{"Could not read metadata"};
     }
 

@@ -46,8 +46,8 @@ target_include_directories(${TARGET_NAME} PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(${TARGET_NAME} PRIVATE
-    "${AVFORMAT_LIBRARIES}"
-    "${LIBJPEG_LIBRARIES}"
+    "${AVFORMAT_LINK_LIBRARIES}"
+    "${LIBJPEG_LINK_LIBRARIES}"
     exiv2lib
     spdlog::spdlog)
 

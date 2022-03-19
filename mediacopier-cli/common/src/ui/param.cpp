@@ -81,11 +81,11 @@ void MediaCopierParam::init(std::shared_ptr<Config> config)
 
 void MediaCopierParam::syncConfig()
 {
-    ui->dirsInputDirText->setText(config->inputDir().c_str());
-    ui->dirsOutputDirText->setText(config->outputDir().c_str());
+    ui->dirsInputDirText->setText(QString::fromStdString(config->inputDir().string()));
+    ui->dirsOutputDirText->setText(QString::fromStdString(config->outputDir().string()));
     ui->paramBaseFormat->setText(config->pattern().c_str());
 
-    for (size_t i = 0; i < commands.length(); ++i) {
+    for (int i = 0; i < commands.length(); ++i) {
         if (commands.at(i) == config->command()) {
             ui->paramCommand->setCurrentIndex(i);
             break;

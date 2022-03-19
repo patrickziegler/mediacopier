@@ -30,7 +30,7 @@ namespace mediacopier {
 auto to_file_info_ptr(const fs::path& path) -> FileInfoPtr
 {
     try {
-        auto image = Exiv2::ImageFactory::open(path);
+        auto image = Exiv2::ImageFactory::open(path.string());
 
         if (image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
             image->readMetadata();

@@ -20,6 +20,8 @@
 
 #include <date/date.h>
 
+#include <array>
+
 static constexpr const std::array<char[29], 4> keysDateTime = {
     "Exif.Photo.DateTimeOriginal",
     "Exif.Image.DateTimeOriginal",

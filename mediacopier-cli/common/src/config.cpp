@@ -77,7 +77,7 @@ bool Config::readConfigFile() noexcept
     bool result = false;
     const auto file = m_outputDir / CONFIG_FILE;
     if (fs::is_regular_file(file)) {
-        QSettings settings{file.c_str(), QSettings::IniFormat};
+        QSettings settings{QString::fromStdString(file.string()), QSettings::IniFormat};
         if (settings.value(KEY_PATTERN).isValid()) {
             m_pattern = settings.value(KEY_PATTERN).toString().toStdString();
             result = true;
@@ -91,7 +91,7 @@ bool Config::writeConfigFile() const noexcept
     bool result = false;
     if (fs::is_directory(m_outputDir)) {
         const auto file = m_outputDir / CONFIG_FILE;
-        QSettings settings{file.c_str(), QSettings::IniFormat};
+        QSettings settings{QString::fromStdString(file.string()), QSettings::IniFormat};
         settings.setValue(KEY_PATTERN, QString::fromStdString(m_pattern));
         settings.sync();
         result = true;

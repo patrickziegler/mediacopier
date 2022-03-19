@@ -70,7 +70,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<std::filesystem::path>
 
     while (id < std::numeric_limits<size_t>::max()) {
         auto dest = constructDestinationPath(file, id);
-        auto item = m_register.find(dest);
+        auto item = m_register.find(dest.string());
 
         if (item != m_register.end()) {
             const auto& knownFile = item->second;
