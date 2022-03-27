@@ -1,5 +1,5 @@
-find_package(spdlog REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets LinguistTools)
+find_package(spdlog REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)

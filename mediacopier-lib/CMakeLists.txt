@@ -1,7 +1,7 @@
 find_package(exiv2 REQUIRED)
-find_package(PkgConfig REQUIRED)
 find_package(spdlog REQUIRED)
 
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(AVFORMAT REQUIRED libavformat libavutil)
 pkg_check_modules(LIBJPEG REQUIRED libturbojpeg)
 
@@ -24,16 +24,16 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mediacopier)
 
 target_sources(${TARGET_NAME} PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/src/files/image.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/files/image_jpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/files/video.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/operations/copy.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/operations/copy_jpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/operations/move.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/operations/move_jpeg.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/operations/show.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_factory.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/src/file_info_register.cpp")
+    "src/files/image.cpp"
+    "src/files/image_jpeg.cpp"
+    "src/files/video.cpp"
+    "src/operations/copy.cpp"
+    "src/operations/copy_jpeg.cpp"
+    "src/operations/move.cpp"
+    "src/operations/move_jpeg.cpp"
+    "src/operations/show.cpp"
+    "src/file_info_factory.cpp"
+    "src/file_info_register.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
     "${AVFORMAT_INCLUDE_DIRS}"
@@ -48,8 +48,7 @@ target_include_directories(${TARGET_NAME} PUBLIC
 target_link_libraries(${TARGET_NAME} PRIVATE
     "${AVFORMAT_LINK_LIBRARIES}"
     "${LIBJPEG_LINK_LIBRARIES}"
-    exiv2lib
-    spdlog::spdlog)
+    exiv2lib spdlog::spdlog)
 
 if(${ENABLE_TEST})
     add_subdirectory(test)

@@ -1,4 +1,5 @@
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets LinguistTools)
+find_package(spdlog 1.9.2 REQUIRED) # qt_sink_* available since v1.9.2
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
