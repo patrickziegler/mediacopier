@@ -27,24 +27,24 @@
 <context>
     <name>QObject</name>
     <message>
+        <location filename="../src/config.cpp" line="140"/>
         <location filename="../src/config.cpp" line="143"/>
-        <location filename="../src/config.cpp" line="146"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
+        <location filename="../src/config.cpp" line="146"/>
         <location filename="../src/config.cpp" line="149"/>
-        <location filename="../src/config.cpp" line="152"/>
         <source>Move</source>
         <translation>Verschieben</translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="155"/>
+        <location filename="../src/config.cpp" line="152"/>
         <source>Show</source>
         <translation>Simulation</translation>
     </message>
     <message>
-        <location filename="../src/config.cpp" line="158"/>
+        <location filename="../src/config.cpp" line="155"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>

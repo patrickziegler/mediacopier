@@ -46,10 +46,7 @@ Config::Config(const QApplication& app)
                 "f", "Base format to be used for new filenames",
                 "pattern");
 
-    QCommandLineOption optGui(
-                "g", "Show graphical user interface");
-
-    parser.addOptions({optCommand, optPattern, optGui});
+    parser.addOptions({optCommand, optPattern});
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
