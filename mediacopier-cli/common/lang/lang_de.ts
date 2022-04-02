@@ -40,8 +40,8 @@
     </message>
     <message>
         <location filename="../src/config.cpp" line="152"/>
-        <source>Show</source>
-        <translation>Simulation</translation>
+        <source>Simulate</source>
+        <translation>Simulieren</translation>
     </message>
     <message>
         <location filename="../src/config.cpp" line="155"/>

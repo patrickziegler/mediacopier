@@ -22,7 +22,7 @@
 namespace fs = std::filesystem;
 
 static constexpr const char* CONFIG_FILE = ".mediacopier";
-static constexpr const char* KEY_PATTERN = "Core/pattern";
+static constexpr const char* CONFIG_KEY_PATTERN = "Core/pattern";
 
 Config::Config(const QApplication& app)
 {
@@ -43,7 +43,7 @@ Config::Config(const QApplication& app)
                 "command");
 
     QCommandLineOption optPattern(
-                "f", "Base format to be used for new filenames",
+                "f", "Pattern to be used for creating new filenames",
                 "pattern");
 
     parser.addOptions({optCommand, optPattern});
@@ -75,8 +75,8 @@ bool Config::readConfigFile() noexcept
     const auto file = m_outputDir / CONFIG_FILE;
     if (fs::is_regular_file(file)) {
         QSettings settings{QString::fromStdString(file.string()), QSettings::IniFormat};
-        if (settings.value(KEY_PATTERN).isValid()) {
-            m_pattern = settings.value(KEY_PATTERN).toString().toStdString();
+        if (settings.value(CONFIG_KEY_PATTERN).isValid()) {
+            m_pattern = settings.value(CONFIG_KEY_PATTERN).toString().toStdString();
             result = true;
         }
     }
@@ -89,7 +89,7 @@ bool Config::writeConfigFile() const noexcept
     if (fs::is_directory(m_outputDir)) {
         const auto file = m_outputDir / CONFIG_FILE;
         QSettings settings{QString::fromStdString(file.string()), QSettings::IniFormat};
-        settings.setValue(KEY_PATTERN, QString::fromStdString(m_pattern));
+        settings.setValue(CONFIG_KEY_PATTERN, QString::fromStdString(m_pattern));
         settings.sync();
         result = true;
     }
@@ -110,7 +110,7 @@ bool Config::setCommand(const QString& command)
     else if (cmd == "move")
         m_command = Command::MOVE_JPEG;
     else if (cmd == "show")
-        m_command = Command::SHOW;
+        m_command = Command::SIMULATE;
     else
         return false;
 
@@ -148,8 +148,8 @@ const QString Config::commandString(const Command& command)
     case Config::Command::MOVE_JPEG:
         return QObject::tr("Move");
 
-    case Config::Command::SHOW:
-        return QObject::tr("Show");
+    case Config::Command::SIMULATE:
+        return QObject::tr("Simulate");
 
     default:
         return QObject::tr("Unknown");

@@ -35,7 +35,7 @@ const auto ask_for_directory = [](const QString& title) -> QString
 static const QList<Config::Command> commands = {
     Config::Command::COPY_JPEG,
     Config::Command::MOVE_JPEG,
-    Config::Command::SHOW
+    Config::Command::SIMULATE
 };
 
 MediaCopierParam::MediaCopierParam(QWidget *parent) :
@@ -72,8 +72,8 @@ void MediaCopierParam::init(std::shared_ptr<Config> config)
     connect(ui->dirsOutputDirText, &QLineEdit::textChanged,
             this, &MediaCopierParam::onOutputDirChanged);
 
-    connect(ui->paramBaseFormat, &QLineEdit::textChanged,
-            this, &MediaCopierParam::onBaseFormatChanged);
+    connect(ui->paramPattern, &QLineEdit::textChanged,
+            this, &MediaCopierParam::onPatternChanged);
 
     connect(ui->paramCommand, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MediaCopierParam::onCommandChanged);
@@ -83,7 +83,7 @@ void MediaCopierParam::syncConfig()
 {
     ui->dirsInputDirText->setText(QString::fromStdString(config->inputDir().string()));
     ui->dirsOutputDirText->setText(QString::fromStdString(config->outputDir().string()));
-    ui->paramBaseFormat->setText(config->pattern().c_str());
+    ui->paramPattern->setText(config->pattern().c_str());
 
     for (int i = 0; i < commands.length(); ++i) {
         if (commands.at(i) == config->command()) {
@@ -117,10 +117,10 @@ void MediaCopierParam::onOutputDirChanged(const QString& text)
     syncConfig();
 }
 
-void MediaCopierParam::onBaseFormatChanged(const QString& text)
+void MediaCopierParam::onPatternChanged(const QString& text)
 {
     config->setPattern(text);
-    spdlog::debug("Changed base format to " + config->pattern());
+    spdlog::debug("Changed pattern to " + config->pattern());
 }
 
 void MediaCopierParam::onCommandChanged(int index)

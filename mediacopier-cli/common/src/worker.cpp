@@ -20,7 +20,7 @@
 #include <mediacopier/file_info_register.hpp>
 #include <mediacopier/operations/move.hpp>
 #include <mediacopier/operations/move_jpeg.hpp>
-#include <mediacopier/operations/show.hpp>
+#include <mediacopier/operations/simulate.hpp>
 
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
@@ -119,9 +119,9 @@ auto get_executor(Config::Command command)
         executor = create_executor<FileOperationMoveJpeg>();
         break;
 
-    case Config::Command::SHOW:
+    case Config::Command::SIMULATE:
         spdlog::info("Executing SHOW operation..");
-        executor = create_executor<FileOperationShow>();
+        executor = create_executor<FileOperationSimulate>();
         break;
 
     default:

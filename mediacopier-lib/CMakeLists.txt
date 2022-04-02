@@ -31,7 +31,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "src/operations/copy_jpeg.cpp"
     "src/operations/move.cpp"
     "src/operations/move_jpeg.cpp"
-    "src/operations/show.cpp"
+    "src/operations/simulate.cpp"
     "src/file_info_factory.cpp"
     "src/file_info_register.cpp")
 

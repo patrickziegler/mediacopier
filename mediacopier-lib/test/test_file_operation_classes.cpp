@@ -20,7 +20,7 @@
 #include <mediacopier/file_info_register.hpp>
 #include <mediacopier/operations/move.hpp>
 #include <mediacopier/operations/move_jpeg.hpp>
-#include <mediacopier/operations/show.hpp>
+#include <mediacopier/operations/simulate.hpp>
 
 namespace fs = std::filesystem;
 
@@ -48,7 +48,7 @@ protected:
 
         // test show operation
         srcPath = m_testDataDirOrig / srcName;
-        ASSERT_NO_THROW(execute_operation<FileOperationShow>(srcPath, m_dstBaseDir1));
+        ASSERT_NO_THROW(execute_operation<FileOperationSimulate>(srcPath, m_dstBaseDir1));
 
         // copy src -> dst1
         srcPath = m_testDataDirOrig / srcName;

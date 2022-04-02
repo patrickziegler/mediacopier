@@ -41,7 +41,7 @@ private Q_SLOTS:
     void onOpenOutputDirClicked();
     void onInputDirChanged(const QString& text);
     void onOutputDirChanged(const QString& text);
-    void onBaseFormatChanged(const QString& text);
+    void onPatternChanged(const QString& text);
     void onCommandChanged(int index);
 
 private:

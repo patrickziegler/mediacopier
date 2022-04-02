@@ -14,32 +14,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <mediacopier/files/image_jpeg.hpp>
-#include <mediacopier/files/video.hpp>
-#include <mediacopier/operations/show.hpp>
+#pragma once
 
-#include <spdlog/spdlog.h>
+#include <mediacopier/abstract_file_info.hpp>
+#include <mediacopier/abstract_file_operation.hpp>
+
+#include <filesystem>
 
 namespace mediacopier {
 
-auto FileOperationShow::dumpFilePaths(const AbstractFileInfo& file) const -> void
-{
-    spdlog::info(m_destination.string() + " (from " + file.path().string() + ")");
-}
-
-auto FileOperationShow::visit(const FileInfoImage& file) -> void
-{
-    dumpFilePaths(file);
-}
-
-auto FileOperationShow::visit(const FileInfoImageJpeg& file) -> void
-{
-    dumpFilePaths(file);
-}
-
-auto FileOperationShow::visit(const FileInfoVideo& file) -> void
-{
-    dumpFilePaths(file);
-}
+class FileOperationSimulate : public AbstractFileOperation {
+public:
+    explicit FileOperationSimulate(std::filesystem::path destination) : m_destination{std::move(destination)} {}
+    auto visit(const FileInfoImage& file) -> void override;
+    auto visit(const FileInfoImageJpeg& file) -> void override;
+    auto visit(const FileInfoVideo& file) -> void override;
+protected:
+    auto dumpFilePaths(const AbstractFileInfo& file) const -> void;
+    std::filesystem::path m_destination;
+};
 
 } // namespace mediacopier

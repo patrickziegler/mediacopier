@@ -27,7 +27,7 @@ public:
         MOVE,
         COPY_JPEG,
         MOVE_JPEG,
-        SHOW
+        SIMULATE
     };
 
     Config(const QApplication& app);
