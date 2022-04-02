@@ -15,7 +15,6 @@
  */
 
 #include "ui/dialog_kde.hpp"
-#include "worker.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -43,9 +42,11 @@ int main(int argc, char *argv[])
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
 
         auto config = std::make_shared<Config>(app);
+
         KMediaCopierDialog dialog;
         dialog.init(config, app);
         dialog.show();
+
         return app.exec();
 
     } catch (const std::exception& err) {

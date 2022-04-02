@@ -43,6 +43,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void startOperation();
     void cancelOperation();
+    void awaitOperation();
 
 Q_SIGNALS:
     void operationDone();

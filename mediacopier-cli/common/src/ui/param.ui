@@ -29,6 +29,9 @@
      <property name="text">
       <string>Input</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
    </item>
    <item row="0" column="1">
@@ -51,6 +54,9 @@
     <widget class="QLabel" name="dirsOutputDirLabel">
      <property name="text">
       <string>Output</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -75,12 +81,18 @@
      <property name="text">
       <string>Pattern</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="paramCommandLabel">
      <property name="text">
       <string>Operation</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>

@@ -43,9 +43,11 @@ int main(int argc, char *argv[])
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
 
         auto config = std::make_shared<Config>(app);
+
         MediaCopierDialog dialog;
         dialog.init(config, app);
         dialog.show();
+
         return app.exec();
 
     } catch (const std::exception& err) {

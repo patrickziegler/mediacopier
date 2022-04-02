@@ -4,7 +4,7 @@
 <context>
     <name>MediaCopierParam</name>
     <message>
-        <location filename="../src/ui/param.ui" line="53"/>
+        <location filename="../src/ui/param.ui" line="56"/>
         <source>Output</source>
         <translation>Zielverzeichnis</translation>
     </message>
@@ -14,12 +14,12 @@
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../src/ui/param.ui" line="76"/>
+        <location filename="../src/ui/param.ui" line="82"/>
         <source>Pattern</source>
         <translation>Schema</translation>
     </message>
     <message>
-        <location filename="../src/ui/param.ui" line="83"/>
+        <location filename="../src/ui/param.ui" line="92"/>
         <source>Operation</source>
         <translation></translation>
     </message>
