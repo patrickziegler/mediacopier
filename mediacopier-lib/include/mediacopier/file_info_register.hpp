@@ -21,20 +21,24 @@
 #include <filesystem>
 #include <optional>
 #include <unordered_map>
+#include <vector>
 
 namespace mediacopier {
 
 using FileInfoMap = std::unordered_map<std::string, FileInfoPtr>;
+using FileConflictMap = std::unordered_map<std::string, std::vector<std::filesystem::path>>;
 
 class FileRegister {
 public:
     explicit FileRegister(std::filesystem::path destination, std::string pattern);
     auto add(FileInfoPtr file) -> std::optional<std::filesystem::path>;
+    auto removeDuplicates() -> void;
 private:
-    auto constructDestinationPath(const FileInfoPtr& file, size_t id) const -> std::filesystem::path;
+    auto constructDestinationPath(const FileInfoPtr&, size_t) const -> std::filesystem::path;
     std::filesystem::path m_destdir;
     std::string m_pattern;
     FileInfoMap m_register;
+    FileConflictMap m_conflicts;
 };
 
 } // namespace mediacopier

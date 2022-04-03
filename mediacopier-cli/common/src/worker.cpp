@@ -204,6 +204,9 @@ void Worker::exec()
             Q_EMIT status({m_config.command(), file->path(), lastPath, fileCount, progress});
         }
 
+        spdlog::info("Removing duplicates..");
+        destRegister.removeDuplicates();
+
         spdlog::info("Writing config..");
         m_config.writeConfigFile();
 

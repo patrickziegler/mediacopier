@@ -18,10 +18,8 @@
 #include <mediacopier/file_info_register.hpp>
 
 #include <date/date.h>
-
 #include <spdlog/spdlog.h>
 
-#include <random>
 #include <fstream>
 #include <sstream>
 
@@ -34,8 +32,8 @@ static auto is_duplicate(const fs::path& file1, const fs::path& file2) -> bool
 {
     std::vector<char> buffer(BUFFER_SIZE, '\0');
 
-    std::ifstream input1(file1.string(),  std::ios::in | std::ios::binary);
-    std::ifstream input2(file2.string(),  std::ios::in | std::ios::binary);
+    std::ifstream input1(file1,  std::ios::in | std::ios::binary);
+    std::ifstream input2(file2,  std::ios::in | std::ios::binary);
 
     std::string chunk1, chunk2;
     size_t chunks_left = CHUNKS_MAX;
@@ -64,31 +62,40 @@ FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdi
     m_destdir /= ""; // this will append a trailing directory separator when necessary
 }
 
-auto FileRegister::add(FileInfoPtr file) -> std::optional<std::filesystem::path>
+auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
 {
-    size_t id = 0;
+    std::vector<std::filesystem::path> conflicts;
+    size_t suffix = 0;
 
-    while (id < std::numeric_limits<size_t>::max()) {
-        auto dest = constructDestinationPath(file, id);
+    while (suffix < std::numeric_limits<size_t>::max()) {
+        auto dest = constructDestinationPath(file, suffix);
         auto item = m_register.find(dest.string());
 
         if (item != m_register.end()) {
             const auto& knownFile = item->second;
             if (is_duplicate(file->path(), knownFile->path())) {
-                spdlog::warn("Duplicate: " + knownFile->path().filename().string() + " same as " + file->path().filename().string());
+                spdlog::info("Ignoring duplicate: " + file->path().filename().string() + " same as " + knownFile->path().filename().string());
                 return {};
             }
-            ++id;
+            // possible duplicate of 'item' at destination
+            conflicts.push_back(item->first);
+            ++suffix;
             continue;
         }
 
         if (fs::exists(dest)) {
             if (is_duplicate(file->path(), dest)) {
-                spdlog::warn("Already there: " + dest.filename().string()  + " same as " + file->path().filename().string());
+                spdlog::info("Ignoring obsolete: " + file->path().filename().string() + " same as " + dest.filename().string());
                 return {};
             }
-            ++id;
+            // possible duplicate of 'dest'
+            conflicts.push_back(dest);
+            ++suffix;
             continue;
+        }
+
+        if (conflicts.size() > 0) {
+            m_conflicts[dest.string()] = std::move(conflicts);
         }
 
         m_register[dest.string()] = std::move(file);
@@ -98,15 +105,28 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<std::filesystem::path>
     throw FileInfoError{"Unable to find unique filename"};
 }
 
-auto FileRegister::constructDestinationPath(const FileInfoPtr& file, size_t id) const -> std::filesystem::path
+auto FileRegister::removeDuplicates() -> void
+{
+    for (const auto& [path, conflicts] : m_conflicts) {
+        for (const auto& conflict : conflicts) {
+            if (fs::exists(path) && fs::exists(conflict) && is_duplicate(path, conflict)) {
+                spdlog::info("Removing duplicate: " + path + " same as " + conflict.string());
+                fs::remove(path);
+                break;
+            }
+        }
+    }
+}
+
+auto FileRegister::constructDestinationPath(const FileInfoPtr& file, size_t suffix) const -> fs::path
 {
     std::ostringstream os;
     os << m_destdir.string();
 
     date::to_stream(os, m_pattern.c_str(), file->timestamp());
 
-    if (id > 0) {
-        os << "_" << id;
+    if (suffix > 0) {
+        os << "_" << suffix;
     }
 
     os << file->path().extension().string();

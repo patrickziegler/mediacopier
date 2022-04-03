@@ -49,7 +49,7 @@ public:
     const std::filesystem::path& outputDir() const { return m_outputDir; }
 
 private:
-    Command m_command = Command::COPY;
+    Command m_command = Command::COPY_JPEG;
     std::string m_pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S";
     std::filesystem::path m_inputDir;
     std::filesystem::path m_outputDir;
