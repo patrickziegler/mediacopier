@@ -60,6 +60,8 @@ auto to_file_info_ptr(const fs::path& path) -> FileInfoPtr
         // this was not a video file
     }
 
+    spdlog::info("Couldn't find metadata: " + path.string());
+
     return {};
 }
 
