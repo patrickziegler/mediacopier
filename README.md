@@ -16,8 +16,15 @@ If the orientation is unkown or the dimensions are inconvenient they will be cop
 
 ### :hammer: Build and Install
 
-Direct dependencies:
-- spdlog >=[1.9.2](https://github.com/gabime/spdlog/releases/tag/v1.9.2)
+Direct dependencies (library):
+- spdlog (https://github.com/gabime/spdlog) >=[1.9.2](https://github.com/gabime/spdlog/releases/tag/v1.9.2)
+- Exiv2 (https://exiv2.org/)
+- libjpeg-turbo (https://libjpeg-turbo.org/)
+- ffmpeg (https://www.ffmpeg.org/download.html)
+
+Direct dependencies (cli):
+- range-v3 (https://github.com/ericniebler/range-v3)
+- Qt5 (https://doc.qt.io/qt-5/)
 
 Clone this repository and create a build directory
 ```sh
