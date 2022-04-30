@@ -14,8 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "param.hpp"
-#include "config.hpp"
+#include "gui/param.hpp"
+#include "core/config.hpp"
 
 #include <QAbstractButton>
 #include <QFileDialog>

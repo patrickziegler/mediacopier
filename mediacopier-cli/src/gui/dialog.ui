@@ -98,7 +98,7 @@
   <customwidget>
    <class>MediaCopierParam</class>
    <extends>QFrame</extends>
-   <header>ui/param.hpp</header>
+   <header>gui/param.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

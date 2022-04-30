@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "worker.hpp"
+#include "core/worker.hpp"
 
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_info_register.hpp>

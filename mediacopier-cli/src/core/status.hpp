@@ -1,4 +1,4 @@
-/* Copyright (C) 2021-2022 Patrick Ziegler
+/* Copyright (C) 2022 Patrick Ziegler
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,7 @@
 
 #pragma once
 
-#include "config.hpp"
-
-#include <QThread>
+#include "core/config.hpp"
 
 class Status {
 public:
@@ -37,25 +35,11 @@ public:
         // nothing to do here
     }
 
-    const Config::Command& command() const {
-        return m_command;
-    }
-
-    const std::filesystem::path& inputPath() const {
-        return m_inputPath;
-    }
-
-    const std::filesystem::path& outputPath() const {
-        return m_outputPath;
-    }
-
-    const size_t& fileCount() const {
-        return m_fileCount;
-    }
-
-    const size_t& progress() const {
-        return m_progress;
-    }
+    const Config::Command& command() const;
+    const std::filesystem::path& inputPath() const;
+    const std::filesystem::path& outputPath() const;
+    const size_t& fileCount() const;
+    const size_t& progress() const;
 
 private:
     const Config::Command m_command = Config::Command::COPY;
@@ -63,30 +47,4 @@ private:
     const std::filesystem::path m_outputPath = "";
     const size_t m_fileCount = 0;
     const size_t m_progress = 0;
-};
-
-class Worker : public QObject {
-    Q_OBJECT
-
-public:
-    Worker() = delete;
-    Worker(Config config);
-
-    void start();
-    void kill();
-    void suspend();
-    void resume();
-
-Q_SIGNALS:
-    void status(Status info);
-    void execDone();
-    void finished();
-
-public Q_SLOTS:
-    void exec();
-    void quit();
-
-private:
-    QThread m_thread;
-    Config m_config;
 };

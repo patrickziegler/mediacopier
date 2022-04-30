@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "config.hpp"
+#include "core/config.hpp"
 
 #include <QCommandLineParser>
 #include <QSettings>

@@ -16,28 +16,33 @@
 
 #pragma once
 
-#include "worker.hpp"
+#include "core/config.hpp"
+#include "core/status.hpp"
 
-#include <KJob>
+#include <QThread>
 
-class KMediaCopierJob : public KJob {
+class Worker : public QObject {
     Q_OBJECT
 
 public:
-    KMediaCopierJob(
-            std::shared_ptr<Worker> worker,
-            const std::filesystem::path& dstDir);
-    void start() override;
+    Worker() = delete;
+    Worker(Config config);
+
+    void start();
+    void kill();
+    void suspend();
+    void resume();
+
+Q_SIGNALS:
+    void status(Status info);
+    void execDone();
+    void finished();
 
 public Q_SLOTS:
-    void update(Status info);
+    void exec();
     void quit();
 
-protected:
-    bool doKill() override;
-    bool doSuspend() override;
-    bool doResume() override;
-
 private:
-    std::shared_ptr<Worker> m_worker;
+    QThread m_thread;
+    Config m_config;
 };

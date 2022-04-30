@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "job.hpp"
+#include "kde/job.hpp"
 
 #include <QVariant>
 

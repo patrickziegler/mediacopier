@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "worker.hpp"
+#include "core/worker.hpp"
 
 #include <QDialog>
 #include <QStateMachine>

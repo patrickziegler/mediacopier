@@ -14,8 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "ui/dialog.hpp"
-#include "worker.hpp"
+#include "gui/dialog.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -27,17 +26,11 @@
 int main(int argc, char *argv[])
 {
     try {
-        Q_INIT_RESOURCE(common);
-
         QApplication app(argc, argv);
 
         QTranslator translator;
         if (translator.load(":/translations/lang.qm"))
             app.installTranslator(&translator);
-
-        QTranslator translator_common;
-        if (translator_common.load(":/translations/lang-common.qm"))
-            app.installTranslator(&translator_common);
 
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
