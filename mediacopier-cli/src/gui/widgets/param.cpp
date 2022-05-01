@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gui/param.hpp"
+#include "gui/widgets/param.hpp"
 #include "core/config.hpp"
 
 #include <QAbstractButton>
@@ -38,9 +38,9 @@ static const QList<Config::Command> commands = {
     Config::Command::SIMULATE
 };
 
-MediaCopierParam::MediaCopierParam(QWidget *parent) :
+MediaCopierParamWidget::MediaCopierParamWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::MediaCopierParam)
+    ui(new Ui::MediaCopierParamWidget)
 {
     ui->setupUi(this);
 
@@ -49,37 +49,37 @@ MediaCopierParam::MediaCopierParam(QWidget *parent) :
     }
 }
 
-MediaCopierParam::~MediaCopierParam()
+MediaCopierParamWidget::~MediaCopierParamWidget()
 {
     delete ui;
 }
 
-void MediaCopierParam::init(std::shared_ptr<Config> config)
+void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
 {
     this->config = std::move(config);
 
     syncConfig();
 
     connect(ui->dirsInputDirButton, &QDialogButtonBox::clicked,
-            this, &MediaCopierParam::onOpenInputDirClicked);
+            this, &MediaCopierParamWidget::onOpenInputDirClicked);
 
     connect(ui->dirsOutputDirButton, &QDialogButtonBox::clicked,
-            this, &MediaCopierParam::onOpenOutputDirClicked);
+            this, &MediaCopierParamWidget::onOpenOutputDirClicked);
 
     connect(ui->dirsInputDirText, &QLineEdit::textChanged,
-            this, &MediaCopierParam::onInputDirChanged);
+            this, &MediaCopierParamWidget::onInputDirChanged);
 
     connect(ui->dirsOutputDirText, &QLineEdit::textChanged,
-            this, &MediaCopierParam::onOutputDirChanged);
+            this, &MediaCopierParamWidget::onOutputDirChanged);
 
     connect(ui->paramPattern, &QLineEdit::textChanged,
-            this, &MediaCopierParam::onPatternChanged);
+            this, &MediaCopierParamWidget::onPatternChanged);
 
     connect(ui->paramCommand, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &MediaCopierParam::onCommandChanged);
+            this, &MediaCopierParamWidget::onCommandChanged);
 }
 
-void MediaCopierParam::syncConfig()
+void MediaCopierParamWidget::syncConfig()
 {
     ui->dirsInputDirText->setText(QString::fromStdString(config->inputDir().string()));
     ui->dirsOutputDirText->setText(QString::fromStdString(config->outputDir().string()));
@@ -93,23 +93,23 @@ void MediaCopierParam::syncConfig()
     }
 }
 
-void MediaCopierParam::onOpenInputDirClicked()
+void MediaCopierParamWidget::onOpenInputDirClicked()
 {
     ui->dirsInputDirText->setText(ask_for_directory(QObject::tr("Source folder")));
 }
 
-void MediaCopierParam::onOpenOutputDirClicked()
+void MediaCopierParamWidget::onOpenOutputDirClicked()
 {
     ui->dirsOutputDirText->setText(ask_for_directory(QObject::tr("Destination folder")));
 }
 
-void MediaCopierParam::onInputDirChanged(const QString& text)
+void MediaCopierParamWidget::onInputDirChanged(const QString& text)
 {
     config->setInputDir(text);
     spdlog::debug("Changed input dir to " + config->outputDir().string());
 }
 
-void MediaCopierParam::onOutputDirChanged(const QString& text)
+void MediaCopierParamWidget::onOutputDirChanged(const QString& text)
 {
     config->setOutputDir(text);
     spdlog::debug("Changed output dir to " + config->outputDir().string());
@@ -117,13 +117,13 @@ void MediaCopierParam::onOutputDirChanged(const QString& text)
     syncConfig();
 }
 
-void MediaCopierParam::onPatternChanged(const QString& text)
+void MediaCopierParamWidget::onPatternChanged(const QString& text)
 {
     config->setPattern(text);
     spdlog::debug("Changed pattern to " + config->pattern());
 }
 
-void MediaCopierParam::onCommandChanged(int index)
+void MediaCopierParamWidget::onCommandChanged(int index)
 {
     config->setCommand(commands.at(index));
     spdlog::debug("Changed command to " + Config::commandString(commands.at(index)).toStdString());

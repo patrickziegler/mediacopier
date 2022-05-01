@@ -19,18 +19,18 @@
 #include <QWidget>
 
 namespace Ui {
-class MediaCopierParam;
+class MediaCopierParamWidget;
 }
 
 class Config;
 
-class MediaCopierParam : public QWidget
+class MediaCopierParamWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit MediaCopierParam(QWidget *parent = nullptr);
-    ~MediaCopierParam();
+    explicit MediaCopierParamWidget(QWidget *parent = nullptr);
+    ~MediaCopierParamWidget();
     void init(std::shared_ptr<Config> config);
 
 private:
@@ -45,6 +45,6 @@ private Q_SLOTS:
     void onCommandChanged(int index);
 
 private:
-    Ui::MediaCopierParam *ui;
+    Ui::MediaCopierParamWidget *ui;
     std::shared_ptr<Config> config;
 };

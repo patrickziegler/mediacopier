@@ -21,9 +21,12 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXECUTABLE_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/core/config.cpp" "src/core/config.hpp" "src/core/status.cpp" "src/core/status.hpp" "src/core/worker.cpp" "src/core/worker.hpp"
+    "src/core/config.cpp" "src/core/config.hpp"
+    "src/core/status.cpp" "src/core/status.hpp"
+    "src/core/worker.cpp" "src/core/worker.hpp"
+    "src/gui/widgets/log.cpp" "src/gui/widgets/log.hpp" "src/gui/widgets/log.ui"
+    "src/gui/widgets/param.cpp" "src/gui/widgets/param.hpp" "src/gui/widgets/param.ui"
     "src/gui/dialog.cpp" "src/gui/dialog.hpp" "src/gui/dialog.ui"
-    "src/gui/param.cpp" "src/gui/param.hpp" "src/gui/param.ui"
     "src/main.cpp"
     ${QM_FILES} "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <author>Patrick Ziegler</author>
- <class>MediaCopierParam</class>
- <widget class="QWidget" name="MediaCopierParam">
+ <class>MediaCopierParamWidget</class>
+ <widget class="QWidget" name="MediaCopierParamWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

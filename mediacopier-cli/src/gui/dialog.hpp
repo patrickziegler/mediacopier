@@ -38,7 +38,6 @@ public:
 
 public Q_SLOTS:
     void aboutToQuit();
-    void update(Status info);
 
 private Q_SLOTS:
     void startOperation();

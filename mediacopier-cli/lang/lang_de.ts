@@ -2,14 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
-    <name>KMediaCopierDialog</name>
-    <message>
-        <location filename="../src/gui/dialog_kde.ui" line="15"/>
-        <source>Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>KMediaCopierJob</name>
     <message>
         <location filename="../src/kde/job.cpp" line="44"/>
@@ -23,32 +15,32 @@
     </message>
 </context>
 <context>
-    <name>MediaCopierDialog</name>
+    <name>MediaCopierLogWidget</name>
     <message>
-        <location filename="../src/gui/dialog.ui" line="58"/>
+        <location filename="../src/gui/widgets/log.ui" line="24"/>
         <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>MediaCopierParam</name>
+    <name>MediaCopierParamWidget</name>
     <message>
-        <location filename="../src/gui/param.ui" line="30"/>
+        <location filename="../src/gui/widgets/param.ui" line="30"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="56"/>
+        <location filename="../src/gui/widgets/param.ui" line="56"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="82"/>
+        <location filename="../src/gui/widgets/param.ui" line="82"/>
         <source>Pattern</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.ui" line="92"/>
+        <location filename="../src/gui/widgets/param.ui" line="92"/>
         <source>Operation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -78,12 +70,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.cpp" line="98"/>
+        <location filename="../src/gui/widgets/param.cpp" line="98"/>
         <source>Source folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/param.cpp" line="103"/>
+        <location filename="../src/gui/widgets/param.cpp" line="103"/>
         <source>Destination folder</source>
         <translation type="unfinished"></translation>
     </message>
