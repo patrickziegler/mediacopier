@@ -27,11 +27,14 @@
 #include <range/v3/iterator_range.hpp>
 
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 #include <atomic>
 #include <chrono>
 #include <csignal>
 #include <thread>
+
+#include "kde/job.hpp"
 
 namespace fs = std::filesystem;
 namespace mc = mediacopier;
@@ -142,6 +145,16 @@ Worker::Worker(Config config) : m_config{std::move(config)}
     QObject::connect(&m_thread, &QThread::finished, this, &Worker::quit);
 
     this->moveToThread(&m_thread);
+
+    auto job = new KMediaCopierJob(this, m_config.outputDir());
+    m_tracker.registerJob(job); // tracker takes ownership of job
+
+    if (spdlog::default_logger()->sinks().size() > 2) {
+        spdlog::default_logger()->sinks().pop_back();
+    }
+    auto logfile = m_config.outputDir() / ".mediacopier-log";
+    spdlog::default_logger()->sinks().push_back(
+                std::make_shared<spdlog::sinks::basic_file_sink_mt>(logfile.string(), true));
 };
 
 void Worker::start()

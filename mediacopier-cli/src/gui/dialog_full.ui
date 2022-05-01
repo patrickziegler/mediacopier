@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <author>Patrick Ziegler</author>
- <class>MediaCopierDialog</class>
- <widget class="QDialog" name="MediaCopierDialog">
+ <class>MediaCopierDialogFull</class>
+ <widget class="QDialog" name="MediaCopierDialogFull">
   <property name="geometry">
    <rect>
     <x>0</x>

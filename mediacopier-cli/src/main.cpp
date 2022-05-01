@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gui/dialog.hpp"
+#include "gui/dialog_full.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -35,9 +35,11 @@ int main(int argc, char *argv[])
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
 
+        app.setDesktopFileName("org.kde.dolphin");
+
         auto config = std::make_shared<Config>(app);
 
-        MediaCopierDialog dialog;
+        MediaCopierDialogFull dialog;
         dialog.init(config, app);
         dialog.show();
 

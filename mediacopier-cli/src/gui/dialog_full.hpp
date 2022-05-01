@@ -22,18 +22,18 @@
 #include <QStateMachine>
 
 namespace Ui {
-class MediaCopierDialog;
+class MediaCopierDialogFull;
 }
 
 class QApplication;
 
-class MediaCopierDialog : public QDialog
+class MediaCopierDialogFull : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit MediaCopierDialog(QWidget *parent=nullptr);
-    ~MediaCopierDialog();
+    explicit MediaCopierDialogFull(QWidget *parent=nullptr);
+    ~MediaCopierDialogFull();
     void init(std::shared_ptr<Config> config, QApplication& app);
 
 public Q_SLOTS:
@@ -48,7 +48,7 @@ Q_SIGNALS:
     void operationDone();
 
 private:
-    Ui::MediaCopierDialog* ui;
+    Ui::MediaCopierDialogFull* ui;
     std::shared_ptr<Config> config = nullptr;
     std::shared_ptr<Worker> worker = nullptr;
     std::unique_ptr<QStateMachine> fsm = nullptr;

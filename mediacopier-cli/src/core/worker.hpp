@@ -19,6 +19,8 @@
 #include "core/config.hpp"
 #include "core/status.hpp"
 
+#include <KUiServerV2JobTracker>
+
 #include <QThread>
 
 class Worker : public QObject {
@@ -45,4 +47,5 @@ public Q_SLOTS:
 private:
     QThread m_thread;
     Config m_config;
+    KUiServerV2JobTracker m_tracker;
 };

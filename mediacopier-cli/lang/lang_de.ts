@@ -4,12 +4,12 @@
 <context>
     <name>KMediaCopierJob</name>
     <message>
-        <location filename="../src/kde/job.cpp" line="44"/>
+        <location filename="../src/kde/job.cpp" line="46"/>
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/kde/job.cpp" line="46"/>
+        <location filename="../src/kde/job.cpp" line="48"/>
         <source>Destination</source>
         <translation type="unfinished"></translation>
     </message>

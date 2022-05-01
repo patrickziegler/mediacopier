@@ -16,20 +16,22 @@
 
 #include "kde/job.hpp"
 
+#include "core/worker.hpp"
+
 #include <QVariant>
 
 KMediaCopierJob::KMediaCopierJob(
-        std::shared_ptr<Worker> worker,
+        Worker* worker,
         const std::filesystem::path& dstDir) :
-    m_worker{std::move(worker)}
+    m_worker{worker}
 {
     setCapabilities(Killable | Suspendable);
     setProgressUnit(Files);
     setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));
     setProperty("immediateProgressReporting", false);
 
-    QObject::connect(m_worker.get(), &Worker::status, this, &KMediaCopierJob::update);
-    QObject::connect(m_worker.get(), &Worker::finished, this, &KMediaCopierJob::quit);
+    QObject::connect(m_worker, &Worker::status, this, &KMediaCopierJob::update);
+    QObject::connect(m_worker, &Worker::finished, this, &KMediaCopierJob::quit);
 }
 
 void KMediaCopierJob::start()

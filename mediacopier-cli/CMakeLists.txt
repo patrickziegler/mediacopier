@@ -26,7 +26,8 @@ target_sources(${TARGET_NAME} PRIVATE
     "src/core/worker.cpp" "src/core/worker.hpp"
     "src/gui/widgets/log.cpp" "src/gui/widgets/log.hpp" "src/gui/widgets/log.ui"
     "src/gui/widgets/param.cpp" "src/gui/widgets/param.hpp" "src/gui/widgets/param.ui"
-    "src/gui/dialog.cpp" "src/gui/dialog.hpp" "src/gui/dialog.ui"
+    "src/gui/dialog_full.cpp" "src/gui/dialog_full.hpp" "src/gui/dialog_full.ui"
+    "src/gui/dialog_slim.cpp" "src/gui/dialog_slim.hpp" "src/gui/dialog_slim.ui"
     "src/main.cpp"
     ${QM_FILES} "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 
