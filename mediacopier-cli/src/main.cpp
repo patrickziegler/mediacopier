@@ -14,7 +14,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/worker.hpp"
 #include "gui/dialog_full.hpp"
+#include "gui/dialog_slim.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -35,15 +37,25 @@ int main(int argc, char *argv[])
         app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
 
-        app.setDesktopFileName("org.kde.dolphin");
-
         auto config = std::make_shared<Config>(app);
 
-        MediaCopierDialogFull dialog;
-        dialog.init(config, app);
-        dialog.show();
+        if (config->ui() == Config::UI::FullGui) {
+            MediaCopierDialogFull dialog;
+            dialog.init(config, app);
+            dialog.show();
+            return app.exec();
 
-        return app.exec();
+        } else if (config->ui() == Config::UI::SlimGui) {
+            MediaCopierDialogSlim dialog;
+            dialog.init(config, app);
+            dialog.show();
+            return app.exec();
+
+        } else {
+            Worker worker{*config};
+            worker.start();
+            return app.exec();
+        }
 
     } catch (const std::exception& err) {
         spdlog::error(err.what());

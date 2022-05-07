@@ -30,6 +30,12 @@ public:
         SIMULATE
     };
 
+    enum class UI {
+        FullGui,
+        SlimGui,
+        NoGui
+    };
+
     Config(const QApplication& app);
 
     bool readConfigFile() noexcept;
@@ -44,12 +50,14 @@ public:
     static const QString commandString(const Command& command);
 
     const Command& command() const { return m_command; }
+    const UI& ui() const { return m_ui; }
     const std::string& pattern() const { return m_pattern; }
     const std::filesystem::path& inputDir() const { return m_inputDir; }
     const std::filesystem::path& outputDir() const { return m_outputDir; }
 
 private:
     Command m_command = Command::COPY_JPEG;
+    UI m_ui = UI::FullGui;
     std::string m_pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S";
     std::filesystem::path m_inputDir;
     std::filesystem::path m_outputDir;

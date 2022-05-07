@@ -46,7 +46,13 @@ Config::Config(const QApplication& app)
                 "f", "Pattern to be used for creating new filenames",
                 "pattern");
 
-    parser.addOptions({optCommand, optPattern});
+    QCommandLineOption optSlimGui(
+                "slim-gui", "Pattern to be used for creating new filenames");
+
+    QCommandLineOption optNoGui(
+                "no-gui", "Pattern to be used for creating new filenames");
+
+    parser.addOptions({optCommand, optPattern, optSlimGui, optNoGui});
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
@@ -66,6 +72,14 @@ Config::Config(const QApplication& app)
         const auto cmd = parser.value("c");
         if (!setCommand(cmd))
             throw std::runtime_error("No such command '" + cmd.toStdString() + "'");
+    }
+
+    if (parser.isSet("slim-gui")) {
+        m_ui = UI::SlimGui;
+    }
+
+    if (parser.isSet("no-gui")) {
+        m_ui = UI::NoGui;
     }
 }
 
