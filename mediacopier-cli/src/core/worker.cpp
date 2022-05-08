@@ -34,7 +34,9 @@
 #include <csignal>
 #include <thread>
 
+#ifdef ENABLE_KDE
 #include "kde/job.hpp"
+#endif
 
 namespace fs = std::filesystem;
 namespace mc = mediacopier;
@@ -146,8 +148,10 @@ Worker::Worker(Config config) : m_config{std::move(config)}
 
     this->moveToThread(&m_thread);
 
+#ifdef ENABLE_KDE
     auto job = new KMediaCopierJob(this, m_config.outputDir());
     m_tracker.registerJob(job); // tracker takes ownership of job
+#endif
 
     if (spdlog::default_logger()->sinks().size() > 2) {
         spdlog::default_logger()->sinks().pop_back();

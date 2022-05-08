@@ -19,7 +19,9 @@
 #include "core/config.hpp"
 #include "core/status.hpp"
 
+#ifdef ENABLE_KDE
 #include <KUiServerV2JobTracker>
+#endif
 
 #include <QThread>
 
@@ -47,5 +49,7 @@ public Q_SLOTS:
 private:
     QThread m_thread;
     Config m_config;
+#ifdef ENABLE_KDE
     KUiServerV2JobTracker m_tracker;
+#endif
 };

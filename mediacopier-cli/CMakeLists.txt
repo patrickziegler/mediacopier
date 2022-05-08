@@ -45,6 +45,8 @@ if(${ENABLE_KDE})
 
     include(GNUInstallDirs)
 
+    target_compile_definitions(${TARGET_NAME} PUBLIC ENABLE_KDE)
+
     target_sources(${TARGET_NAME} PRIVATE
         "src/kde/job.hpp" "src/kde/job.cpp")
 
