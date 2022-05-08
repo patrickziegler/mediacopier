@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>220</width>
+    <width>160</width>
     <height>150</height>
    </rect>
   </property>
@@ -24,6 +24,16 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <item row="5" column="0">
+    <widget class="QLabel" name="paramCommandLabel">
+     <property name="text">
+      <string>Operation</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="dirsInputDirLabel">
      <property name="text">
@@ -34,49 +44,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="dirsInputDirText"/>
-   </item>
-   <item row="0" column="2">
-    <widget class="QDialogButtonBox" name="dirsInputDirButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Open</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="dirsOutputDirLabel">
-     <property name="text">
-      <string>Output</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="dirsOutputDirText"/>
-   </item>
-   <item row="1" column="2">
-    <widget class="QDialogButtonBox" name="dirsOutputDirButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Open</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="paramBaseFormatLabel">
      <property name="text">
       <string>Pattern</string>
@@ -86,24 +54,50 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="paramCommandLabel">
+   <item row="2" column="0">
+    <widget class="QLabel" name="dirsOutputDirLabel">
      <property name="text">
-      <string>Operation</string>
+      <string>Output</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="dirsOutputDirText"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QToolButton" name="dirsOutputDirButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="dirsInputDirText"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QToolButton" name="dirsInputDirButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::DelayedPopup</enum>
+     </property>
+     <property name="arrowType">
+      <enum>Qt::NoArrow</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
     <widget class="QLineEdit" name="paramPattern">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="2">
+   <item row="5" column="1" colspan="2">
     <widget class="QComboBox" name="paramCommand"/>
    </item>
   </layout>

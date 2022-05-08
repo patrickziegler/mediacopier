@@ -25,22 +25,28 @@
 <context>
     <name>MediaCopierParamWidget</name>
     <message>
-        <location filename="../src/gui/widget_param.ui" line="30"/>
+        <location filename="../src/gui/widget_param.ui" line="40"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widget_param.ui" line="56"/>
+        <location filename="../src/gui/widget_param.ui" line="60"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widget_param.ui" line="82"/>
+        <location filename="../src/gui/widget_param.ui" line="73"/>
+        <location filename="../src/gui/widget_param.ui" line="83"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/widget_param.ui" line="50"/>
         <source>Pattern</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widget_param.ui" line="92"/>
+        <location filename="../src/gui/widget_param.ui" line="30"/>
         <source>Operation</source>
         <translation type="unfinished"></translation>
     </message>

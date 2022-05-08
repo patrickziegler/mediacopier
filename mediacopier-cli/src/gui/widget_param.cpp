@@ -60,10 +60,10 @@ void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
 
     syncConfig();
 
-    connect(ui->dirsInputDirButton, &QDialogButtonBox::clicked,
+    connect(ui->dirsInputDirButton, &QToolButton::clicked,
             this, &MediaCopierParamWidget::onOpenInputDirClicked);
 
-    connect(ui->dirsOutputDirButton, &QDialogButtonBox::clicked,
+    connect(ui->dirsOutputDirButton, &QToolButton::clicked,
             this, &MediaCopierParamWidget::onOpenOutputDirClicked);
 
     connect(ui->dirsInputDirText, &QLineEdit::textChanged,
