@@ -1,3 +1,3 @@
-[submodule "extern/date"]
-	path = extern/date
+[submodule "mediacopier-lib/extern/date"]
+	path = mediacopier-lib/extern/date
 	url = https://github.com/HowardHinnant/date.git

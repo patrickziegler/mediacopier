@@ -38,7 +38,7 @@ target_sources(${TARGET_NAME} PRIVATE
 target_include_directories(${TARGET_NAME} PRIVATE
     "${AVFORMAT_INCLUDE_DIRS}"
     "${LIBJPEG_INCLUDE_DIRS}"
-    "${CMAKE_SOURCE_DIR}/extern/date/include")
+    "extern/date/include")
 
 target_include_directories(${TARGET_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>

@@ -12,7 +12,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "test_file_register.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
-    "${CMAKE_SOURCE_DIR}/extern/date/include")
+    "../extern/date/include")
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     gtest gtest_main "${MEDIACOPIER_LIB_TARGET_NAME}")
