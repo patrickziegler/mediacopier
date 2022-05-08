@@ -28,7 +28,7 @@ jobs:
       env:
         CC: ${{matrix.config.CC}}
         CXX: ${{matrix.config.CXX}}
-        BUILD_DIR: "build-and-test/"
+        BUILD_DIR: "build/"
       run: |
         cmake -B ${BUILD_DIR} -DENABLE_TEST=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}

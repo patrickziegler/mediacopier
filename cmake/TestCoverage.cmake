@@ -47,9 +47,9 @@ add_custom_command(
                 --remove ${TRACEFILE}
                     "${CMAKE_SOURCE_DIR}/build/*"
                     "${CMAKE_SOURCE_DIR}/build-coverage/*"
-                    "${CMAKE_SOURCE_DIR}/extern/*"
-                    "${CMAKE_SOURCE_DIR}/mediacopier/test/*"
                     "${CMAKE_SOURCE_DIR}/mediacopier-cli/*"
+                    "${CMAKE_SOURCE_DIR}/mediacopier-lib/extern/*"
+                    "${CMAKE_SOURCE_DIR}/mediacopier-lib/test/*"
                 --output-file ${TRACEFILE}
 
     COMMAND genhtml ${TRACEFILE}
