@@ -6,12 +6,12 @@
     <message>
         <location filename="../src/kde/job.cpp" line="50"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Quellverzeichnis</translation>
     </message>
     <message>
         <location filename="../src/kde/job.cpp" line="52"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Zielverzeichnis</translation>
     </message>
 </context>
 <context>
@@ -19,7 +19,7 @@
     <message>
         <location filename="../src/gui/widget_log.ui" line="24"/>
         <source>Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Protokoll</translation>
     </message>
 </context>
 <context>
@@ -27,28 +27,28 @@
     <message>
         <location filename="../src/gui/widget_param.ui" line="40"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Quellverzeichnis</translation>
     </message>
     <message>
         <location filename="../src/gui/widget_param.ui" line="60"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Zielverzeichnis</translation>
     </message>
     <message>
         <location filename="../src/gui/widget_param.ui" line="73"/>
         <location filename="../src/gui/widget_param.ui" line="83"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/gui/widget_param.ui" line="50"/>
         <source>Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Schema</translation>
     </message>
     <message>
         <location filename="../src/gui/widget_param.ui" line="30"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -57,33 +57,33 @@
         <location filename="../src/core/config.cpp" line="154"/>
         <location filename="../src/core/config.cpp" line="157"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieren</translation>
     </message>
     <message>
         <location filename="../src/core/config.cpp" line="160"/>
         <location filename="../src/core/config.cpp" line="163"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschieben</translation>
     </message>
     <message>
         <location filename="../src/core/config.cpp" line="166"/>
         <source>Simulate</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulation</translation>
     </message>
     <message>
         <location filename="../src/core/config.cpp" line="169"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannt</translation>
     </message>
     <message>
         <location filename="../src/gui/widget_param.cpp" line="98"/>
         <source>Source folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Quellverzeichnis</translation>
     </message>
     <message>
         <location filename="../src/gui/widget_param.cpp" line="103"/>
         <source>Destination folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Zielverzeichnis</translation>
     </message>
 </context>
 </TS>
