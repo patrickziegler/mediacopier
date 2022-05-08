@@ -125,7 +125,7 @@ auto get_executor(Config::Command command)
         break;
 
     case Config::Command::SIMULATE:
-        spdlog::info("Executing SHOW operation..");
+        spdlog::info("Executing SIMULATE operation..");
         executor = create_executor<FileOperationSimulate>();
         break;
 

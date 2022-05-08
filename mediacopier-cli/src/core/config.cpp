@@ -39,7 +39,7 @@ Config::Config(const QApplication& app)
                 "DST", "Output directory", "[DST]]");
 
     QCommandLineOption optCommand(
-                "c", "Available commands: copy (default), move, show",
+                "c", "Available commands: copy (default), move, sim",
                 "command");
 
     QCommandLineOption optPattern(
@@ -123,7 +123,7 @@ bool Config::setCommand(const QString& command)
         m_command = Command::COPY_JPEG;
     else if (cmd == "move")
         m_command = Command::MOVE_JPEG;
-    else if (cmd == "show")
+    else if (cmd == "sim")
         m_command = Command::SIMULATE;
     else
         return false;

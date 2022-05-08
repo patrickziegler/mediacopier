@@ -14,9 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "kde/job.hpp"
-
 #include "core/worker.hpp"
+#include "kde/job.hpp"
 
 #include <QApplication>
 
