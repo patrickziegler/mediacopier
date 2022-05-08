@@ -28,7 +28,7 @@
   <customwidget>
    <class>MediaCopierParamWidget</class>
    <extends>QWidget</extends>
-   <header>gui/widgets/param.hpp</header>
+   <header>gui/widget_param.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

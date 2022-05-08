@@ -24,10 +24,10 @@ target_sources(${TARGET_NAME} PRIVATE
     "src/core/config.cpp" "src/core/config.hpp"
     "src/core/status.cpp" "src/core/status.hpp"
     "src/core/worker.cpp" "src/core/worker.hpp"
-    "src/gui/widgets/log.cpp" "src/gui/widgets/log.hpp" "src/gui/widgets/log.ui"
-    "src/gui/widgets/param.cpp" "src/gui/widgets/param.hpp" "src/gui/widgets/param.ui"
     "src/gui/dialog_full.cpp" "src/gui/dialog_full.hpp" "src/gui/dialog_full.ui"
     "src/gui/dialog_slim.cpp" "src/gui/dialog_slim.hpp" "src/gui/dialog_slim.ui"
+    "src/gui/widget_log.cpp" "src/gui/widget_log.hpp" "src/gui/widget_log.ui"
+    "src/gui/widget_param.cpp" "src/gui/widget_param.hpp" "src/gui/widget_param.ui"
     "src/main.cpp"
     ${QM_FILES} "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 

@@ -47,13 +47,13 @@
   <customwidget>
    <class>MediaCopierParamWidget</class>
    <extends>QWidget</extends>
-   <header>gui/widgets/param.hpp</header>
+   <header>gui/widget_param.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>MediaCopierLogWidget</class>
    <extends>QWidget</extends>
-   <header>gui/widgets/log.hpp</header>
+   <header>gui/widget_log.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -18,6 +18,8 @@
 
 #include "core/worker.hpp"
 
+#include <QApplication>
+
 #include <QVariant>
 
 KMediaCopierJob::KMediaCopierJob(
@@ -25,6 +27,8 @@ KMediaCopierJob::KMediaCopierJob(
         const std::filesystem::path& dstDir) :
     m_worker{worker}
 {
+    QApplication::setDesktopFileName("org.kde.dolphin");
+
     setCapabilities(Killable | Suspendable);
     setProgressUnit(Files);
     setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));

@@ -82,18 +82,6 @@ void MediaCopierDialogSlim::aboutToQuit()
 void MediaCopierDialogSlim::startOperation()
 {
     worker = std::make_shared<Worker>(*config);
-
     QObject::connect(worker.get(), &Worker::finished, this, &MediaCopierDialogSlim::operationDone);
-
     worker->start();
-}
-
-void MediaCopierDialogSlim::cancelOperation()
-{
-    worker->kill();
-}
-
-void MediaCopierDialogSlim::awaitOperation()
-{
-    spdlog::default_logger()->flush();
 }

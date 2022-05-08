@@ -4,12 +4,12 @@
 <context>
     <name>KMediaCopierJob</name>
     <message>
-        <location filename="../src/kde/job.cpp" line="46"/>
+        <location filename="../src/kde/job.cpp" line="50"/>
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/kde/job.cpp" line="48"/>
+        <location filename="../src/kde/job.cpp" line="52"/>
         <source>Destination</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17,7 +17,7 @@
 <context>
     <name>MediaCopierLogWidget</name>
     <message>
-        <location filename="../src/gui/widgets/log.ui" line="24"/>
+        <location filename="../src/gui/widget_log.ui" line="24"/>
         <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
@@ -25,22 +25,22 @@
 <context>
     <name>MediaCopierParamWidget</name>
     <message>
-        <location filename="../src/gui/widgets/param.ui" line="30"/>
+        <location filename="../src/gui/widget_param.ui" line="30"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widgets/param.ui" line="56"/>
+        <location filename="../src/gui/widget_param.ui" line="56"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widgets/param.ui" line="82"/>
+        <location filename="../src/gui/widget_param.ui" line="82"/>
         <source>Pattern</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widgets/param.ui" line="92"/>
+        <location filename="../src/gui/widget_param.ui" line="92"/>
         <source>Operation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -48,34 +48,34 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/core/config.cpp" line="140"/>
-        <location filename="../src/core/config.cpp" line="143"/>
+        <location filename="../src/core/config.cpp" line="154"/>
+        <location filename="../src/core/config.cpp" line="157"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/config.cpp" line="146"/>
-        <location filename="../src/core/config.cpp" line="149"/>
+        <location filename="../src/core/config.cpp" line="160"/>
+        <location filename="../src/core/config.cpp" line="163"/>
         <source>Move</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/config.cpp" line="152"/>
+        <location filename="../src/core/config.cpp" line="166"/>
         <source>Simulate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/config.cpp" line="155"/>
+        <location filename="../src/core/config.cpp" line="169"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widgets/param.cpp" line="98"/>
+        <location filename="../src/gui/widget_param.cpp" line="98"/>
         <source>Source folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widgets/param.cpp" line="103"/>
+        <location filename="../src/gui/widget_param.cpp" line="103"/>
         <source>Destination folder</source>
         <translation type="unfinished"></translation>
     </message>
