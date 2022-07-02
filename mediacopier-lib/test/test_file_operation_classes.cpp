@@ -17,10 +17,10 @@
 #include "common_test_fixtures.hpp"
 
 #include <mediacopier/file_info_factory.hpp>
-#include <mediacopier/file_info_register.hpp>
-#include <mediacopier/operations/move.hpp>
-#include <mediacopier/operations/move_jpeg.hpp>
-#include <mediacopier/operations/simulate.hpp>
+#include <mediacopier/file_register.hpp>
+#include <mediacopier/operation_move.hpp>
+#include <mediacopier/operation_move_jpeg.hpp>
+#include <mediacopier/operation_simulate.hpp>
 
 namespace fs = std::filesystem;
 

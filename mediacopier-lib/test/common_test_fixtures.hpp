@@ -18,11 +18,9 @@
 
 #include "file_info_type_detector.hpp"
 
-#include <mediacopier/file_info_factory.hpp>
-
 #include <date/date.h>
-
 #include <gtest/gtest.h>
+#include <mediacopier/file_info_factory.hpp>
 
 #include <chrono>
 

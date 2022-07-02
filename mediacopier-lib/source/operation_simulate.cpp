@@ -14,45 +14,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <mediacopier/operation_simulate.hpp>
 
-#include <mediacopier/abstract_operation.hpp>
 #include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/file_info_video.hpp>
+#include <spdlog/spdlog.h>
 
-namespace mediacopier::test {
+namespace mediacopier {
 
-enum class FileInfoType {
-    None,
-    FileInfoImage,
-    FileInfoImageJpeg,
-    FileInfoVideo,
-};
+auto FileOperationSimulate::dumpFilePaths(const AbstractFileInfo& file) const -> void
+{
+    spdlog::info(m_destination.string() + " (from " + file.path().string() + ")");
+}
 
-class FileInfoTypeDetector : public AbstractFileOperation {
-public:
-    auto visit(const FileInfoImage& /*file*/) -> void
-    {
-        m_lastType = FileInfoType::FileInfoImage;
-    }
+auto FileOperationSimulate::visit(const FileInfoImage& file) -> void
+{
+    dumpFilePaths(file);
+}
 
-    auto visit(const FileInfoImageJpeg& /*file*/) -> void
-    {
-        m_lastType = FileInfoType::FileInfoImageJpeg;
-    }
+auto FileOperationSimulate::visit(const FileInfoImageJpeg& file) -> void
+{
+    dumpFilePaths(file);
+}
 
-    auto visit(const FileInfoVideo& /*file*/) -> void
-    {
-        m_lastType = FileInfoType::FileInfoVideo;
-    }
-
-    auto lastType() const -> FileInfoType
-    {
-        return m_lastType;
-    }
-
-private:
-    FileInfoType m_lastType = FileInfoType::None;
-};
+auto FileOperationSimulate::visit(const FileInfoVideo& file) -> void
+{
+    dumpFilePaths(file);
+}
 
 } // namespace mediacopier

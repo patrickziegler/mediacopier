@@ -62,6 +62,11 @@ docker build \
     --build-arg USER_UID=$(id -u) \
     --build-arg USER_GID=$(id -g) \
     -t mediacopier-build .
+docker build \
+    --build-arg USER_NAME=root \
+    --build-arg USER_UID=0 \
+    --build-arg USER_GID=0 \
+    -t mediacopier-build .
 docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
 ```
 
@@ -69,6 +74,7 @@ Inside the container, run the following commands.
 All build-time dependencies are solved already.
 ```sh
 cmake -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
+cmake -DENABLE_TEST_COVERAGE=ON /usr/src/mediacopier/ && make -j $(nproc) && make coverage
 ```
 
 ## Build Instructions for Windows

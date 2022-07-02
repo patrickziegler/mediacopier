@@ -16,43 +16,22 @@
 
 #pragma once
 
+#include <mediacopier/abstract_file_info.hpp>
 #include <mediacopier/abstract_operation.hpp>
-#include <mediacopier/file_info_image_jpeg.hpp>
-#include <mediacopier/file_info_video.hpp>
 
-namespace mediacopier::test {
+#include <filesystem>
 
-enum class FileInfoType {
-    None,
-    FileInfoImage,
-    FileInfoImageJpeg,
-    FileInfoVideo,
-};
+namespace mediacopier {
 
-class FileInfoTypeDetector : public AbstractFileOperation {
+class FileOperationSimulate : public AbstractFileOperation {
 public:
-    auto visit(const FileInfoImage& /*file*/) -> void
-    {
-        m_lastType = FileInfoType::FileInfoImage;
-    }
-
-    auto visit(const FileInfoImageJpeg& /*file*/) -> void
-    {
-        m_lastType = FileInfoType::FileInfoImageJpeg;
-    }
-
-    auto visit(const FileInfoVideo& /*file*/) -> void
-    {
-        m_lastType = FileInfoType::FileInfoVideo;
-    }
-
-    auto lastType() const -> FileInfoType
-    {
-        return m_lastType;
-    }
-
-private:
-    FileInfoType m_lastType = FileInfoType::None;
+    explicit FileOperationSimulate(std::filesystem::path destination) : m_destination{std::move(destination)} {}
+    auto visit(const FileInfoImage& file) -> void override;
+    auto visit(const FileInfoImageJpeg& file) -> void override;
+    auto visit(const FileInfoVideo& file) -> void override;
+protected:
+    auto dumpFilePaths(const AbstractFileInfo& file) const -> void;
+    std::filesystem::path m_destination;
 };
 
 } // namespace mediacopier

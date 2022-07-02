@@ -1,5 +1,6 @@
-set(CMAKE_CXX_FLAGS "-g -O0 --coverage")
-set(CMAKE_EXE_LINKER_FLAGS "--coverage")
+# need to be set before other targets are defined
+# set(CMAKE_CXX_FLAGS "-g -O0 --coverage")
+# set(CMAKE_EXE_LINKER_FLAGS "--coverage")
 
 set(COVERAGE_OUTPUT_DIR "${CMAKE_BINARY_DIR}/coverage")
 

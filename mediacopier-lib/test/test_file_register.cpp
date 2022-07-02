@@ -17,8 +17,8 @@
 #include "common_test_fixtures.hpp"
 
 #include <mediacopier/file_info_factory.hpp>
-#include <mediacopier/file_info_register.hpp>
-#include <mediacopier/operations/copy_jpeg.hpp>
+#include <mediacopier/file_register.hpp>
+#include <mediacopier/operation_copy_jpeg.hpp>
 
 namespace fs = std::filesystem;
 

@@ -5,7 +5,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-qt5_create_translation(QM_FILES src/ lang/lang_de.ts OPTIONS "-noobsolete")
+qt5_create_translation(QM_FILES source/ lang/lang_de.ts OPTIONS "-noobsolete")
 
 set(RESOURCES_FILE resources.qrc)
 
@@ -21,17 +21,28 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME ${EXECUTABLE_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/core/config.cpp" "src/core/config.hpp"
-    "src/core/status.cpp" "src/core/status.hpp"
-    "src/core/worker.cpp" "src/core/worker.hpp"
-    "src/gui/dialog_full.cpp" "src/gui/dialog_full.hpp" "src/gui/dialog_full.ui"
-    "src/gui/dialog_slim.cpp" "src/gui/dialog_slim.hpp" "src/gui/dialog_slim.ui"
-    "src/gui/widget_log.cpp" "src/gui/widget_log.hpp" "src/gui/widget_log.ui"
-    "src/gui/widget_param.cpp" "src/gui/widget_param.hpp" "src/gui/widget_param.ui"
-    "src/main.cpp"
+    "source/config.cpp"
+    "source/config.hpp"
+    "source/main.cpp"
+    "source/status.cpp"
+    "source/status.hpp"
+    "source/worker.cpp"
+    "source/worker.hpp"
+    "source/gui/MediaCopierDialogFull.cpp"
+    "source/gui/MediaCopierDialogFull.hpp"
+    "source/gui/MediaCopierDialogFull.ui"
+    "source/gui/MediaCopierDialogSlim.cpp"
+    "source/gui/MediaCopierDialogSlim.hpp"
+    "source/gui/MediaCopierDialogSlim.ui"
+    "source/gui/MediaCopierLogWidget.cpp"
+    "source/gui/MediaCopierLogWidget.hpp"
+    "source/gui/MediaCopierLogWidget.ui"
+    "source/gui/MediaCopierParamWidget.cpp"
+    "source/gui/MediaCopierParamWidget.hpp"
+    "source/gui/MediaCopierParamWidget.ui"
     ${QM_FILES} "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 
-target_include_directories(${TARGET_NAME} PUBLIC src/)
+target_include_directories(${TARGET_NAME} PUBLIC source/)
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt5::Core Qt5::Widgets spdlog::spdlog
@@ -48,14 +59,15 @@ if(${ENABLE_KDE})
     target_compile_definitions(${TARGET_NAME} PUBLIC ENABLE_KDE)
 
     target_sources(${TARGET_NAME} PRIVATE
-        "src/kde/job.hpp" "src/kde/job.cpp")
+        "source/kde/KMediaCopierJob.hpp"
+        "source/kde/KMediaCopierJob.cpp")
 
     target_link_libraries(${TARGET_NAME} PUBLIC
         KF5::I18n KF5::JobWidgets)
 
     set(DESKTOP_FILE_NAME "mediacopier.desktop")
 
-    configure_file("src/kde/${DESKTOP_FILE_NAME}.in"
+    configure_file("source/kde/${DESKTOP_FILE_NAME}.in"
         "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}")
 
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}"

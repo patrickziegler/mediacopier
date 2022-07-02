@@ -1,7 +1,7 @@
 find_package(exiv2 REQUIRED)
+find_package(PkgConfig REQUIRED)
 find_package(spdlog REQUIRED)
 
-find_package(PkgConfig REQUIRED)
 pkg_check_modules(AVFORMAT REQUIRED libavformat libavutil)
 pkg_check_modules(LIBJPEG REQUIRED libturbojpeg)
 
@@ -11,7 +11,7 @@ configure_file(
     "${CMAKE_CURRENT_LIST_DIR}/version.hpp.in"
     "${CMAKE_CURRENT_BINARY_DIR}/include/mediacopier/version.hpp")
 
-if (${ENABLE_SHARED_LIB})
+if(${ENABLE_SHARED_LIB})
     add_library(${TARGET_NAME} SHARED)
     set_target_properties(${TARGET_NAME} PROPERTIES
         VERSION ${CMAKE_PROJECT_VERSION}
@@ -24,16 +24,29 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     OUTPUT_NAME mediacopier)
 
 target_sources(${TARGET_NAME} PRIVATE
-    "src/files/image.cpp"
-    "src/files/image_jpeg.cpp"
-    "src/files/video.cpp"
-    "src/operations/copy.cpp"
-    "src/operations/copy_jpeg.cpp"
-    "src/operations/move.cpp"
-    "src/operations/move_jpeg.cpp"
-    "src/operations/simulate.cpp"
-    "src/file_info_factory.cpp"
-    "src/file_info_register.cpp")
+    "include/mediacopier/abstract_file_info.hpp"
+    "include/mediacopier/abstract_operation.hpp"
+    "include/mediacopier/error.hpp"
+    "include/mediacopier/file_info_factory.hpp"
+    "include/mediacopier/file_info_image.hpp"
+    "include/mediacopier/file_info_image_jpeg.hpp"
+    "include/mediacopier/file_info_video.hpp"
+    "include/mediacopier/file_register.hpp"
+    "include/mediacopier/operation_copy.hpp"
+    "include/mediacopier/operation_copy_jpeg.hpp"
+    "include/mediacopier/operation_move.hpp"
+    "include/mediacopier/operation_move_jpeg.hpp"
+    "include/mediacopier/operation_simulate.hpp"
+    "source/file_info_factory.cpp"
+    "source/file_info_image.cpp"
+    "source/file_info_image_jpeg.cpp"
+    "source/file_info_video.cpp"
+    "source/file_register.cpp"
+    "source/operation_copy.cpp"
+    "source/operation_copy_jpeg.cpp"
+    "source/operation_move.cpp"
+    "source/operation_move_jpeg.cpp"
+    "source/operation_simulate.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
     "${AVFORMAT_INCLUDE_DIRS}"
@@ -77,7 +90,7 @@ if(${INSTALL_DEV_FILES})
 
     # create config file for enabling `find_package`
     configure_package_config_file(
-        cmake/Config.cmake.in
+        "cmake/Config.cmake.in"
         "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
         INSTALL_DESTINATION "${TARGETS_INSTALL_DIR}")
 
@@ -93,7 +106,6 @@ if(${INSTALL_DEV_FILES})
         DESTINATION "${TARGETS_INSTALL_DIR}")
 
 elseif(${ENABLE_SHARED_LIB})
-    # install library
     install(TARGETS ${TARGET_NAME})
 
 endif()
