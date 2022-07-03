@@ -15,20 +15,15 @@
  */
 
 #include "worker.hpp"
+#include "core.hpp"
 
-#ifdef ENABLE_KDE
-#include "kde/KMediaCopierJob.hpp"
-#endif
-
-#include <mediacopier/file_info_factory.hpp>
-#include <mediacopier/file_register.hpp>
 #include <mediacopier/operation_move.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
 #include <mediacopier/operation_simulate.hpp>
 
-#include <range/v3/view/filter.hpp>
-#include <range/v3/view/transform.hpp>
-#include <range/v3/iterator_range.hpp>
+#ifdef ENABLE_KDE
+#include "kde/KMediaCopierJob.hpp"
+#endif
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
@@ -39,7 +34,6 @@
 #include <thread>
 
 namespace fs = std::filesystem;
-namespace mc = mediacopier;
 
 namespace {
 
@@ -65,78 +59,6 @@ auto check_operation_state()
 }
 
 } // namespace
-
-namespace mediacopier {
-
-auto valid_media_files(const fs::path& path)
-{
-    using namespace ranges;
-
-    static auto is_regular_file = [](const fs::directory_entry& path) {
-        return fs::is_regular_file(path);
-    };
-
-    static auto is_valid = [](const FileInfoPtr& file) {
-        return file != nullptr;
-    };
-
-    return make_iterator_range(
-                fs::recursive_directory_iterator(path),
-                fs::recursive_directory_iterator())
-            | views::filter(is_regular_file)
-            | views::transform(to_file_info_ptr)
-            | views::filter(is_valid);
-}
-
-template <typename T>
-auto create_executor()
-{
-    return [](const FileInfoPtr& file, const fs::path& path) {
-        T op(path);
-        file->accept(op);
-    };
-}
-
-auto get_executor(Config::Command command)
-{
-    std::function<void(const FileInfoPtr&, const fs::path&)> executor;
-
-    // dispatch necessary as Q_OBJECT does not allow templated classes
-    switch(command) {
-
-    case Config::Command::COPY:
-        spdlog::info("Executing COPY operation..");
-        executor = create_executor<FileOperationCopy>();
-        break;
-
-    case Config::Command::COPY_JPEG:
-        spdlog::info("Executing COPY operation (jpeg aware)..");
-        executor = create_executor<FileOperationCopyJpeg>();
-        break;
-
-    case Config::Command::MOVE:
-        spdlog::info("Executing MOVE operation");
-        executor = create_executor<FileOperationMove>();
-        break;
-
-    case Config::Command::MOVE_JPEG:
-        spdlog::info("Executing MOVE operation (jpeg aware)..");
-        executor = create_executor<FileOperationMoveJpeg>();
-        break;
-
-    case Config::Command::SIMULATE:
-        spdlog::info("Executing SIMULATE operation..");
-        executor = create_executor<FileOperationSimulate>();
-        break;
-
-    default:
-        throw std::runtime_error("Unknown operation..");
-    }
-
-    return executor;
-}
-
-} // namespace mediacopier
 
 Worker::Worker(Config config) : m_config{std::move(config)}
 {
@@ -189,6 +111,20 @@ void Worker::resume()
     operationSuspended.store(false);
 }
 
+template <typename T>
+void execute(const Config& m_config, std::function<void(const fs::path&, const fs::path)> cb)
+{
+    spdlog::info("Executing operation..");
+    auto reg = mediacopier::execute<T>(
+                m_config.inputDir(),
+                m_config.outputDir(),
+                m_config.pattern(),
+                cb);
+
+    spdlog::info("Removing duplicates..");
+    reg->removeDuplicates();
+}
+
 void Worker::exec()
 {
     // register callback for graceful shutdown via CTRL-C
@@ -196,42 +132,47 @@ void Worker::exec()
         operationCancelled.store(true);
     });
 
-    try {
-        auto executor = mc::get_executor(m_config.command());
-        mc::FileRegister destRegister{m_config.outputDir(), m_config.pattern()};
-        fs::path lastPath = "";
-        size_t progress = 0;
-
-        spdlog::info("Checking input folder..");
-        size_t fileCount = ranges::distance(mc::valid_media_files(m_config.inputDir()));
-
-        spdlog::info("Starting execution..");
-        for (auto file : mc::valid_media_files(m_config.inputDir())) {
-            auto path = destRegister.add(file);
-            if (path.has_value()) {
-                lastPath = path.value();
-                Q_EMIT status({m_config.command(), file->path(), lastPath, fileCount, progress});
-                executor(file, lastPath);
-            }
-            if (check_operation_state()) {
-                spdlog::warn("Operation was cancelled");
-                break;
-            }
-            ++progress;
-            Q_EMIT status({m_config.command(), file->path(), lastPath, fileCount, progress});
+    // create callback for status update
+    auto callbackStatus = [this](const fs::path& src, const fs::path& dst) {
+        if (check_operation_state()) {
+            throw std::runtime_error("Operation was cancelled..");
         }
+        Q_EMIT status({m_config.command(), src, dst, 0, 0});
+    };
 
-        spdlog::info("Removing duplicates..");
-        destRegister.removeDuplicates();
+    switch(m_config.command()) {
 
-        spdlog::info("Writing config..");
-        m_config.writeConfigFile();
+    case Config::Command::COPY:
+        spdlog::info("Executing COPY operation..");
+        execute<mediacopier::FileOperationCopy>(m_config, callbackStatus);
+        break;
 
-        spdlog::info("Done");
+    case Config::Command::COPY_JPEG:
+        spdlog::info("Executing COPY operation (jpeg aware)..");
+        execute<mediacopier::FileOperationCopyJpeg>(m_config, callbackStatus);
+        break;
 
-    } catch (const std::exception& err) {
-        spdlog::error(err.what());
+    case Config::Command::MOVE:
+        spdlog::info("Executing MOVE operation");
+        execute<mediacopier::FileOperationMove>(m_config, callbackStatus);
+        break;
+
+    case Config::Command::MOVE_JPEG:
+        spdlog::info("Executing MOVE operation (jpeg aware)..");
+        execute<mediacopier::FileOperationMoveJpeg>(m_config, callbackStatus);
+        break;
+
+    case Config::Command::SIMULATE:
+        spdlog::info("Executing SIMULATE operation..");
+        execute<mediacopier::FileOperationSimulate>(m_config, callbackStatus);
+        break;
+
+    default:
+        throw std::runtime_error("Unknown operation..");
     }
+
+    spdlog::info("Writing config..");
+    m_config.writeConfigFile();
 
     std::signal(SIGINT, SIG_DFL);
 

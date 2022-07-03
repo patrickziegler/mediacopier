@@ -23,6 +23,8 @@ set_target_properties(${TARGET_NAME} PROPERTIES
 target_sources(${TARGET_NAME} PRIVATE
     "source/config.cpp"
     "source/config.hpp"
+    "source/core.cpp"
+    "source/core.hpp"
     "source/main.cpp"
     "source/status.cpp"
     "source/status.hpp"
