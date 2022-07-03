@@ -17,6 +17,12 @@
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
 
+#include <mediacopier/operation_copy.hpp>
+#include <mediacopier/operation_copy_jpeg.hpp>
+#include <mediacopier/operation_move.hpp>
+#include <mediacopier/operation_move_jpeg.hpp>
+#include <mediacopier/operation_simulate.hpp>
+
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
 #include <range/v3/iterator_range.hpp>

@@ -32,6 +32,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "include/mediacopier/file_info_image_jpeg.hpp"
     "include/mediacopier/file_info_video.hpp"
     "include/mediacopier/file_register.hpp"
+    "include/mediacopier/mediacopier.hpp"
     "include/mediacopier/operation_copy.hpp"
     "include/mediacopier/operation_copy_jpeg.hpp"
     "include/mediacopier/operation_move.hpp"

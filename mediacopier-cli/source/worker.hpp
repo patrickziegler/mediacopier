@@ -33,9 +33,9 @@ public:
     Worker(Config config);
 
     void start();
-    void kill();
     void suspend();
     void resume();
+    void kill();
 
 Q_SIGNALS:
     void status(Status info);
@@ -47,8 +47,10 @@ public Q_SLOTS:
     void quit();
 
 private:
+    const Config m_config;
+    size_t m_fileCount;
+    size_t m_progress;
     QThread m_thread;
-    Config m_config;
 #ifdef ENABLE_KDE
     KUiServerV2JobTracker m_tracker;
 #endif

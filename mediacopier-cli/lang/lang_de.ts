@@ -6,12 +6,12 @@
     <message>
         <location filename="../source/kde/KMediaCopierJob.cpp" line="49"/>
         <source>Source</source>
-        <translation>Quellverzeichnis</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../source/kde/KMediaCopierJob.cpp" line="51"/>
         <source>Destination</source>
-        <translation>Zielverzeichnis</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19,36 +19,36 @@
     <message>
         <location filename="../source/gui/MediaCopierLogWidget.ui" line="24"/>
         <source>Log</source>
-        <translation>Protokoll</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MediaCopierParamWidget</name>
     <message>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="30"/>
+        <source>Operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../source/gui/MediaCopierParamWidget.ui" line="40"/>
         <source>Input</source>
-        <translation>Quellverzeichnis</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="50"/>
+        <source>Pattern</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../source/gui/MediaCopierParamWidget.ui" line="60"/>
         <source>Output</source>
-        <translation>Zielverzeichnis</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../source/gui/MediaCopierParamWidget.ui" line="73"/>
         <location filename="../source/gui/MediaCopierParamWidget.ui" line="83"/>
         <source>...</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="50"/>
-        <source>Pattern</source>
-        <translation>Schema</translation>
-    </message>
-    <message>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="30"/>
-        <source>Operation</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -57,33 +57,33 @@
         <location filename="../source/config.cpp" line="154"/>
         <location filename="../source/config.cpp" line="157"/>
         <source>Copy</source>
-        <translation>Kopieren</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../source/config.cpp" line="160"/>
         <location filename="../source/config.cpp" line="163"/>
         <source>Move</source>
-        <translation>Verschieben</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../source/config.cpp" line="166"/>
         <source>Simulate</source>
-        <translation>Simulation</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../source/config.cpp" line="169"/>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../source/gui/MediaCopierParamWidget.cpp" line="98"/>
         <source>Source folder</source>
-        <translation>Quellverzeichnis</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../source/gui/MediaCopierParamWidget.cpp" line="103"/>
         <source>Destination folder</source>
-        <translation>Zielverzeichnis</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
