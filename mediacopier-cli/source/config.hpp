@@ -42,7 +42,7 @@ public:
     bool writeConfigFile() const noexcept;
 
     void setCommand(const Command& command);
-    bool setCommand(const QString& command);
+    void setCommand(const QString& command);
     void setPattern(const QString& pattern);
     void setInputDir(const QString& inputDir);
     void setOutputDir(const QString& outputDir);

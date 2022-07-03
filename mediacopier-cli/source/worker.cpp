@@ -17,7 +17,7 @@
 #include "worker.hpp"
 
 #ifdef ENABLE_KDE
-#include "kde/KMediaCopierJob.hpp"
+#include <kde/KMediaCopierJob.hpp>
 #endif
 
 #include <mediacopier/mediacopier.hpp>
@@ -77,8 +77,9 @@ Worker::Worker(Config config) : m_config{std::move(config)}
     this->moveToThread(&m_thread);
 
 #ifdef ENABLE_KDE
+    // tracker takes ownership of job
     auto job = new KMediaCopierJob(this, m_config.outputDir());
-    m_tracker.registerJob(job); // tracker takes ownership of job
+    m_tracker.registerJob(job);
 #endif
 
     if (spdlog::default_logger()->sinks().size() > 2) {
@@ -124,6 +125,8 @@ void Worker::exec()
     std::signal(SIGINT, [](int) -> void {
         operationCancelled.store(true);
     });
+
+    m_progress = 1;
 
     // create callback for status update
     auto callbackStatus = [this](const fs::path& src, const fs::path& dst) {

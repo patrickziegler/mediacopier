@@ -59,8 +59,8 @@ if(${ENABLE_KDE})
     target_compile_definitions(${TARGET_NAME} PUBLIC ENABLE_KDE)
 
     target_sources(${TARGET_NAME} PRIVATE
-        "source/kde/KMediaCopierJob.hpp"
-        "source/kde/KMediaCopierJob.cpp")
+        "source/kde/KMediaCopierJob.cpp"
+        "source/kde/KMediaCopierJob.hpp")
 
     target_link_libraries(${TARGET_NAME} PUBLIC
         KF5::I18n KF5::JobWidgets)

@@ -24,6 +24,20 @@ namespace fs = std::filesystem;
 static constexpr const char* CONFIG_FILE = ".mediacopier";
 static constexpr const char* CONFIG_KEY_PATTERN = "Core/pattern";
 
+static const std::map<QString, Config::Command> commands = {
+    {"copy", Config::Command::COPY_JPEG},
+    {"move", Config::Command::MOVE_JPEG},
+    {"sim", Config::Command::SIMULATE}
+};
+
+static const std::map<Config::Command, QString> commandStrings = {
+    {Config::Command::COPY, QObject::tr("Copy")},
+    {Config::Command::COPY_JPEG, QObject::tr("Copy")},
+    {Config::Command::MOVE, QObject::tr("Move")},
+    {Config::Command::MOVE_JPEG, QObject::tr("Move")},
+    {Config::Command::SIMULATE, QObject::tr("Simulate")}
+};
+
 Config::Config(const QApplication& app)
 {
     QCommandLineParser parser;
@@ -68,19 +82,14 @@ Config::Config(const QApplication& app)
     if (parser.isSet("f"))
         setPattern(parser.value("f"));
 
-    if (parser.isSet("c")) {
-        const auto cmd = parser.value("c");
-        if (!setCommand(cmd))
-            throw std::runtime_error("No such command '" + cmd.toStdString() + "'");
-    }
+    if (parser.isSet("c"))
+        setCommand(parser.value("c"));
 
-    if (parser.isSet("slim-gui")) {
+    if (parser.isSet("slim-gui"))
         m_ui = UI::SlimGui;
-    }
 
-    if (parser.isSet("no-gui")) {
+    if (parser.isSet("no-gui"))
         m_ui = UI::NoGui;
-    }
 }
 
 bool Config::readConfigFile() noexcept
@@ -115,20 +124,14 @@ void Config::setCommand(const Command& command)
     m_command = command;
 }
 
-bool Config::setCommand(const QString& command)
+void Config::setCommand(const QString& command)
 {
-    auto cmd = command.toLower();
+    try {
+        m_command = commands.at(command.toLower());
 
-    if (cmd == "copy")
-        m_command = Command::COPY_JPEG;
-    else if (cmd == "move")
-        m_command = Command::MOVE_JPEG;
-    else if (cmd == "sim")
-        m_command = Command::SIMULATE;
-    else
-        return false;
-
-    return true;
+    } catch (const std::out_of_range&) {
+        throw std::runtime_error("No such command '" + command.toStdString() + "'");
+    }
 }
 
 void Config::setPattern(const QString& pattern)
@@ -148,24 +151,5 @@ void Config::setOutputDir(const QString& outputDir)
 
 const QString Config::commandString(const Command& command)
 {
-    switch(command) {
-
-    case Config::Command::COPY:
-        return QObject::tr("Copy");
-
-    case Config::Command::COPY_JPEG:
-        return QObject::tr("Copy");
-
-    case Config::Command::MOVE:
-        return QObject::tr("Move");
-
-    case Config::Command::MOVE_JPEG:
-        return QObject::tr("Move");
-
-    case Config::Command::SIMULATE:
-        return QObject::tr("Simulate");
-
-    default:
-        return QObject::tr("Unknown");
-    }
+    return commandStrings.at(command);
 }

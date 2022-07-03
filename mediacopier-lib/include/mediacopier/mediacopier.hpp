@@ -66,18 +66,21 @@ auto execute(
         std::function<void(const fs::path&, const fs::path&)> callbackStatus)
 {
     auto destRegister = std::make_unique<FileRegister>(outputDir, pattern);
+    fs::path lastPath = "";
 
     try {
         for (auto file : valid_media_files(inputDir)) {
             auto destPath = destRegister->add(file);
 
             if (destPath.has_value()) {
-                callbackStatus(file->path(), destPath.value());
-
+                lastPath = destPath.value();
                 T op(destPath.value());
                 file->accept(op);
             }
+
+            callbackStatus(file->path(), lastPath);
         }
+
     } catch (const std::exception& err) {
         spdlog::error(err.what());
     }

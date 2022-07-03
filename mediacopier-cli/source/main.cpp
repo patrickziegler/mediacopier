@@ -25,6 +25,30 @@
 
 #include <spdlog/spdlog.h>
 
+template <typename T>
+int run_gui(QApplication& app, std::shared_ptr<Config> config)
+{
+    T dialog;
+    dialog.init(config, app);
+    dialog.show();
+    return app.exec();
+}
+
+int run_cli(QApplication& app, std::shared_ptr<Config> config)
+{
+    Worker worker{*config};
+    worker.start();
+    return app.exec();
+}
+
+using UiFuncType = std::function<int(QApplication&, std::shared_ptr<Config>)>;
+
+static const std::map<Config::UI, UiFuncType> uiFuncMap = {
+    {Config::UI::FullGui, &run_gui<MediaCopierDialogFull>},
+    {Config::UI::SlimGui, &run_gui<MediaCopierDialogSlim>},
+    {Config::UI::NoGui, &run_cli},
+};
+
 int main(int argc, char *argv[])
 {
     try {
@@ -38,24 +62,7 @@ int main(int argc, char *argv[])
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
 
         auto config = std::make_shared<Config>(app);
-
-        if (config->ui() == Config::UI::FullGui) {
-            MediaCopierDialogFull dialog;
-            dialog.init(config, app);
-            dialog.show();
-            return app.exec();
-
-        } else if (config->ui() == Config::UI::SlimGui) {
-            MediaCopierDialogSlim dialog;
-            dialog.init(config, app);
-            dialog.show();
-            return app.exec();
-
-        } else {
-            Worker worker{*config};
-            worker.start();
-            return app.exec();
-        }
+        return uiFuncMap.at(config->ui())(app, config);
 
     } catch (const std::exception& err) {
         spdlog::error(err.what());
