@@ -14,6 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
 
@@ -29,9 +31,8 @@
 
 #include <spdlog/spdlog.h>
 
-namespace mediacopier {
-
 namespace fs = std::filesystem;
+namespace mc = mediacopier;
 
 auto valid_media_files(const fs::path& path)
 {
@@ -41,7 +42,7 @@ auto valid_media_files(const fs::path& path)
         return fs::is_regular_file(path);
     };
 
-    static auto is_valid = [](const FileInfoPtr& file) {
+    static auto is_valid = [](const mc::FileInfoPtr& file) {
         return file != nullptr;
     };
 
@@ -49,7 +50,7 @@ auto valid_media_files(const fs::path& path)
                 fs::recursive_directory_iterator(path),
                 fs::recursive_directory_iterator())
             | views::filter(is_regular_file)
-            | views::transform(to_file_info_ptr)
+            | views::transform(mc::to_file_info_ptr)
             | views::filter(is_valid);
 }
 
@@ -65,7 +66,7 @@ auto execute(
         const std::string& pattern,
         std::function<void(const fs::path&, const fs::path&)> callbackStatus)
 {
-    auto destRegister = std::make_unique<FileRegister>(outputDir, pattern);
+    auto destRegister = std::make_unique<mc::FileRegister>(outputDir, pattern);
     fs::path lastPath = "";
 
     try {
@@ -87,5 +88,3 @@ auto execute(
 
     return std::move(destRegister);
 }
-
-} // namespace mediacopier

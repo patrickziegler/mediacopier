@@ -14,13 +14,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "core.hpp"
 #include "worker.hpp"
 
 #ifdef ENABLE_KDE
 #include <kde/KMediaCopierJob.hpp>
 #endif
-
-#include <mediacopier/mediacopier.hpp>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
@@ -34,14 +33,14 @@ namespace fs = std::filesystem;
 
 namespace {
 
-using ExecFuncType = std::function<std::unique_ptr<mediacopier::FileRegister>(const fs::path&, const fs::path&, const std::string&, std::function<void(const fs::path&, const fs::path&)>)>;
+using ExecFuncType = std::function<std::unique_ptr<mc::FileRegister>(const fs::path&, const fs::path&, const std::string&, std::function<void(const fs::path&, const fs::path&)>)>;
 
 static const std::map<Config::Command, ExecFuncType> execFuncMap = {
-    {Config::Command::COPY, &mediacopier::execute<mediacopier::FileOperationCopy>},
-    {Config::Command::COPY_JPEG, &mediacopier::execute<mediacopier::FileOperationCopyJpeg>},
-    {Config::Command::MOVE, &mediacopier::execute<mediacopier::FileOperationMove>},
-    {Config::Command::MOVE_JPEG, &mediacopier::execute<mediacopier::FileOperationMoveJpeg>},
-    {Config::Command::SIMULATE, &mediacopier::execute<mediacopier::FileOperationSimulate>}};
+    {Config::Command::COPY, &execute<mc::FileOperationCopy>},
+    {Config::Command::COPY_JPEG, &execute<mc::FileOperationCopyJpeg>},
+    {Config::Command::MOVE, &execute<mc::FileOperationMove>},
+    {Config::Command::MOVE_JPEG, &execute<mc::FileOperationMoveJpeg>},
+    {Config::Command::SIMULATE, &execute<mc::FileOperationSimulate>}};
 
 static volatile std::atomic<bool> operationCancelled(false);
 static volatile std::atomic<bool> operationSuspended(false);
@@ -138,7 +137,7 @@ void Worker::exec()
     };
 
     spdlog::info("Checking input directory..");
-    m_fileCount = mediacopier::valid_media_file_count(m_config.inputDir());
+    m_fileCount = valid_media_file_count(m_config.inputDir());
 
     auto reg = execFuncMap.at(m_config.command())(
                 m_config.inputDir(), m_config.outputDir(),
