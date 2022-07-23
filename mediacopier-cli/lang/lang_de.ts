@@ -2,6 +2,26 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
+    <name>Command</name>
+    <message>
+        <location filename="../source/config.cpp" line="34"/>
+        <location filename="../source/config.cpp" line="35"/>
+        <source>Copy</source>
+        <translation>Kopieren</translation>
+    </message>
+    <message>
+        <location filename="../source/config.cpp" line="36"/>
+        <location filename="../source/config.cpp" line="37"/>
+        <source>Move</source>
+        <translation>Verschieben</translation>
+    </message>
+    <message>
+        <location filename="../source/config.cpp" line="38"/>
+        <source>Simulate</source>
+        <translation>Simulation</translation>
+    </message>
+</context>
+<context>
     <name>KMediaCopierJob</name>
     <message>
         <location filename="../source/kde/KMediaCopierJob.cpp" line="49"/>
@@ -53,23 +73,6 @@
 </context>
 <context>
     <name>QObject</name>
-    <message>
-        <location filename="../source/config.cpp" line="34"/>
-        <location filename="../source/config.cpp" line="35"/>
-        <source>Copy</source>
-        <translation>Kopieren</translation>
-    </message>
-    <message>
-        <location filename="../source/config.cpp" line="36"/>
-        <location filename="../source/config.cpp" line="37"/>
-        <source>Move</source>
-        <translation>Verschieben</translation>
-    </message>
-    <message>
-        <location filename="../source/config.cpp" line="38"/>
-        <source>Simulate</source>
-        <translation>Simulation</translation>
-    </message>
     <message>
         <location filename="../source/gui/MediaCopierParamWidget.cpp" line="98"/>
         <source>Source folder</source>

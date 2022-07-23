@@ -31,11 +31,11 @@ static const std::map<QString, Config::Command> commands = {
 };
 
 static const std::map<Config::Command, QString> commandStrings = {
-    {Config::Command::COPY, QObject::tr("Copy")},
-    {Config::Command::COPY_JPEG, QObject::tr("Copy")},
-    {Config::Command::MOVE, QObject::tr("Move")},
-    {Config::Command::MOVE_JPEG, QObject::tr("Move")},
-    {Config::Command::SIMULATE, QObject::tr("Simulate")}
+    {Config::Command::COPY, QT_TRANSLATE_NOOP("Command", "Copy")},
+    {Config::Command::COPY_JPEG, QT_TRANSLATE_NOOP("Command", "Copy")},
+    {Config::Command::MOVE, QT_TRANSLATE_NOOP("Command", "Move")},
+    {Config::Command::MOVE_JPEG, QT_TRANSLATE_NOOP("Command", "Move")},
+    {Config::Command::SIMULATE, QT_TRANSLATE_NOOP("Command", "Simulate")}
 };
 
 Config::Config(const QApplication& app)
@@ -151,5 +151,5 @@ void Config::setOutputDir(const QString& outputDir)
 
 const QString Config::commandString(const Command& command)
 {
-    return commandStrings.at(command);
+    return QApplication::translate("Command", commandStrings.at(command).toStdString().c_str());
 }
