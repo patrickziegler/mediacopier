@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/patrickziegler/MediaCopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/MediaCopier?branch=master)
 ![C++ Version](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
 
-### Features
+## Features
 This software searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
 The original creation date is used to **generate a folder structure** and unique filenames.
 Raw image files and videos are supported as well.
@@ -32,26 +32,21 @@ git clone --recursive https://github.com/patrickziegler/MediaCopier.git
 cd MediaCopier && mkdir build && cd build
 ```
 
-Build for installing to `/usr/local` *(default)*
+Build and install the package
 ```sh
-cmake .. && make -j$(nproc)
+cmake -DCMAKE_INSTALL_PREFIX=/usr .. && make -j$(nproc) && sudo make install
 ```
 
-Build for installing to another destination *(alternative)*
-```sh
-export INSTALL_PREFIX=~/.local
+Available cmake flags
 
-cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX .. && make -j$(nproc)
-
-# optional
-export $PATH=$PATH:$INSTALL_PREFIX/bin
-export $LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALL_PREFIX/lib
-```
-
-Execute installation
-```sh
-make install
-```
+| Flag                   | Description                               | Default   |
+|------------------------|-------------------------------------------|-----------|
+| `ENABLE_CLI`           | Build Qt based cli tool                   | `ON`      |
+| `ENABLE_KDE`           | Enable KDE integration for cli tool       | `OFF`     |
+| `ENABLE_SHARED_LIB`    | Build shared instead of static lib        | `OFF`     |
+| `ENABLE_TEST`          | Enable test targets                       | `OFF`     |
+| `ENABLE_TEST_COVERAGE` | Enable test and coverage targets          | `OFF`     |
+| `INSTALL_DEV_FILES`    | Install library headers and cmake targets | `OFF`     |
 
 ### :factory: Build and Test with Docker
 
@@ -77,7 +72,7 @@ cmake -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
 cmake -DENABLE_TEST_COVERAGE=ON /usr/src/mediacopier/ && make -j $(nproc) && make coverage
 ```
 
-## Build Instructions for Windows
+### :paperclip: Build Instructions for Windows
 
 Prepare the [vcpkg](https://github.com/microsoft/vcpkg#using-vcpkg-with-cmake) environment like described in a very helpful [article by Sam Elborai](https://sam.elborai.me/articles/vscode-cpp-dev-environment-2020/)
 ```sh
@@ -92,11 +87,19 @@ cmake -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}\vcpkg\scripts\buildsystems\vcpkg.cmake
 cmake --build build --config Release
 ```
 
-## Translations
+### :speech_balloon: Translations
 
 ```sh
 linguist-qt5 mediacopier-cli/lang/lang_de.ts
 ```
+
+## Demo
+
+The tool can be built with seamless integration into the KDE desktop environment (`ENABLE_KDE=ON`).
+It is then available in the context menu for any given folder and will report its progress via the native notification system.
+
+[comment]: https://imgur.com/a/8vp34Q7
+![](https://i.imgur.com/lPUpAyN.gif)
 
 ## License
 
