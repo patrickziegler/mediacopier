@@ -57,11 +57,6 @@ docker build \
     --build-arg USER_UID=$(id -u) \
     --build-arg USER_GID=$(id -g) \
     -t mediacopier-build .
-docker build \
-    --build-arg USER_NAME=root \
-    --build-arg USER_UID=0 \
-    --build-arg USER_GID=0 \
-    -t mediacopier-build .
 docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
 ```
 
@@ -98,8 +93,8 @@ linguist-qt5 mediacopier-cli/lang/lang_de.ts
 The tool can be built with seamless integration into the KDE desktop environment (`ENABLE_KDE=ON`).
 It is then available in the context menu for any given folder and will report its progress via the native notification system.
 
-[comment]: https://imgur.com/a/8vp34Q7
-![](https://i.imgur.com/lPUpAyN.gif)
+<!--gif was created with 'ffmpeg -i capture.mp4 -r 10 -vf "fps=10,scale=830:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 demo.gif'-->
+![](https://i.imgur.com/LF5Vnj9.gif)
 
 ## License
 
