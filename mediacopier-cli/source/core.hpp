@@ -59,23 +59,23 @@ auto valid_media_file_count(const fs::path& inputDir) -> size_t
     return ranges::distance(valid_media_files(inputDir));
 }
 
-template <typename T>
+template <typename Operation>
 auto execute(
         const fs::path& inputDir,
         const fs::path& outputDir,
         const std::string& pattern,
-        std::function<void(const fs::path&, const fs::path&)> callbackStatus)
+        const std::function<void(const fs::path&, const fs::path&)> callbackStatus)
 {
     auto destRegister = std::make_unique<mc::FileRegister>(outputDir, pattern);
     fs::path lastPath = "";
 
     try {
         for (auto file : valid_media_files(inputDir)) {
-            auto destPath = destRegister->add(file);
+            const auto destPath = destRegister->add(file);
 
             if (destPath.has_value()) {
                 lastPath = destPath.value();
-                T op(destPath.value());
+                Operation op(destPath.value());
                 file->accept(op);
             }
 

@@ -20,7 +20,7 @@
 
 class Status {
 public:
-    Status() {};
+    Status() {}
     Status(Config::Command command,
            std::filesystem::path inputPath,
            std::filesystem::path outputPath,
