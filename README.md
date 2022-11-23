@@ -1,16 +1,16 @@
-# :camera: MediaCopier
+# :camera: mediacopier
 
 [![Build Status](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml/badge.svg?branch=master)](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml?query=branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/patrickziegler/MediaCopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/MediaCopier?branch=master)
 ![C++ Version](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
 
 ## Features
-This software searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
+This app searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
 The original creation date is used to **generate a folder structure** and unique filenames.
-Raw image files and videos are supported as well.
+It supports a wide variety of image and videos formats (including raw) and features **lossless on-the-fly auto-rotation of JPEG files**.
 
-This library supports **lossless auto-rotation of JPEG files with known orientation** (on the fly) when image dimensions are appropriate (divisible by 16).
-If the orientation is unkown or the dimensions are inconvenient they will be copied as they are.
+<!--gif was created with 'ffmpeg -i capture.mp4 -r 10 -vf "fps=10,scale=830:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 demo.gif'-->
+The app focusses on integrating into the native [KDE Plasma](https://kde.org/de/) notification system and context menu ([screenshot](https://i.imgur.com/LF5Vnj9.mp4)) but other desktop environments are supported as well.
 
 ## Getting Started
 
@@ -81,20 +81,6 @@ Use the vcpkg toolchain file with cmake
 cmake -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -B build -S .
 cmake --build build --config Release
 ```
-
-### :speech_balloon: Translations
-
-```sh
-linguist-qt5 mediacopier-cli/lang/lang_de.ts
-```
-
-## Demo
-
-The tool can be built with seamless integration into the KDE desktop environment (`ENABLE_KDE=ON`).
-It is then available in the context menu for any given folder and will report its progress via the native notification system.
-
-<!--gif was created with 'ffmpeg -i capture.mp4 -r 10 -vf "fps=10,scale=830:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 demo.gif'-->
-![](https://i.imgur.com/LF5Vnj9.gif)
 
 ## License
 
