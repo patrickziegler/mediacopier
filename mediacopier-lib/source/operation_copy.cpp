@@ -16,9 +16,9 @@
 
 #include <mediacopier/operation_copy.hpp>
 
-#include <mediacopier/error.hpp>
 #include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/file_info_video.hpp>
+#include <spdlog/spdlog.h>
 
 namespace fs = std::filesystem;
 
@@ -27,12 +27,14 @@ namespace mediacopier {
 auto FileOperationCopy::copyFile(const AbstractFileInfo& file) const -> void
 {
     std::error_code err;
-
-    fs::create_directories(m_destination.parent_path());
+    fs::create_directories(m_destination.parent_path(), err);
+    if (err.value()) {
+        spdlog::warn("Could not create parent path (%s): %s", m_destination.parent_path().string(), err.message());
+        return;
+    }
     fs::copy_file(file.path(), m_destination, fs::copy_options::overwrite_existing, err);
-
-    if (err.value() > 0) {
-        throw FileOperationError{err.message()};
+    if (err.value()) {
+        spdlog::warn("Could not copy file (%s): %s", file.path().string(), err.message());
     }
 }
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 Patrick Ziegler <zipat@proton.me>
+/* Copyright (C) 2022 Patrick Ziegler <zipat@proton.me>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,10 @@
 
 #pragma once
 
-#include <mediacopier/operation_move.hpp>
+#include <mediacopier/file_info_image_jpeg.hpp>
 
 namespace mediacopier {
 
-class FileOperationMoveJpeg : public FileOperationMove {
-public:
-    using FileOperationMove::FileOperationMove;
-    auto visit(const FileInfoImage& file) -> void override;
-    auto visit(const FileInfoImageJpeg& file) -> void override;
-    auto visit(const FileInfoVideo& file) -> void override;
-protected:
-    auto moveFileJpeg(const FileInfoImageJpeg& file) const -> void;
-};
+auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const std::filesystem::path& dest) noexcept -> bool;
 
 } // namespace mediacopier

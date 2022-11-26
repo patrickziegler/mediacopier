@@ -27,7 +27,7 @@ public:
     auto visit(const FileInfoImageJpeg& file) -> void override;
     auto visit(const FileInfoVideo& file) -> void override;
 protected:
-    auto copyJpeg(const FileInfoImageJpeg& file) const -> void;
+    auto copyFileJpeg(const FileInfoImageJpeg& file) const -> void;
 };
 
 } // namespace mediacopier

@@ -18,27 +18,39 @@
 
 #include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/file_info_video.hpp>
+#include <spdlog/spdlog.h>
 
 namespace fs = std::filesystem;
 
 namespace mediacopier {
 
+auto FileOperationMove::moveFile(const AbstractFileInfo& file) const -> void
+{
+    std::error_code err;
+    fs::create_directories(m_destination.parent_path(), err);
+    if (err.value()) {
+        spdlog::warn("Could not create parent path (%s): %s", m_destination.parent_path().string(), err.message());
+        return;
+    }
+    fs::rename(file.path(), m_destination, err);
+    if (err.value()) {
+        spdlog::warn("Could not move file (%s): %s", file.path().string(), err.message());
+    }
+}
+
 auto FileOperationMove::visit(const FileInfoImage& file) -> void
 {
-    copyFile(file);
-    fs::remove(file.path());
+    moveFile(file);
 }
 
 auto FileOperationMove::visit(const FileInfoImageJpeg& file) -> void
 {
-    copyFile(file);
-    fs::remove(file.path());
+    moveFile(file);
 }
 
 auto FileOperationMove::visit(const FileInfoVideo& file) -> void
 {
-    copyFile(file);
-    fs::remove(file.path());
+    moveFile(file);
 }
 
 } // namespace mediacopier

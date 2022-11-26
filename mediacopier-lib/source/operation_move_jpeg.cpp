@@ -16,29 +16,47 @@
 
 #include <mediacopier/operation_move_jpeg.hpp>
 
-#include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/file_info_video.hpp>
+#include <mediacopier/jpeg.hpp>
+#include <spdlog/spdlog.h>
 
 namespace fs = std::filesystem;
 
 namespace mediacopier {
 
+constexpr static const auto upright = FileInfoImageJpeg::Orientation::ROT_0;
+
+auto FileOperationMoveJpeg::moveFileJpeg(const FileInfoImageJpeg& file) const -> void
+{
+    std::error_code err;
+    fs::create_directories(m_destination.parent_path(), err);
+    if (err.value()) {
+        spdlog::warn("Could not create parent path (%s): %s", m_destination.parent_path().string(), err.message());
+        return;
+    }
+    if (file.orientation() != upright && copy_rotate_jpeg(file, m_destination)) {
+        fs::remove(file.path());
+        return;
+    }
+    fs::rename(file.path(), m_destination, err);
+    if (err.value()) {
+        spdlog::warn("Could not move jpeg file (%s): %s", file.path().string(), err.message());
+    }
+}
+
 auto FileOperationMoveJpeg::visit(const FileInfoImage& file) -> void
 {
-    copyFile(file);
-    fs::remove(file.path());
+    moveFile(file);
 }
 
 auto FileOperationMoveJpeg::visit(const FileInfoImageJpeg& file) -> void
 {
-    copyJpeg(file);
-    fs::remove(file.path());
+    moveFileJpeg(file);
 }
 
 auto FileOperationMoveJpeg::visit(const FileInfoVideo& file) -> void
 {
-    copyFile(file);
-    fs::remove(file.path());
+    moveFile(file);
 }
 
 } // namespace mediacopier

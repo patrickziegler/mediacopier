@@ -19,8 +19,6 @@
 #include <mediacopier/abstract_file_info.hpp>
 #include <mediacopier/abstract_operation.hpp>
 
-#include <filesystem>
-
 namespace mediacopier {
 
 class FileOperationCopy : public AbstractFileOperation {
