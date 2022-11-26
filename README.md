@@ -1,11 +1,8 @@
 # :camera: mediacopier
 
 [![Build Status](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml/badge.svg?branch=master)](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml?query=branch%3Amaster)
-[![Coverage Status](https://coveralls.io/repos/github/patrickziegler/MediaCopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/MediaCopier?branch=master)
-![C++ Version](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
 
-## Features
-This app searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
+This is an app that searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
 The original creation date is used to **generate a folder structure** and unique filenames.
 It supports a wide variety of image and videos formats (including raw) and features **lossless on-the-fly auto-rotation of JPEG files**.
 
@@ -27,6 +24,7 @@ Direct dependencies (cli):
 - Qt5 (https://doc.qt.io/qt-5/)
 
 Clone this repository and create a build directory
+
 ```sh
 git clone --recursive https://github.com/patrickziegler/MediaCopier.git
 cd MediaCopier && mkdir build && cd build
@@ -50,7 +48,8 @@ Available cmake flags
 
 ### :factory: Build and Test with Docker
 
-Build an image and run it as a containerized build environment.
+Build an image and run it as a containerized test environment.
+
 ```sh
 docker build \
     --build-arg USER_NAME=$(whoami) \
@@ -60,10 +59,15 @@ docker build \
 docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
 ```
 
-Inside the container, run the following commands.
-All build-time dependencies are solved already.
+Inside the container, run the following commands
+
 ```sh
 cmake -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
+```
+
+Coverage reports are created with the following commands (they can also be found [here](https://coveralls.io/github/patrickziegler/MediaCopier))
+
+```sh
 cmake -DENABLE_TEST_COVERAGE=ON /usr/src/mediacopier/ && make -j $(nproc) && make coverage
 ```
 
