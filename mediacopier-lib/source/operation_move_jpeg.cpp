@@ -31,7 +31,7 @@ auto FileOperationMoveJpeg::moveFileJpeg(const FileInfoImageJpeg& file) const ->
     std::error_code err;
     fs::create_directories(m_destination.parent_path(), err);
     if (err.value()) {
-        spdlog::warn("Could not create parent path (%s): %s", m_destination.parent_path().string(), err.message());
+        spdlog::warn("Could not create parent path ({0}): {1}", m_destination.parent_path().string(), err.message());
         return;
     }
     if (file.orientation() != upright && copy_rotate_jpeg(file, m_destination) && reset_exif_orientation(m_destination)) {
@@ -40,7 +40,7 @@ auto FileOperationMoveJpeg::moveFileJpeg(const FileInfoImageJpeg& file) const ->
     }
     fs::rename(file.path(), m_destination, err);
     if (err.value()) {
-        spdlog::warn("Could not move jpeg file (%s): %s", file.path().string(), err.message());
+        spdlog::warn("Could not move jpeg file ({0}): {1}", file.path().string(), err.message());
     }
 }
 

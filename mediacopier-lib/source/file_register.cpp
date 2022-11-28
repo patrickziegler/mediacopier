@@ -116,7 +116,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
         if (item != m_register.end()) {
             const auto& knownFile = item->second;
             if (is_duplicate(file->path(), knownFile->path())) {
-                spdlog::info("Ignoring duplicate: " + file->path().filename().string() + " same as " + knownFile->path().filename().string());
+                spdlog::info("Ignoring duplicate: {0} same as {1}", file->path().filename().string(), knownFile->path().filename().string());
                 return {};
             }
             // possible duplicate of 'item' at destination
@@ -127,7 +127,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
 
         if (fs::exists(dest)) {
             if (is_duplicate(file->path(), dest)) {
-                spdlog::info("Ignoring obsolete: " + file->path().filename().string() + " same as " + dest.filename().string());
+                spdlog::info("Ignoring obsolete: {0} same as {1}", file->path().filename().string(), dest.filename().string());
                 return {};
             }
             // possible duplicate of 'dest'
@@ -152,7 +152,7 @@ auto FileRegister::removeDuplicates() -> void
     for (const auto& [path, conflicts] : m_conflicts) {
         for (const auto& conflict : conflicts) {
             if (fs::exists(path) && fs::exists(conflict) && is_duplicate(path, conflict)) {
-                spdlog::info("Removing duplicate: " + path + " same as " + conflict.string());
+                spdlog::info("Removing duplicate: {0} same as {1}", path, conflict.string());
                 fs::remove(path);
                 break;
             }

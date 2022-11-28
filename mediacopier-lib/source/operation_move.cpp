@@ -29,12 +29,12 @@ auto FileOperationMove::moveFile(const AbstractFileInfo& file) const -> void
     std::error_code err;
     fs::create_directories(m_destination.parent_path(), err);
     if (err.value()) {
-        spdlog::warn("Could not create parent path (%s): %s", m_destination.parent_path().string(), err.message());
+        spdlog::warn("Could not create parent path ({0}): {1}", m_destination.parent_path().string(), err.message());
         return;
     }
     fs::rename(file.path(), m_destination, err);
     if (err.value()) {
-        spdlog::warn("Could not move file (%s): %s", file.path().string(), err.message());
+        spdlog::warn("Could not move file ({0}): {1}", file.path().string(), err.message());
     }
 }
 
