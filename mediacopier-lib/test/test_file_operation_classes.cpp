@@ -18,7 +18,7 @@
 
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
-#include <mediacopier/operation_move.hpp>
+#include <mediacopier/operation_copy_jpeg.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
 #include <mediacopier/operation_simulate.hpp>
 

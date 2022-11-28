@@ -65,7 +65,7 @@ TEST_F(FileRegisterTests, multipleAddSameSource)
 TEST_F(FileRegisterTests, multipleAddDifferentSource)
 {
     const auto& srcPath = m_testDataDirOrig / "lena64_rot270.jpg";
-    const auto& srcPathMod = m_testDataDirOrig / "lena64_rot270_orientation_missing.jpg";
+    const auto& srcPathMod = m_testDataDirOrig / "lena64_rot270_low_quality.jpg";
 
     executeCopyOperation(srcPath);
 

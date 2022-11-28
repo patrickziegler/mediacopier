@@ -25,18 +25,21 @@
 
 namespace fs = std::filesystem;
 
-constexpr static const size_t BUFFER_SIZE = 1024;
-constexpr static const size_t CHUNKS_MAX = 32;
+constexpr static const size_t BUFFER_SIZE = 64;
+constexpr static const size_t CHUNKS_MAX = 128;
 
 static auto seek_jpeg_data(std::ifstream* input) noexcept -> bool
 {
-    uint8_t s1 = 0, s2 = 0;
-    uint16_t buf = 0;
+    uint8_t s1=0, s2=0;
+    uint16_t buf=0;
 
     input->seekg(2, std::ios_base::beg);
 
     while (input->good()) {
         input->read(reinterpret_cast<char*>(&buf), 2);
+        /* data begins after section code 0xdaff was found,
+         * https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
+         * */
         if (buf == 0xdaff) {
             return true;
         }
@@ -55,10 +58,10 @@ static auto prepare_input_stream(const fs::path& file) -> std::unique_ptr<std::i
     }
     auto input = std::make_unique<std::ifstream>(file,  std::ios_base::in | std::ios_base::binary);
 
-    uint16_t buf;
-    input->read(reinterpret_cast<char*>(&buf), 2);
+    uint16_t magic;
+    input->read(reinterpret_cast<char*>(&magic), 2);
 
-    if (buf == 0xd8ff) { // is jpeg file
+    if (magic == 0xd8ff) { // is jpeg file
         seek_jpeg_data(input.get());
     }
     return input;
@@ -75,7 +78,9 @@ static auto is_duplicate(const fs::path& file1, const fs::path& file2) -> bool
     size_t chunks_left = CHUNKS_MAX;
 
     while (chunks_left > 0) {
-        if (!input1->good() && !input2->good()) {
+        if (input1->eof() && input2->eof()) {
+            break;
+        } else if (!input1->good() || !input2->good()) {
             return false;
         }
         input1->read(buffer.data(), BUFFER_SIZE);

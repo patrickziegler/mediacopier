@@ -52,6 +52,7 @@ IMG_64_ROT270="${DATA_PATH}/lena64_rot270.jpg"
 IMG_64_ROT270_COPY="${DATA_PATH}/lena64_rot270_copy.png"
 IMG_64_ROT270_COPY_TIMESTAMP_MISSING="${DATA_PATH}/lena64_rot270_timestamp_missing.jpg"
 IMG_64_ROT270_COPY_ORIENTATION_MISSING="${DATA_PATH}/lena64_rot270_orientation_missing.jpg"
+IMG_64_ROT270_COPY_LOW_QUALITY="${DATA_PATH}/lena64_rot270_low_quality.jpg"
 
 IMG_50_ROT0="${DATA_PATH}/lena50_rot0.jpg"
 IMG_50_ROT90="${DATA_PATH}/lena50_rot90.jpg"
@@ -101,6 +102,8 @@ exiftool -overwrite_original -DateTimeOriginal= "${IMG_64_ROT270_COPY_TIMESTAMP_
 
 cp "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY_ORIENTATION_MISSING}"
 exiftool -overwrite_original -Orientation= "${IMG_64_ROT270_COPY_ORIENTATION_MISSING}"
+
+convert "${IMG_64_ROT270}" -quality 25 "${IMG_64_ROT270_COPY_LOW_QUALITY}"
 
 # --- Create image with corrupted rotation as described in [2]
 
