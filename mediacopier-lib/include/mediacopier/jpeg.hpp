@@ -21,5 +21,6 @@
 namespace mediacopier {
 
 auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const std::filesystem::path& dest) noexcept -> bool;
+auto reset_exif_orientation(const std::filesystem::path& dest) noexcept -> bool;
 
 } // namespace mediacopier

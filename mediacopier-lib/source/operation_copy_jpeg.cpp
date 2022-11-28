@@ -34,7 +34,7 @@ auto FileOperationCopyJpeg::copyFileJpeg(const FileInfoImageJpeg& file) const ->
         spdlog::warn("Could not create parent path (%s): %s", m_destination.parent_path().string(), err.message());
         return;
     }
-    if (file.orientation() != upright && copy_rotate_jpeg(file, m_destination)) {
+    if (file.orientation() != upright && copy_rotate_jpeg(file, m_destination) && reset_exif_orientation(m_destination)) {
         return;
     }
     fs::copy_file(file.path(), m_destination, fs::copy_options::overwrite_existing, err);

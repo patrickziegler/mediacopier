@@ -22,9 +22,32 @@ extern "C"
 #include <turbojpeg.h>
 }
 
+namespace fs = std::filesystem;
+
 namespace mediacopier {
 
-auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const std::filesystem::path& dest) noexcept -> bool
+auto reset_exif_orientation(const fs::path& dest) noexcept -> bool
+{
+    try {
+        std::unique_ptr<Exiv2::Image> image;
+        image = Exiv2::ImageFactory::open(dest.string());
+        image->readMetadata();
+
+        auto exif = image->exifData();
+        exif["Exif.Image.Orientation"] = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
+
+        image->setExifData(exif);
+        image->writeMetadata();
+
+    } catch(const std::exception& err) {
+        spdlog::warn("Could not reset exif orientation tag (" + dest.string() + "): " + err.what());
+        return false;
+    }
+
+    return true;
+}
+
+auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexcept -> bool
 {
     using unique_file_t = std::unique_ptr<std::FILE, decltype(&std::fclose)>;
     using unique_buf_t = std::unique_ptr<unsigned char, decltype(&tjFree)>;
@@ -118,24 +141,6 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const std::filesystem::path
     }
 
     tjDestroy(tjInstance);
-
-    // ----------------- reset exif orientation
-
-    try {
-        std::unique_ptr<Exiv2::Image> image;
-        image = Exiv2::ImageFactory::open(dest.string());
-        image->readMetadata();
-
-        auto exif = image->exifData();
-        exif["Exif.Image.Orientation"] = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
-
-        image->setExifData(exif);
-        image->writeMetadata();
-
-    } catch(std::exception e) {
-        spdlog::warn("Could not reset exif orientation tag (%s): %s", dest.string(), e.what());
-        return false;
-    }
 
     return true;
 }
