@@ -37,7 +37,7 @@
 <context>
     <name>MediaCopierLogWidget</name>
     <message>
-        <location filename="../source/gui/MediaCopierLogWidget.ui" line="24"/>
+        <location filename="../source/gui/MediaCopierLogWidget.ui" line="30"/>
         <source>Log</source>
         <translation>Protokoll</translation>
     </message>
