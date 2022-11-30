@@ -18,8 +18,32 @@
 
 #include <mediacopier/abstract_operation.hpp>
 #include <mediacopier/error.hpp>
+#include <spdlog/spdlog.h>
+
+namespace fs = std::filesystem;
 
 namespace mediacopier {
+
+auto reset_exif_orientation(const fs::path& path) noexcept -> bool
+{
+    try {
+        std::unique_ptr<Exiv2::Image> image;
+        image = Exiv2::ImageFactory::open(path.string());
+        image->readMetadata();
+
+        auto exif = image->exifData();
+        exif["Exif.Image.Orientation"] = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
+
+        image->setExifData(exif);
+        image->writeMetadata();
+
+    } catch(const std::exception& err) {
+        spdlog::warn("Could not reset exif orientation tag ({0}): {1}", path.string(), err.what());
+        return false;
+    }
+
+    return true;
+}
 
 FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif) : FileInfoImage{std::move(path), exif}
 {

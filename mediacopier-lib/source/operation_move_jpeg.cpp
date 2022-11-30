@@ -17,7 +17,7 @@
 #include <mediacopier/operation_move_jpeg.hpp>
 
 #include <mediacopier/file_info_video.hpp>
-#include <mediacopier/jpeg.hpp>
+#include <mediacopier/operation_copy_jpeg.hpp>
 #include <spdlog/spdlog.h>
 
 namespace fs = std::filesystem;

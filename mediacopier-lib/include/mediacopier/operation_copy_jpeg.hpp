@@ -16,9 +16,12 @@
 
 #pragma once
 
+#include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/operation_copy.hpp>
 
 namespace mediacopier {
+
+auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const std::filesystem::path& dest) noexcept -> bool;
 
 class FileOperationCopyJpeg : public FileOperationCopy {
 public:

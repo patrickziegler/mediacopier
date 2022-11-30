@@ -20,6 +20,8 @@
 
 namespace mediacopier {
 
+auto reset_exif_orientation(const std::filesystem::path& path) noexcept -> bool;
+
 class FileInfoImageJpeg : public FileInfoImage {
 public:
     enum class Orientation {
