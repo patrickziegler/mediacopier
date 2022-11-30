@@ -64,7 +64,7 @@ static auto prepare_input_stream(const fs::path& file) -> std::unique_ptr<std::i
     if (magic == 0xd8ff) { // is jpeg file
         seek_jpeg_data(input.get());
     }
-    return input;
+    return std::move(input);
 }
 
 static auto is_duplicate(const fs::path& file1, const fs::path& file2) -> bool
@@ -149,8 +149,10 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
 
 auto FileRegister::removeDuplicates() -> void
 {
-    for (const auto& [path, conflicts] : m_conflicts) {
-        for (const auto& conflict : conflicts) {
+    for (const auto& [path, conflicts] : m_conflicts)
+    {
+        for (const auto& conflict : conflicts)
+        {
             if (fs::exists(path) && fs::exists(conflict) && is_duplicate(path, conflict)) {
                 spdlog::info("Removing duplicate: {0} same as {1}", path, conflict.string());
                 fs::remove(path);
@@ -170,7 +172,6 @@ auto FileRegister::constructDestinationPath(const FileInfoPtr& file, size_t suff
     if (suffix > 0) {
         os << "_" << suffix;
     }
-
     os << file->path().extension().string();
     return {os.str()};
 }
