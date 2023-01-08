@@ -25,13 +25,16 @@ RUN apt-get update && apt-get install -y \
 ARG USER_NAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
-ARG BUILD_DIR=/tmp/build
 
 RUN groupadd -g ${USER_GID} ${USER_NAME}; \
-    useradd -l --uid ${USER_UID} --gid ${USER_GID} ${USER_NAME}; \
-    mkdir -p ${BUILD_DIR}; \
-    chown ${USER_NAME} ${BUILD_DIR}
+    useradd -l --uid ${USER_UID} --gid ${USER_GID} ${USER_NAME}
 
-USER ${USER_NAME}
+# Use docker run -u <USER_NAME> instead of setting the user here
+#
+# Not setting the user here allows to use the same Dockerfile with
+# rootless podman and not having to modify the shared folders with
+# `podman unshare chown ...`
+#
+# USER ${USER_NAME}
 
-WORKDIR ${BUILD_DIR}
+WORKDIR /tmp/build

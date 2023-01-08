@@ -46,26 +46,37 @@ Available cmake flags
 | `ENABLE_TEST_COVERAGE` | Enable test and coverage targets          | `OFF`     |
 | `INSTALL_DEV_FILES`    | Install library headers and cmake targets | `OFF`     |
 
-### :factory: Build and Test with Docker
+### :factory: Containerized build environment
 
-Build an image and run it as a containerized test environment.
+Build the container image as specified in the `Dockerfile`
 
 ```sh
 docker build \
-    --build-arg USER_NAME=$(whoami) \
+    --build-arg USER_NAME=$(id -nu) \
     --build-arg USER_UID=$(id -u) \
     --build-arg USER_GID=$(id -g) \
     -t mediacopier-build .
-docker run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
 ```
 
-Inside the container, run the following commands
+Start the build environment with the following command
+
+```sh
+docker run -it --rm -v ${PWD}:/usr/src/mediacopier -u $(id -nu) mediacopier-build
+```
+
+Alternatively, with rootless podman you don't have to specify the user
+
+```sh
+podman run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
+```
+
+Inside the container, run the test suite with the following commands
 
 ```sh
 cmake -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
 ```
 
-Coverage reports are created with the following commands (they can also be found [here](https://coveralls.io/github/patrickziegler/MediaCopier))
+Alternatively, create a test coverage report like this (result can also be found [here](https://coveralls.io/github/patrickziegler/MediaCopier))
 
 ```sh
 cmake -DENABLE_TEST_COVERAGE=ON /usr/src/mediacopier/ && make -j $(nproc) && make coverage
