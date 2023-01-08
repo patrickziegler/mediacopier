@@ -70,8 +70,6 @@ auto check_operation_state()
 
 auto valid_media_files(const fs::path& path)
 {
-    using namespace ranges;
-
     static auto is_regular_file = [](const fs::directory_entry& path) {
         return fs::is_regular_file(path);
     };
@@ -80,12 +78,12 @@ auto valid_media_files(const fs::path& path)
         return file != nullptr;
     };
 
-    return make_iterator_range(
+    return ranges::make_iterator_range(
                 fs::recursive_directory_iterator(path),
                 fs::recursive_directory_iterator())
-            | views::filter(is_regular_file)
-            | views::transform(mc::to_file_info_ptr)
-            | views::filter(is_valid);
+            | ranges::views::filter(is_regular_file)
+            | ranges::views::transform(mc::to_file_info_ptr)
+            | ranges::views::filter(is_valid);
 }
 
 auto valid_media_file_count(const fs::path& inputDir) -> size_t
