@@ -92,43 +92,21 @@ auto valid_media_file_count(const fs::path& inputDir) -> size_t
 }
 
 template <typename Operation>
-auto execute(
-        const fs::path& inputDir,
-        const fs::path& outputDir,
-        const std::string& pattern,
-        const std::function<void(const fs::path&, const fs::path&)> callbackStatus)
+auto execute(const fs::path& dest, mc::FileInfoPtr file) -> void
 {
-    auto destRegister = std::make_unique<mc::FileRegister>(outputDir, pattern);
-    fs::path lastPath = "";
-
-    try {
-        for (auto file : valid_media_files(inputDir)) {
-            const auto destPath = destRegister->add(file);
-
-            if (destPath.has_value()) {
-                lastPath = destPath.value();
-                Operation op(destPath.value());
-                file->accept(op);
-            }
-
-            callbackStatus(file->path(), lastPath);
-        }
-
-    } catch (const std::exception& err) {
-        spdlog::error(err.what());
-    }
-
-    return std::move(destRegister);
+    Operation op(dest);
+    file->accept(op);
 }
 
-using ExecFuncType = std::function<std::unique_ptr<mc::FileRegister>(const fs::path&, const fs::path&, const std::string&, std::function<void(const fs::path&, const fs::path&)>)>;
+typedef void (*ExecFuncPtr)(const fs::path&, mc::FileInfoPtr);
 
-static const std::map<Config::Command, ExecFuncType> execFuncMap = {
+static const std::map<Config::Command, ExecFuncPtr> execFuncMap = {
     {Config::Command::COPY, &execute<mc::FileOperationCopy>},
     {Config::Command::COPY_JPEG, &execute<mc::FileOperationCopyJpeg>},
     {Config::Command::MOVE, &execute<mc::FileOperationMove>},
     {Config::Command::MOVE_JPEG, &execute<mc::FileOperationMoveJpeg>},
-    {Config::Command::SIMULATE, &execute<mc::FileOperationSimulate>}};
+    {Config::Command::SIMULATE, &execute<mc::FileOperationSimulate>}
+};
 
 } // namespace
 
@@ -192,26 +170,34 @@ void Worker::exec()
         operationCancelled.store(true);
     });
 
-    m_progress = 1;
-
-    // create callback for status update
-    auto callbackStatus = [this](const fs::path& src, const fs::path& dst) {
-        if (check_operation_state()) {
-            throw std::runtime_error("Operation was cancelled..");
-        }
-        Q_EMIT status({m_config.command(), src, dst, m_fileCount, m_progress});
-        ++m_progress;
-    };
-
     spdlog::info("Checking input directory..");
     m_fileCount = valid_media_file_count(m_config.inputDir());
+    m_progress = 0;
 
-    auto reg = execFuncMap.at(m_config.command())(
-                m_config.inputDir(), m_config.outputDir(),
-                m_config.pattern(), callbackStatus);
+    auto reg = mc::FileRegister{m_config.outputDir(), m_config.pattern()};
+    auto execute = execFuncMap.at(m_config.command());
+    std::optional<fs::path> dest;
+
+    try {
+        for (auto file : valid_media_files(m_config.inputDir())) {
+            if (check_operation_state()) {
+                spdlog::info("Operation was cancelled..");
+                break;
+            }
+            ++m_progress;
+            if ((dest = reg.add(file)).has_value()) {
+                Q_EMIT status({m_config.command(), file->path(), dest.value(), m_fileCount, m_progress});
+                execute(dest.value(), file);
+            } else {
+                Q_EMIT status({m_config.command(), file->path(), "", m_fileCount, m_progress});
+            }
+        }
+    } catch (const std::exception& err) {
+        spdlog::error(err.what());
+    }
 
     spdlog::info("Removing duplicates..");
-    reg->removeDuplicates();
+    reg.removeDuplicates();
 
     spdlog::info("Writing config..");
     m_config.writeConfigFile();
