@@ -53,7 +53,11 @@ FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData
         throw FileInfoImageJpegError{"Field 'Exif.Image.Orientation' not found in metadata"};
     }
 
+#ifdef EXIV2_HAS_TOLONG
     auto orientation = item->toLong();
+#else
+    auto orientation = item->toInt64();
+#endif
 
     if (orientation < static_cast<long>(Orientation::ROT_0) || orientation > static_cast<long>(Orientation::ROT_90)) {
         throw FileInfoImageJpegError{"Invalid orientation value"};

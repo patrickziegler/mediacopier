@@ -44,7 +44,7 @@ Config::Config(const QApplication& app)
 
     parser.setApplicationDescription(
                 app.applicationName() +
-                ", Copyright (C) 2020-2022 Patrick Ziegler");
+                ", Copyright (C) 2020-2023 Patrick Ziegler");
 
     parser.addPositionalArgument(
                 "SRC", "Input directory", "[SRC");

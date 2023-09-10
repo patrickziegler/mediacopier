@@ -5,6 +5,10 @@ find_package(spdlog REQUIRED)
 pkg_check_modules(AVFORMAT REQUIRED libavformat libavutil)
 pkg_check_modules(LIBJPEG REQUIRED libturbojpeg)
 
+if(exiv2_VERSION VERSION_LESS "0.28")
+    add_compile_definitions(EXIV2_HAS_TOLONG=1)
+endif()
+
 set(TARGET_NAME ${MEDIACOPIER_LIB_TARGET_NAME})
 
 configure_file(
