@@ -30,6 +30,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES
 target_sources(${TARGET_NAME} PRIVATE
     "include/mediacopier/abstract_file_info.hpp"
     "include/mediacopier/abstract_operation.hpp"
+    "include/mediacopier/duplicate_check.hpp"
     "include/mediacopier/error.hpp"
     "include/mediacopier/file_info_factory.hpp"
     "include/mediacopier/file_info_image.hpp"
@@ -41,6 +42,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "include/mediacopier/operation_move.hpp"
     "include/mediacopier/operation_move_jpeg.hpp"
     "include/mediacopier/operation_simulate.hpp"
+    "source/duplicate_check.cpp"
     "source/file_info_factory.cpp"
     "source/file_info_image.cpp"
     "source/file_info_image_jpeg.cpp"
