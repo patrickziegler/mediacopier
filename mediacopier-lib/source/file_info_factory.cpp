@@ -29,40 +29,45 @@ namespace mediacopier {
 
 auto to_file_info_ptr(const fs::path& path) -> FileInfoPtr
 {
+    FileInfoPtr result = nullptr;
+
     try {
         auto image = Exiv2::ImageFactory::open(path.string());
 
-        if (image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
+        if (image->imageType() != Exiv2::ImageType::none && image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
             image->readMetadata();
 
-            if (image->mimeType() == "image/jpeg") {
-                try {
-                    return std::make_shared<FileInfoImageJpeg>(path, image->exifData());
-
-                }  catch (const FileInfoImageJpegError& err) {
-                    spdlog::warn(std::string{err.what()} + ": " + path.string());
+            try {
+                if (image->mimeType() == "image/jpeg") {
+                    result = std::make_shared<FileInfoImageJpeg>(path, image->exifData());
                 }
+            } catch (const FileInfoImageJpegError& err) {
+                spdlog::warn("Error reading jpeg metadata {0}: {1}", path.string(), err.what());
+            } catch (const FileInfoError& err) {
+                // ignore, will be reported anyway when file is parsed as 'FileInfoImage'
             }
 
-            return std::make_shared<FileInfoImage>(path, image->exifData());
+            try {
+                if (!result) {
+                    result = std::make_shared<FileInfoImage>(path, image->exifData());
+                }
+            } catch (const FileInfoError& err) {
+                spdlog::warn("Couldn't find image metadata in {0}: {1}", path.string(), err.what());
+            }
+
+        } else {
+            try {
+                result = std::make_shared<FileInfoVideo>(path);
+            }  catch (const FileInfoError& err) {
+                spdlog::warn("Couldn't find video metadata in {0}: {1}", path.string(), err.what());
+            }
         }
 
-    } catch (const FileInfoError&) {
-        return {};
-
-    } catch (const Exiv2::Error&) {
-        // this was not an image file
+    } catch (const Exiv2::Error& err) {
+        spdlog::warn("Is no media file: {0}", err.what());
     }
 
-    try {
-        return std::make_shared<FileInfoVideo>(path);
-    }  catch (const FileInfoError&) {
-        // this was not a video file
-    }
-
-    spdlog::info("Couldn't find metadata: " + path.string());
-
-    return {};
+    return result;
 }
 
 } // namespace mediacopier

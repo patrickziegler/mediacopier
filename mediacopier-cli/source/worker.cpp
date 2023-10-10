@@ -204,6 +204,7 @@ void Worker::exec()
 
     std::signal(SIGINT, SIG_DFL);
 
+    spdlog::info("Done");
     Q_EMIT execDone();
 }
 
