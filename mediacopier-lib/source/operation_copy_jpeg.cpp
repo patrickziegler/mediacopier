@@ -108,8 +108,7 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
 
     // ----------------- write output file
 
-    const char * c_path = reinterpret_cast<const char *>(dest.c_str());
-    unique_file_t outputFile(std::fopen(c_path, "wb"), &std::fclose);
+    unique_file_t outputFile(std::fopen(dest.string().c_str(), "wb"), &std::fclose);
 
     if (!outputFile) {
         tjDestroy(tjInstance);
