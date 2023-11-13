@@ -28,7 +28,8 @@ if(${MSVC})
     set(CLI_TARGET_FLAGS WIN32)
 endif()
 
-option(ENABLE_CLI "Build Qt based cli tool" ON)
+option(ENABLE_CLI "Build cli tool" ON)
+option(ENABLE_GUI "Build Qt based graphical user interface" OFF)
 option(ENABLE_KDE "Enable KDE integration for cli tool" OFF)
 option(ENABLE_SHARED_LIB "Build shared instead of static lib" OFF)
 option(ENABLE_TEST "Enable test targets" OFF)
@@ -48,6 +49,10 @@ add_subdirectory(mediacopier-lib)
 
 if(${ENABLE_CLI})
     add_subdirectory(mediacopier-cli)
+endif()
+
+if(${ENABLE_GUI})
+    add_subdirectory(mediacopier-gui)
 endif()
 
 if(${ENABLE_TEST})

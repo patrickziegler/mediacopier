@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       env:
         DEBIAN_FRONTEND: "noninteractive"
-      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs librange-v3-dev libspdlog-dev libturbojpeg0-dev pkg-config qtbase5-dev qttools5-dev
+      run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs librange-v3-dev libspdlog-dev libturbojpeg0-dev
 
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
         CXX: ${{matrix.config.CXX}}
         BUILD_DIR: "build/"
       run: |
-        cmake -B ${BUILD_DIR} -DENABLE_TEST=ON
+        cmake -B ${BUILD_DIR} -DENABLE_CLI=OFF -DENABLE_QT=OFF -DENABLE_TEST=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}
         ctest --test-dir ${BUILD_DIR} -V
 
@@ -40,7 +40,7 @@ jobs:
         CXX: ${{matrix.config.CXX}}
         BUILD_DIR: "build-coverage/"
       run: |
-        cmake -B ${BUILD_DIR} -DENABLE_TEST_COVERAGE=ON
+        cmake -B ${BUILD_DIR} -DENABLE_CLI=OFF -DENABLE_QT=OFF -DENABLE_TEST_COVERAGE=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}
         cmake --build ${BUILD_DIR} --target coverage
       if: matrix.config.CC == 'gcc'

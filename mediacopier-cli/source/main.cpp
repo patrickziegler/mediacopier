@@ -1,71 +1,38 @@
-/* Copyright (C) 2021 Patrick Ziegler <zipat@proton.me>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+#include <CLI/CLI.hpp>
 
-#include "gui/MediaCopierDialogFull.hpp"
-#include "gui/MediaCopierDialogSlim.hpp"
-#include "worker.hpp"
+#include <iostream>
 
-#include <mediacopier/version.hpp>
+int main(int argc, char** argv) {
+    CLI::App app{"App description"};
+    //argv = app.ensure_utf8(argv);
 
-#include <QApplication>
-#include <QTranslator>
+    app.set_version_flag("-v,--version", "1.0.0");
 
-#include <spdlog/spdlog.h>
+    std::string pattern = "default";
+    std::string filename = "default file";
+    std::string command = "none";
+    bool slim = false;
 
-template <typename T>
-int run_gui(QApplication& app, std::shared_ptr<Config> config)
-{
-    T dialog;
-    dialog.init(config, app);
-    dialog.show();
-    return app.exec();
-}
+    auto copyapp = app.add_subcommand("copy", "Copy some files");
+    copyapp->add_option("-p,--pattern", pattern, "A help string");
+    copyapp->callback([&command]() { command = "copy"; });
+    auto opt = copyapp->add_option("filename", filename);
+    opt->required();
 
-int run_cli(QApplication& app, std::shared_ptr<Config> config)
-{
-    Worker worker{*config};
-    worker.start();
-    return app.exec();
-}
+    auto moveapp = app.add_subcommand("move", "Move some files");
+    moveapp->add_option("-p,--pattern", pattern, "A help string");
 
-using UiFuncType = std::function<int(QApplication&, std::shared_ptr<Config>)>;
+    auto simapp = app.add_subcommand("simulate", "Do nothing, just simulate what would happen");
+    simapp->add_option("-p,--pattern", pattern, "A help string");
 
-static const std::map<Config::UI, UiFuncType> uiFuncMap = {
-    {Config::UI::FullGui, &run_gui<MediaCopierDialogFull>},
-    {Config::UI::SlimGui, &run_gui<MediaCopierDialogSlim>},
-    {Config::UI::NoGui, &run_cli},
-};
+    auto guiapp = app.add_subcommand("gui");
+    guiapp->add_flag("--slim", slim, "Instantiate the slim version");
 
-int main(int argc, char *argv[])
-{
-    try {
-        QApplication app(argc, argv);
+    CLI11_PARSE(app, argc, argv);
 
-        QTranslator translator;
-        if (translator.load(":/translations/lang.qm"))
-            app.installTranslator(&translator);
-
-        app.setApplicationName(mediacopier::MEDIACOPIER_PROJECT_NAME);
-        app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
-
-        auto config = std::make_shared<Config>(app);
-        return uiFuncMap.at(config->ui())(app, config);
-
-    } catch (const std::exception& err) {
-        spdlog::error(err.what());
-        return 1;
-    }
+    std::cout << pattern << std::endl
+              << filename << std::endl
+              << command << std::endl
+              << slim << std::endl;
+    return 0;
 }
