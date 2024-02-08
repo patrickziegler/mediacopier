@@ -4,19 +4,19 @@
 <context>
     <name>Command</name>
     <message>
-        <location filename="../source/config.cpp" line="34"/>
         <location filename="../source/config.cpp" line="35"/>
+        <location filename="../source/config.cpp" line="36"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../source/config.cpp" line="36"/>
         <location filename="../source/config.cpp" line="37"/>
+        <location filename="../source/config.cpp" line="38"/>
         <source>Move</source>
         <translation>Verschieben</translation>
     </message>
     <message>
-        <location filename="../source/config.cpp" line="38"/>
+        <location filename="../source/config.cpp" line="39"/>
         <source>Simulate</source>
         <translation>Simulation</translation>
     </message>

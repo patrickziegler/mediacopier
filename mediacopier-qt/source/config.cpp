@@ -17,12 +17,13 @@
 #include "config.hpp"
 
 #include <QCommandLineParser>
-#include <QSettings>
+
+#include <spdlog/spdlog.h>
+#include <toml.hpp>
 
 namespace fs = std::filesystem;
 
 static constexpr const char* CONFIG_FILE = ".mediacopier";
-static constexpr const char* CONFIG_KEY_PATTERN = "Core/pattern";
 
 static const std::map<QString, Config::Command> commands = {
     {"copy", Config::Command::COPY_JPEG},
@@ -94,29 +95,31 @@ Config::Config(const QApplication& app)
 
 bool Config::readConfigFile() noexcept
 {
-    bool result = false;
-    const auto file = m_outputDir / CONFIG_FILE;
-    if (fs::is_regular_file(file)) {
-        QSettings settings{QString::fromStdString(file.string()), QSettings::IniFormat};
-        if (settings.value(CONFIG_KEY_PATTERN).isValid()) {
-            m_pattern = settings.value(CONFIG_KEY_PATTERN).toString().toStdString();
-            result = true;
-        }
+    const auto configFile = m_outputDir / CONFIG_FILE;
+    if (!fs::is_regular_file(configFile)) {
+        return false;
     }
-    return result;
+    try {
+        const auto data = toml::parse(configFile);
+        m_pattern = toml::find<std::string>(data, "pattern");
+    } catch (const std::exception& err) {
+        spdlog::error("Failed to load config: " + std::string{err.what()});
+        return false;
+    }
+    return true;
 }
 
 bool Config::writeConfigFile() const noexcept
 {
-    bool result = false;
-    if (fs::is_directory(m_outputDir)) {
-        const auto file = m_outputDir / CONFIG_FILE;
-        QSettings settings{QString::fromStdString(file.string()), QSettings::IniFormat};
-        settings.setValue(CONFIG_KEY_PATTERN, QString::fromStdString(m_pattern));
-        settings.sync();
-        result = true;
+    if (!fs::is_directory(m_outputDir)) {
+        return false;
     }
-    return result;
+    auto configFile = m_outputDir / CONFIG_FILE;
+    toml::value data{{"pattern", m_pattern}};
+    std::ofstream out{configFile};
+    out << "# this file is updated on every run of mediacopier"
+        << ", manual changes might be lost\n" << data;
+    return true;
 }
 
 void Config::setCommand(const Command& command)
@@ -128,7 +131,6 @@ void Config::setCommand(const QString& command)
 {
     try {
         m_command = commands.at(command.toLower());
-
     } catch (const std::out_of_range&) {
         throw std::runtime_error("No such command '" + command.toStdString() + "'");
     }
