@@ -1,5 +1,6 @@
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets LinguistTools)
 find_package(spdlog 1.9.2 REQUIRED) # qt_sink_* available since v1.9.2
+find_package(toml11 REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -11,9 +12,11 @@ set(RESOURCES_FILE resources.qrc)
 
 configure_file("${RESOURCES_FILE}.in" "${CMAKE_CURRENT_BINARY_DIR}/${RESOURCES_FILE}")
 
-set(TARGET_NAME mediacopier-gui)
+set(TARGET_NAME mediacopier-qt)
 
 add_executable(${TARGET_NAME} ${CLI_TARGET_FLAGS})
+
+set(EXECUTABLE_NAME ${TARGET_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
     "source/config.cpp"
