@@ -19,7 +19,7 @@ Direct dependencies (library):
 - libjpeg-turbo (https://libjpeg-turbo.org/)
 - ffmpeg (https://www.ffmpeg.org/download.html)
 
-Direct dependencies (cli):
+Direct dependencies (tools):
 - range-v3 (https://github.com/ericniebler/range-v3)
 - Qt5 (https://doc.qt.io/qt-5/)
 
@@ -32,15 +32,16 @@ cd MediaCopier && mkdir build && cd build
 
 Build and install the package
 ```sh
-cmake -DCMAKE_INSTALL_PREFIX=/usr .. && make -j$(nproc) && sudo make install
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DENABLE_QT=ON -DENABLE_KDE=ON -DCMAKE_BUILD_TYPE=release .. && make -j$(nproc) && sudo make install
 ```
 
 Available cmake flags
 
 | Flag                   | Description                               | Default   |
 |------------------------|-------------------------------------------|-----------|
-| `ENABLE_CLI`           | Build Qt based cli tool                   | `ON`      |
-| `ENABLE_KDE`           | Enable KDE integration for cli tool       | `OFF`     |
+| `ENABLE_CLI`           | Build simple CLI tool                     | `ON`      |
+| `ENABLE_QT`            | Build Qt based graphical user interface   | `OFF`     |
+| `ENABLE_KDE`           | Enable KDE integration for GUI            | `OFF`     |
 | `ENABLE_SHARED_LIB`    | Build shared instead of static lib        | `OFF`     |
 | `ENABLE_TEST`          | Enable test targets                       | `OFF`     |
 | `ENABLE_TEST_COVERAGE` | Enable test and coverage targets          | `OFF`     |
