@@ -2,6 +2,12 @@ find_package(exiv2 REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(spdlog REQUIRED)
 
+# inspired by https://github.com/Exiv2/exiv2/commit/130064dc76d2494b6fd473b293f2f32d36eb88f3,
+# needed here because package in Ubuntu 22.04 was not updated yet
+if (NOT TARGET Exiv2::exiv2lib)
+    add_library(Exiv2::exiv2lib ALIAS exiv2lib)
+endif()
+
 pkg_check_modules(AVFORMAT REQUIRED libavformat libavutil)
 pkg_check_modules(LIBJPEG REQUIRED libturbojpeg)
 
@@ -67,7 +73,7 @@ target_include_directories(${TARGET_NAME} PUBLIC
 target_link_libraries(${TARGET_NAME} PRIVATE
     "${AVFORMAT_LINK_LIBRARIES}"
     "${LIBJPEG_LINK_LIBRARIES}"
-    exiv2lib spdlog::spdlog)
+    Exiv2::exiv2lib spdlog::spdlog)
 
 if(${ENABLE_TEST})
     add_subdirectory(test)
