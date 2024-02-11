@@ -56,16 +56,19 @@ void MediaCopierDialogFull::init(std::shared_ptr<Config> config, QApplication& a
     fsm = std::make_unique<QStateMachine>();
 
     auto s1 = new QState();         // waiting for input
-    auto s2 = new QState();         // executing operation
-    auto s3 = new QState();         // aborting operation
-    auto s4 = new QFinalState();    // closing dialog
+    auto s2 = new QState();         // checking parameters
+    auto s3 = new QState();         // executing operation
+    auto s4 = new QState();         // aborting operation
+    auto s5 = new QFinalState();    // closing dialog
 
     s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::accepted, s2);
-    s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s4);
-    s2->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s3);
-    s2->addTransition(this, &MediaCopierDialogFull::rejected, s3);
-    s2->addTransition(this, &MediaCopierDialogFull::operationDone, s1);
+    s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s5);
+    s2->addTransition(ui->param, &MediaCopierParamWidget::validParameters, s3);
+    s2->addTransition(ui->param, &MediaCopierParamWidget::invalidParameters, s1);
+    s3->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s4);
+    s3->addTransition(this, &MediaCopierDialogFull::rejected, s4);
     s3->addTransition(this, &MediaCopierDialogFull::operationDone, s1);
+    s4->addTransition(this, &MediaCopierDialogFull::operationDone, s1);
 
     auto m_btnOk = ui->dialogButtonBox->button(QDialogButtonBox::Ok);
     auto m_btnCancel = ui->dialogButtonBox->button(QDialogButtonBox::Cancel);
@@ -73,17 +76,22 @@ void MediaCopierDialogFull::init(std::shared_ptr<Config> config, QApplication& a
     s1->assignProperty(m_btnOk, "enabled", true);
     s1->assignProperty(m_btnCancel, "enabled", true);
     s2->assignProperty(m_btnOk, "enabled", false);
-    s3->assignProperty(m_btnCancel, "enabled", false);
+    s2->assignProperty(m_btnCancel, "enabled", false);
+    s3->assignProperty(m_btnOk, "enabled", false);
+    s3->assignProperty(m_btnCancel, "enabled", true);
+    s4->assignProperty(m_btnCancel, "enabled", false);
 
     QObject::connect(s1, &QState::entered, this, &MediaCopierDialogFull::awaitOperation);
-    QObject::connect(s2, &QState::entered, this, &MediaCopierDialogFull::startOperation);
-    QObject::connect(s3, &QState::entered, this, &MediaCopierDialogFull::cancelOperation);
+    QObject::connect(s2, &QState::entered, ui->param, &MediaCopierParamWidget::validate);
+    QObject::connect(s3, &QState::entered, this, &MediaCopierDialogFull::startOperation);
+    QObject::connect(s4, &QState::entered, this, &MediaCopierDialogFull::cancelOperation);
     QObject::connect(fsm.get(), &QStateMachine::finished, this, &MediaCopierDialogFull::close);
 
     fsm->addState(s1);
     fsm->addState(s2);
     fsm->addState(s3);
     fsm->addState(s4);
+    fsm->addState(s5);
     fsm->setInitialState(s1);
     fsm->start();
 }

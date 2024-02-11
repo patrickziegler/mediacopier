@@ -91,6 +91,42 @@ void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
             this, &MediaCopierParamWidget::onCommandChanged);
 }
 
+void MediaCopierParamWidget::validate()
+{
+    bool result = true;
+
+    QPalette errorPalette;
+    errorPalette.setColor(QPalette::Base, QColor(255, 145, 145));
+    errorPalette.setColor(QPalette::Text, Qt::white);
+
+    if (ui->dirsInputDirText->text().isEmpty() || !QDir(ui->dirsInputDirText->text()).exists()) {
+        ui->dirsInputDirText->setPalette(errorPalette);
+        result = false;
+    } else {
+        ui->dirsInputDirText->setPalette(this->style()->standardPalette());
+    }
+
+    if (ui->dirsOutputDirText->text().isEmpty() || !QDir(ui->dirsOutputDirText->text()).makeAbsolute()) {
+        ui->dirsOutputDirText->setPalette(errorPalette);
+        result = false;
+    } else {
+        ui->dirsOutputDirText->setPalette(this->style()->standardPalette());
+    }
+
+    if (ui->paramPattern->text().isEmpty()) {
+        ui->paramPattern->setPalette(errorPalette);
+        result = false;
+    } else {
+        ui->paramPattern->setPalette(this->style()->standardPalette());
+    }
+
+    if (result) {
+        validParameters();
+    } else {
+        invalidParameters();
+    }
+}
+
 void MediaCopierParamWidget::onOpenInputDirClicked()
 {
     ui->dirsInputDirText->setText(ask_for_directory(QObject::tr("Source folder")));

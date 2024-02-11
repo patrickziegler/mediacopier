@@ -55,20 +55,25 @@ void MediaCopierDialogSlim::init(std::shared_ptr<Config> config, QApplication& a
     fsm = std::make_unique<QStateMachine>();
 
     auto s1 = new QState();         // waiting for input
-    auto s2 = new QState();         // executing operation
-    auto s3 = new QFinalState();    // closing dialog
+    auto s2 = new QState();         // checking parameters
+    auto s3 = new QState();         // executing operation
+    auto s4 = new QFinalState();    // closing dialog
 
     s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::accepted, s2);
-    s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s3);
-    s2->addTransition(this, &MediaCopierDialogSlim::operationDone, s3);
+    s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s4);
+    s2->addTransition(ui->param, &MediaCopierParamWidget::validParameters, s3);
+    s2->addTransition(ui->param, &MediaCopierParamWidget::invalidParameters, s1);
+    s3->addTransition(this, &MediaCopierDialogSlim::operationDone, s4);
 
-    QObject::connect(s2, &QState::entered, this, &MediaCopierDialogSlim::hide);
-    QObject::connect(s2, &QState::entered, this, &MediaCopierDialogSlim::startOperation);
+    QObject::connect(s2, &QState::entered, ui->param, &MediaCopierParamWidget::validate);
+    QObject::connect(s3, &QState::entered, this, &MediaCopierDialogSlim::hide);
+    QObject::connect(s3, &QState::entered, this, &MediaCopierDialogSlim::startOperation);
     QObject::connect(fsm.get(), &QStateMachine::finished, this, &MediaCopierDialogSlim::close);
 
     fsm->addState(s1);
     fsm->addState(s2);
     fsm->addState(s3);
+    fsm->addState(s4);
     fsm->setInitialState(s1);
     fsm->start();
 }
