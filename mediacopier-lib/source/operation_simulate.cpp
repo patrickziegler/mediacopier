@@ -20,25 +20,31 @@
 #include <mediacopier/file_info_video.hpp>
 #include <spdlog/spdlog.h>
 
+#include <chrono>
+#include <thread>
+
 namespace mediacopier {
 
 auto FileOperationSimulate::dumpFilePaths(const AbstractFileInfo& file) const -> void
 {
-    spdlog::info(m_destination.string() + " (from " + file.path().string() + ")");
+    spdlog::info("{} -> {}", file.path().string(), m_destination.string());
 }
 
 auto FileOperationSimulate::visit(const FileInfoImage& file) -> void
 {
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     dumpFilePaths(file);
 }
 
 auto FileOperationSimulate::visit(const FileInfoImageJpeg& file) -> void
 {
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     dumpFilePaths(file);
 }
 
 auto FileOperationSimulate::visit(const FileInfoVideo& file) -> void
 {
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     dumpFilePaths(file);
 }
 
