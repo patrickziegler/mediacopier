@@ -58,9 +58,10 @@
         <translation>Zielverzeichnis</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="133"/>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="139"/>
         <source>Update</source>
-        <translation></translation>
+        <translatorcomment>Ändern</translatorcomment>
+        <translation>Ändern</translation>
     </message>
     <message>
         <location filename="../source/gui/MediaCopierParamWidget.ui" line="46"/>
