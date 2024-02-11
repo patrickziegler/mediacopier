@@ -33,6 +33,7 @@ class MediaCopierLogWidget : public QWidget
 public:
     explicit MediaCopierLogWidget(QWidget *parent=nullptr);
     ~MediaCopierLogWidget();
+    void clear();
 
 public Q_SLOTS:
     void update(Status info);
