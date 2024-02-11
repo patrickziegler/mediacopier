@@ -33,12 +33,10 @@ public:
     ~MediaCopierParamWidget();
     void init(std::shared_ptr<Config> config);
 
-private:
-    void syncConfig();
-
 private Q_SLOTS:
     void onOpenInputDirClicked();
     void onOpenOutputDirClicked();
+    void onPatternUpdateClicked(bool checked);
     void onInputDirChanged(const QString& text);
     void onOutputDirChanged(const QString& text);
     void onPatternChanged(const QString& text);
@@ -46,5 +44,5 @@ private Q_SLOTS:
 
 private:
     Ui::MediaCopierParamWidget *ui;
-    std::shared_ptr<Config> config;
+    std::shared_ptr<Config> m_config;
 };
