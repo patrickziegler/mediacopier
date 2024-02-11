@@ -95,6 +95,12 @@
    </item>
    <item row="3" column="2" colspan="2">
     <widget class="QFrame" name="paramPatternFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -139,6 +145,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>dirsInputDirText</tabstop>
+  <tabstop>dirsInputDirButton</tabstop>
+  <tabstop>dirsOutputDirText</tabstop>
+  <tabstop>dirsOutputDirButton</tabstop>
+  <tabstop>paramPatternUpdate</tabstop>
+  <tabstop>paramPattern</tabstop>
+  <tabstop>paramCommand</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
