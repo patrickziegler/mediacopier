@@ -16,7 +16,6 @@
 
 #include "gui/MediaCopierDialogFull.hpp"
 #include "gui/MediaCopierDialogSlim.hpp"
-#include "worker.hpp"
 
 #include <mediacopier/version.hpp>
 
@@ -34,21 +33,6 @@ int run_gui(QApplication& app, std::shared_ptr<Config> config)
     return app.exec();
 }
 
-int run_cli(QApplication& app, std::shared_ptr<Config> config)
-{
-    Worker worker{*config};
-    worker.start();
-    return app.exec();
-}
-
-using UiFuncType = std::function<int(QApplication&, std::shared_ptr<Config>)>;
-
-static const std::map<Config::UI, UiFuncType> uiFuncMap = {
-    {Config::UI::FullGui, &run_gui<MediaCopierDialogFull>},
-    {Config::UI::SlimGui, &run_gui<MediaCopierDialogSlim>},
-    {Config::UI::NoGui, &run_cli},
-};
-
 int main(int argc, char *argv[])
 {
     try {
@@ -62,8 +46,13 @@ int main(int argc, char *argv[])
         app.setApplicationVersion(mediacopier::MEDIACOPIER_VERSION);
 
         auto config = std::make_shared<Config>(app);
-        return uiFuncMap.at(config->ui())(app, config);
 
+        switch (config->ui()) {
+        case Config::UI::FullGui:
+            return run_gui<MediaCopierDialogFull>(app, config);
+        case Config::UI::SlimGui:
+            return run_gui<MediaCopierDialogSlim>(app, config);
+        }
     } catch (const std::exception& err) {
         spdlog::error(err.what());
         return 1;

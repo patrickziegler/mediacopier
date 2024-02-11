@@ -26,17 +26,13 @@ namespace fs = std::filesystem;
 static constexpr const char* CONFIG_FILE = ".mediacopier";
 
 static const std::map<QString, Config::Command> commands = {
-    {"copy", Config::Command::COPY_JPEG},
-    {"move", Config::Command::MOVE_JPEG},
-    {"sim", Config::Command::SIMULATE}
+    {"copy", Config::Command::COPY},
+    {"move", Config::Command::MOVE}
 };
 
 static const std::map<Config::Command, QString> commandStrings = {
     {Config::Command::COPY, QT_TRANSLATE_NOOP("Command", "Copy")},
-    {Config::Command::COPY_JPEG, QT_TRANSLATE_NOOP("Command", "Copy")},
-    {Config::Command::MOVE, QT_TRANSLATE_NOOP("Command", "Move")},
-    {Config::Command::MOVE_JPEG, QT_TRANSLATE_NOOP("Command", "Move")},
-    {Config::Command::SIMULATE, QT_TRANSLATE_NOOP("Command", "Simulate")}
+    {Config::Command::MOVE, QT_TRANSLATE_NOOP("Command", "Move")}
 };
 
 Config::Config(const QApplication& app)
@@ -88,9 +84,6 @@ Config::Config(const QApplication& app)
 
     if (parser.isSet("slim-gui"))
         m_ui = UI::SlimGui;
-
-    if (parser.isSet("no-gui"))
-        m_ui = UI::NoGui;
 }
 
 bool Config::readConfigFile() noexcept

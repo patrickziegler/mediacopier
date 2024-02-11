@@ -4,21 +4,14 @@
 <context>
     <name>Command</name>
     <message>
-        <location filename="../source/config.cpp" line="35"/>
-        <location filename="../source/config.cpp" line="36"/>
+        <location filename="../source/config.cpp" line="34"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../source/config.cpp" line="37"/>
-        <location filename="../source/config.cpp" line="38"/>
+        <location filename="../source/config.cpp" line="35"/>
         <source>Move</source>
         <translation>Verschieben</translation>
-    </message>
-    <message>
-        <location filename="../source/config.cpp" line="39"/>
-        <source>Simulate</source>
-        <translation>Simulation</translation>
     </message>
 </context>
 <context>
@@ -74,12 +67,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="98"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="97"/>
         <source>Source folder</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="103"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="102"/>
         <source>Destination folder</source>
         <translation>Zielverzeichnis</translation>
     </message>

@@ -23,9 +23,7 @@
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
 
-#include <mediacopier/operation_copy.hpp>
 #include <mediacopier/operation_copy_jpeg.hpp>
-#include <mediacopier/operation_move.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
 #include <mediacopier/operation_simulate.hpp>
 
@@ -52,7 +50,7 @@ static volatile std::atomic<bool> operationSuspended(false);
 
 static constexpr const unsigned int DEFAULT_WAIT_MS = 200;
 
-auto check_operation_state()
+auto is_operation_cancelled()
 {
     while (true) {
         if (operationCancelled.load()) {
@@ -99,14 +97,6 @@ auto execute(const fs::path& dest, mc::FileInfoPtr file) -> void
 }
 
 typedef void (*ExecFuncPtr)(const fs::path&, mc::FileInfoPtr);
-
-static const std::map<Config::Command, ExecFuncPtr> execFuncMap = {
-    {Config::Command::COPY, &execute<mc::FileOperationCopy>},
-    {Config::Command::COPY_JPEG, &execute<mc::FileOperationCopyJpeg>},
-    {Config::Command::MOVE, &execute<mc::FileOperationMove>},
-    {Config::Command::MOVE_JPEG, &execute<mc::FileOperationMoveJpeg>},
-    {Config::Command::SIMULATE, &execute<mc::FileOperationSimulate>}
-};
 
 } // namespace
 
@@ -174,37 +164,45 @@ void Worker::exec()
     m_fileCount = valid_media_file_count(m_config.inputDir());
     m_progress = 0;
 
-    auto reg = mc::FileRegister{m_config.outputDir(), m_config.pattern()};
-    auto execute = execFuncMap.at(m_config.command());
-    std::optional<fs::path> dest;
+    auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern()};
 
-    try {
-        for (auto file : valid_media_files(m_config.inputDir())) {
-            if (check_operation_state()) {
-                spdlog::info("Operation was cancelled..");
-                break;
-            }
-            ++m_progress;
-            if ((dest = reg.add(file)).has_value()) {
+    ExecFuncPtr execute;
+    switch (m_config.command()) {
+    case Config::Command::COPY:
+        execute = &::execute<mc::FileOperationCopyJpeg>;
+        break;
+    case Config::Command::MOVE:
+        execute = &::execute<mc::FileOperationMoveJpeg>;
+        break;
+    }
+
+    std::optional<fs::path> dest;
+    for (auto file : valid_media_files(m_config.inputDir())) {
+        if (is_operation_cancelled()) {
+            spdlog::info("Operation was cancelled..");
+            break;
+        }
+        ++m_progress;
+        try {
+            if ((dest = fileRegister.add(file)).has_value()) {
                 Q_EMIT status({m_config.command(), file->path(), dest.value(), m_fileCount, m_progress});
                 execute(dest.value(), file);
             } else {
                 Q_EMIT status({m_config.command(), file->path(), "", m_fileCount, m_progress});
             }
+        } catch (const std::exception& err) {
+            spdlog::error(err.what());
         }
-    } catch (const std::exception& err) {
-        spdlog::error(err.what());
     }
 
-    spdlog::info("Removing duplicates..");
-    reg.removeDuplicates();
+    spdlog::info("Removing duplicates in destination directory..");
+    fileRegister.removeDuplicates();
 
     spdlog::info("Writing config..");
     m_config.writeConfigFile();
 
-    std::signal(SIGINT, SIG_DFL);
-
     spdlog::info("Done");
+    std::signal(SIGINT, SIG_DFL);
     Q_EMIT execDone();
 }
 

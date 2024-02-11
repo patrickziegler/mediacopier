@@ -60,7 +60,7 @@ auto exec(const Config& config) -> void
     });
 
     spdlog::info("Checking input directory..");
-    auto reg = mc::FileRegister{config.outputDir, config.pattern};
+    auto fileRegister = mc::FileRegister{config.outputDir, config.pattern};
     std::optional<fs::path> dest;
 
     for (auto file : valid_media_files(config.inputDir)) {
@@ -69,7 +69,7 @@ auto exec(const Config& config) -> void
             break;
         }
         try {
-            if ((dest = reg.add(file)).has_value()) {
+            if ((dest = fileRegister.add(file)).has_value()) {
                 spdlog::info("Processing: {} -> {}",
                              file->path().string(),
                              dest.value().string());
@@ -82,7 +82,7 @@ auto exec(const Config& config) -> void
     }
 
     spdlog::info("Removing duplicates in destination directory..");
-    reg.removeDuplicates();
+    fileRegister.removeDuplicates();
 
     spdlog::info("Done");
     std::signal(SIGINT, SIG_DFL);

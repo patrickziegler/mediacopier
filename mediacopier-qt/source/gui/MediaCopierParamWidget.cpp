@@ -33,9 +33,8 @@ const auto ask_for_directory = [](const QString& title) -> QString
 };
 
 static const QList<Config::Command> commands = {
-    Config::Command::COPY_JPEG,
-    Config::Command::MOVE_JPEG,
-    Config::Command::SIMULATE
+    Config::Command::COPY,
+    Config::Command::MOVE
 };
 
 MediaCopierParamWidget::MediaCopierParamWidget(QWidget *parent) :
