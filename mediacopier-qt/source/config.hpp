@@ -24,16 +24,12 @@ class Config {
 public:
     enum class Command {
         COPY,
-        MOVE,
-        COPY_JPEG,
-        MOVE_JPEG,
-        SIMULATE
+        MOVE
     };
 
     enum class UI {
         FullGui,
         SlimGui,
-        NoGui
     };
 
     Config(const QApplication& app);
@@ -56,7 +52,7 @@ public:
     const std::filesystem::path& outputDir() const { return m_outputDir; }
 
 private:
-    Command m_command = Command::COPY_JPEG;
+    Command m_command = Command::COPY;
     UI m_ui = UI::FullGui;
     std::string m_pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S";
     std::filesystem::path m_inputDir;
