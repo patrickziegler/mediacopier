@@ -25,7 +25,6 @@
 
 #include <mediacopier/operation_copy_jpeg.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
-#include <mediacopier/operation_simulate.hpp>
 
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
