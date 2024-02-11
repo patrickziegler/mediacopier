@@ -39,6 +39,12 @@ MediaCopierLogWidget::~MediaCopierLogWidget()
     delete ui;
 }
 
+void MediaCopierLogWidget::clear()
+{
+    ui->logProgressBar->setValue(0);
+    ui->logText->clear();
+}
+
 void MediaCopierLogWidget::update(Status info)
 {
     ui->logProgressBar->setMaximum(info.fileCount());

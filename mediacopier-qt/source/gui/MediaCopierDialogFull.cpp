@@ -96,6 +96,7 @@ void MediaCopierDialogFull::aboutToQuit()
 
 void MediaCopierDialogFull::startOperation()
 {
+    this->ui->log->clear();
     worker = std::make_shared<Worker>(*config);
     QObject::connect(worker.get(), &Worker::status, this->ui->log, &MediaCopierLogWidget::update);
     QObject::connect(worker.get(), &Worker::finished, this, &MediaCopierDialogFull::operationDone);
