@@ -19,6 +19,7 @@
 
 #include <QAbstractButton>
 #include <QFileDialog>
+#include <QCheckBox>
 
 #include <spdlog/spdlog.h>
 
@@ -46,6 +47,7 @@ MediaCopierParamWidget::MediaCopierParamWidget(QWidget *parent) :
     Q_FOREACH(Config::Command item, commands) {
         ui->paramCommand->addItem(Config::commandString(item));
     }
+    ui->paramPattern->setEnabled(false);
 }
 
 MediaCopierParamWidget::~MediaCopierParamWidget()
@@ -55,15 +57,26 @@ MediaCopierParamWidget::~MediaCopierParamWidget()
 
 void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
 {
-    this->config = std::move(config);
+    m_config = std::move(config);
 
-    syncConfig();
+    ui->dirsInputDirText->setText(QString::fromStdString(m_config->inputDir().string()));
+    ui->dirsOutputDirText->setText(QString::fromStdString(m_config->outputDir().string()));
+    ui->paramPattern->setText(m_config->pattern().c_str());
+    for (int i = 0; i < commands.length(); ++i) {
+        if (commands.at(i) == m_config->command()) {
+            ui->paramCommand->setCurrentIndex(i);
+            break;
+        }
+    }
 
     connect(ui->dirsInputDirButton, &QToolButton::clicked,
             this, &MediaCopierParamWidget::onOpenInputDirClicked);
 
     connect(ui->dirsOutputDirButton, &QToolButton::clicked,
             this, &MediaCopierParamWidget::onOpenOutputDirClicked);
+
+    connect(ui->paramPatternUpdate, &QCheckBox::clicked,
+            this, &MediaCopierParamWidget::onPatternUpdateClicked);
 
     connect(ui->dirsInputDirText, &QLineEdit::textChanged,
             this, &MediaCopierParamWidget::onInputDirChanged);
@@ -78,20 +91,6 @@ void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
             this, &MediaCopierParamWidget::onCommandChanged);
 }
 
-void MediaCopierParamWidget::syncConfig()
-{
-    ui->dirsInputDirText->setText(QString::fromStdString(config->inputDir().string()));
-    ui->dirsOutputDirText->setText(QString::fromStdString(config->outputDir().string()));
-    ui->paramPattern->setText(config->pattern().c_str());
-
-    for (int i = 0; i < commands.length(); ++i) {
-        if (commands.at(i) == config->command()) {
-            ui->paramCommand->setCurrentIndex(i);
-            break;
-        }
-    }
-}
-
 void MediaCopierParamWidget::onOpenInputDirClicked()
 {
     ui->dirsInputDirText->setText(ask_for_directory(QObject::tr("Source folder")));
@@ -102,28 +101,43 @@ void MediaCopierParamWidget::onOpenOutputDirClicked()
     ui->dirsOutputDirText->setText(ask_for_directory(QObject::tr("Destination folder")));
 }
 
+void MediaCopierParamWidget::onPatternUpdateClicked(bool checked)
+{
+    ui->paramPattern->setEnabled(checked);
+    if (!checked) {
+        m_config->resetPattern();
+        m_config->readConfigFile();
+        ui->paramPattern->setText(m_config->pattern().c_str());
+    }
+}
+
 void MediaCopierParamWidget::onInputDirChanged(const QString& text)
 {
-    config->setInputDir(text);
-    spdlog::debug("Changed input dir to " + config->outputDir().string());
+    m_config->setInputDir(text);
+    spdlog::debug("Changed input dir to " + m_config->outputDir().string());
 }
 
 void MediaCopierParamWidget::onOutputDirChanged(const QString& text)
 {
-    config->setOutputDir(text);
-    spdlog::debug("Changed output dir to " + config->outputDir().string());
-    config->readConfigFile();
-    syncConfig();
+    m_config->setOutputDir(text);
+    spdlog::debug("Changed output dir to " + m_config->outputDir().string());
+    if (!ui->paramPattern->isEnabled()) {
+        m_config->resetPattern();
+        if (QDir(text).exists()) {
+            m_config->readConfigFile();
+        }
+    }
+    ui->paramPattern->setText(m_config->pattern().c_str());
 }
 
 void MediaCopierParamWidget::onPatternChanged(const QString& text)
 {
-    config->setPattern(text);
-    spdlog::debug("Changed pattern to " + config->pattern());
+    m_config->setPattern(text);
+    spdlog::debug("Changed pattern to " + m_config->pattern());
 }
 
 void MediaCopierParamWidget::onCommandChanged(int index)
 {
-    config->setCommand(commands.at(index));
+    m_config->setCommand(commands.at(index));
     spdlog::debug("Changed command to " + Config::commandString(commands.at(index)).toStdString());
 }

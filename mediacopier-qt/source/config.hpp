@@ -27,9 +27,9 @@ public:
         MOVE
     };
 
-    enum class UI {
-        FullGui,
-        SlimGui,
+    enum class GuiType {
+        Full,
+        Slim,
     };
 
     Config(const QApplication& app);
@@ -40,21 +40,22 @@ public:
     void setCommand(const Command& command);
     void setCommand(const QString& command);
     void setPattern(const QString& pattern);
+    void resetPattern();
     void setInputDir(const QString& inputDir);
     void setOutputDir(const QString& outputDir);
 
     static const QString commandString(const Command& command);
 
     const Command& command() const { return m_command; }
-    const UI& ui() const { return m_ui; }
+    const GuiType& guiType() const { return m_guiType; }
     const std::string& pattern() const { return m_pattern; }
     const std::filesystem::path& inputDir() const { return m_inputDir; }
     const std::filesystem::path& outputDir() const { return m_outputDir; }
 
 private:
     Command m_command = Command::COPY;
-    UI m_ui = UI::FullGui;
-    std::string m_pattern = "%Y/%W/IMG_%Y%m%d_%H%M%S";
+    GuiType m_guiType = GuiType::Full;
+    std::string m_pattern;
     std::filesystem::path m_inputDir;
     std::filesystem::path m_outputDir;
 };

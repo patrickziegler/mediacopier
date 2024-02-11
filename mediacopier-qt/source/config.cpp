@@ -24,6 +24,7 @@
 namespace fs = std::filesystem;
 
 static constexpr const char* CONFIG_FILE = ".mediacopier";
+static constexpr const char* DEFAULT_PATTERN = "%Y/%W/IMG_%Y%m%d_%H%M%S";
 
 static const std::map<QString, Config::Command> commands = {
     {"copy", Config::Command::COPY},
@@ -41,49 +42,38 @@ Config::Config(const QApplication& app)
 
     parser.setApplicationDescription(
                 app.applicationName() +
-                ", Copyright (C) 2020-2023 Patrick Ziegler");
-
+                ", Copyright (C) 2020-2024 Patrick Ziegler");
+    parser.addPositionalArgument(
+                "CMD", "Available commands: copy (default), move", "[CMD");
     parser.addPositionalArgument(
                 "SRC", "Input directory", "[SRC");
-
     parser.addPositionalArgument(
-                "DST", "Output directory", "[DST]]");
-
-    QCommandLineOption optCommand(
-                "c", "Available commands: copy (default), move, sim",
-                "command");
-
-    QCommandLineOption optPattern(
-                "f", "Pattern to be used for creating new filenames",
-                "pattern");
-
+                "DST", "Output directory", "[DST]]]");
     QCommandLineOption optSlimGui(
                 "slim-gui", "Pattern to be used for creating new filenames");
-
     QCommandLineOption optNoGui(
                 "no-gui", "Pattern to be used for creating new filenames");
 
-    parser.addOptions({optCommand, optPattern, optSlimGui, optNoGui});
+    parser.addOptions({optSlimGui, optNoGui});
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
 
-    if (parser.positionalArguments().length() > 0)
-        setInputDir(parser.positionalArguments().at(0));
+    if (parser.positionalArguments().length() > 0) {
+        setCommand(parser.positionalArguments().at(0));
+    }
+    if (parser.positionalArguments().length() > 1) {
+        setInputDir(parser.positionalArguments().at(1));
+    }
+    if (parser.positionalArguments().length() > 2) {
+        setOutputDir(parser.positionalArguments().at(2));
+        readConfigFile();
+    }
+    if (parser.isSet("slim-gui")) {
+        m_guiType = GuiType::Slim;
+    }
 
-    if (parser.positionalArguments().length() > 1)
-        setOutputDir(parser.positionalArguments().at(1));
-
-    readConfigFile();
-
-    if (parser.isSet("f"))
-        setPattern(parser.value("f"));
-
-    if (parser.isSet("c"))
-        setCommand(parser.value("c"));
-
-    if (parser.isSet("slim-gui"))
-        m_ui = UI::SlimGui;
+    m_pattern = DEFAULT_PATTERN;
 }
 
 bool Config::readConfigFile() noexcept
@@ -132,6 +122,11 @@ void Config::setCommand(const QString& command)
 void Config::setPattern(const QString& pattern)
 {
     m_pattern = pattern.toStdString();
+}
+
+void Config::resetPattern()
+{
+    m_pattern = DEFAULT_PATTERN;
 }
 
 void Config::setInputDir(const QString& inputDir)

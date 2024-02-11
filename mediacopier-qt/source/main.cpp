@@ -47,10 +47,10 @@ int main(int argc, char *argv[])
 
         auto config = std::make_shared<Config>(app);
 
-        switch (config->ui()) {
-        case Config::UI::FullGui:
+        switch (config->guiType()) {
+        case Config::GuiType::Full:
             return run_gui<MediaCopierDialogFull>(app, config);
-        case Config::UI::SlimGui:
+        case Config::GuiType::Slim:
             return run_gui<MediaCopierDialogSlim>(app, config);
         }
     } catch (const std::exception& err) {
