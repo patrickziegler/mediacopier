@@ -16,12 +16,11 @@
 
 #include "config.hpp"
 
-#include <CLI/CLI.hpp>
+#include <mediacopier/version.hpp>
 
+#include <CLI/CLI.hpp>
 #include <spdlog/spdlog.h>
 #include <toml.hpp>
-
-#include <mediacopier/version.hpp>
 
 #include <filesystem>
 #include <fstream>
@@ -95,4 +94,32 @@ void Config::finalize() noexcept
     if (pattern.empty()) {
         pattern = DEFAULT_PATTERN;
     }
+}
+
+bool Config::validate() const noexcept
+{
+    bool result = false;
+    if (pattern.empty()) {
+        spdlog::error("No pattern specified!");
+        result = true;
+    }
+    try {
+        if (fs::absolute(outputDir).empty() || !fs::is_directory(inputDir)) {
+            spdlog::error("Input directory does not exist!");
+            result = true;
+        }
+    } catch(const fs::filesystem_error& err) {
+        spdlog::error("Failed to validate input directory path: " + std::string{err.what()});
+        result = true;
+    }
+    try {
+        if (fs::absolute(outputDir).empty()) {
+            spdlog::error("No output directory specified");
+            result = true;
+        }
+    } catch(const fs::filesystem_error& err) {
+        spdlog::error("Failed to validate output directory path: " + std::string{err.what()});
+        result = true;
+    }
+    return result;
 }

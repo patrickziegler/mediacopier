@@ -72,12 +72,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="96"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="132"/>
         <source>Source folder</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="101"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="137"/>
         <source>Destination folder</source>
         <translation>Zielverzeichnis</translation>
     </message>
