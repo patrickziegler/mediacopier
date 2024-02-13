@@ -42,7 +42,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
         if (item != m_register.end()) {
             const auto& knownFile = item->second;
             if (is_duplicate(file->path(), knownFile->path())) {
-                spdlog::info("Ignoring duplicate: {0} same as {1}", file->path().filename().string(), knownFile->path().filename().string());
+                spdlog::info("Ignoring duplicate: {0} (same as {1})", file->path().filename().string(), knownFile->path().filename().string());
                 return {};
             }
             // possible duplicate of 'item' at destination
@@ -53,7 +53,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
 
         if (fs::exists(dest)) {
             if (is_duplicate(file->path(), dest)) {
-                spdlog::info("Ignoring obsolete: {0} same as {1}", file->path().filename().string(), dest.filename().string());
+                spdlog::info("Ignoring already exsiting: {0} (same as {1})", file->path().filename().string(), dest.filename().string());
                 return {};
             }
             // possible duplicate of 'dest'
