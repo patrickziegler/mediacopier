@@ -32,7 +32,7 @@ public:
     explicit MediaCopierParamWidget(QWidget *parent=nullptr);
     ~MediaCopierParamWidget();
     void init(std::shared_ptr<Config> config);
-    void validate();
+    void validateParameters();
 
 Q_SIGNALS:
     void validParameters();

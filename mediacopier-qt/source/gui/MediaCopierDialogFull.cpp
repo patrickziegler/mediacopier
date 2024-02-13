@@ -82,7 +82,7 @@ void MediaCopierDialogFull::init(std::shared_ptr<Config> config, QApplication& a
     s4->assignProperty(m_btnCancel, "enabled", false);
 
     QObject::connect(s1, &QState::entered, this, &MediaCopierDialogFull::awaitOperation);
-    QObject::connect(s2, &QState::entered, ui->param, &MediaCopierParamWidget::validate);
+    QObject::connect(s2, &QState::entered, ui->param, &MediaCopierParamWidget::validateParameters);
     QObject::connect(s3, &QState::entered, this, &MediaCopierDialogFull::startOperation);
     QObject::connect(s4, &QState::entered, this, &MediaCopierDialogFull::cancelOperation);
     QObject::connect(fsm.get(), &QStateMachine::finished, this, &MediaCopierDialogFull::close);
