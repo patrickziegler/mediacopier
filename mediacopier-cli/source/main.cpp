@@ -98,11 +98,6 @@ int main(int argc, char *argv[])
     config.loadPersistentConfig();
     config.finalize();
 
-    if (config.validate()) {
-        spdlog::error("Invalid configuration");
-        return 1;
-    }
-
     switch (config.cmd) {
     case Config::Command::Copy:
         exec<mediacopier::FileOperationCopyJpeg>(config);
