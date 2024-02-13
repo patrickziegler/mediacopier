@@ -32,7 +32,6 @@ struct Config
     void loadPersistentConfig();
     void storePersistentConfig() const;
     void finalize() noexcept;
-    bool validate() const noexcept;
 
     Command cmd = Command::Copy;
     std::filesystem::path inputDir;

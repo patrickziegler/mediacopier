@@ -35,16 +35,27 @@ std::pair<Config::ParseResult, int> Config::parseArgs(int argc, char *argv[])
     CLI::App app{mediacopier::MEDIACOPIER_PROJECT_NAME};
     app.set_version_flag("-v,--version", mediacopier::MEDIACOPIER_VERSION);
 
+    static const auto& isValidPath = [](const std::string& path) -> std::string {
+        try {
+            if (fs::absolute(path).empty()) {
+                throw CLI::ValidationError{"Empty string is not a valid path"};
+            }
+        } catch(const fs::filesystem_error& err) {
+            throw CLI::ValidationError{"Invalid path definition: " + std::string{err.what()}};
+        }
+        return {};
+    };
+
     auto copyapp = app.add_subcommand("copy", "Copy some files");
     copyapp->callback([this]() { cmd = Command::Copy; });
     copyapp->add_option("inputDir", inputDir)->required()->check(CLI::ExistingDirectory);
-    copyapp->add_option("outputDir", outputDir)->required();
+    copyapp->add_option("outputDir", outputDir)->required()->check(isValidPath, "DIR");
     copyapp->add_option("-p,--pattern", pattern);
 
     auto moveapp = app.add_subcommand("move", "Move some files");
     moveapp->callback([this]() { cmd = Command::Move; });
     moveapp->add_option("inputDir", inputDir)->required()->check(CLI::ExistingDirectory);
-    moveapp->add_option("outputDir", outputDir)->required();
+    moveapp->add_option("outputDir", outputDir)->required()->check(isValidPath, "DIR");
     moveapp->add_option("-p,--pattern", pattern);
 
     int ret = 0;
@@ -94,32 +105,4 @@ void Config::finalize() noexcept
     if (pattern.empty()) {
         pattern = DEFAULT_PATTERN;
     }
-}
-
-bool Config::validate() const noexcept
-{
-    bool result = false;
-    if (pattern.empty()) {
-        spdlog::error("No pattern specified!");
-        result = true;
-    }
-    try {
-        if (fs::absolute(outputDir).empty() || !fs::is_directory(inputDir)) {
-            spdlog::error("Input directory does not exist!");
-            result = true;
-        }
-    } catch(const fs::filesystem_error& err) {
-        spdlog::error("Failed to validate input directory path: " + std::string{err.what()});
-        result = true;
-    }
-    try {
-        if (fs::absolute(outputDir).empty()) {
-            spdlog::error("No output directory specified");
-            result = true;
-        }
-    } catch(const fs::filesystem_error& err) {
-        spdlog::error("Failed to validate output directory path: " + std::string{err.what()});
-        result = true;
-    }
-    return result;
 }
