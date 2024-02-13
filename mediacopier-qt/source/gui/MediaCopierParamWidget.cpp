@@ -91,7 +91,7 @@ void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
             this, &MediaCopierParamWidget::onCommandChanged);
 }
 
-void MediaCopierParamWidget::validate()
+void MediaCopierParamWidget::validateParameters()
 {
     bool result = true;
 

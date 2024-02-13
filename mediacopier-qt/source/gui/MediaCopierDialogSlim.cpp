@@ -65,7 +65,7 @@ void MediaCopierDialogSlim::init(std::shared_ptr<Config> config, QApplication& a
     s2->addTransition(ui->param, &MediaCopierParamWidget::invalidParameters, s1);
     s3->addTransition(this, &MediaCopierDialogSlim::operationDone, s4);
 
-    QObject::connect(s2, &QState::entered, ui->param, &MediaCopierParamWidget::validate);
+    QObject::connect(s2, &QState::entered, ui->param, &MediaCopierParamWidget::validateParameters);
     QObject::connect(s3, &QState::entered, this, &MediaCopierDialogSlim::hide);
     QObject::connect(s3, &QState::entered, this, &MediaCopierDialogSlim::startOperation);
     QObject::connect(fsm.get(), &QStateMachine::finished, this, &MediaCopierDialogSlim::close);
