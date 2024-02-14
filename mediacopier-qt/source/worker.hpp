@@ -48,8 +48,6 @@ public Q_SLOTS:
 
 private:
     const Config m_config;
-    size_t m_fileCount;
-    size_t m_progress;
     QThread m_thread;
 
 #ifdef ENABLE_KDE

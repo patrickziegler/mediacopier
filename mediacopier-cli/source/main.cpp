@@ -35,20 +35,19 @@ namespace mc = mediacopier;
 
 static volatile std::atomic<bool> operationCancelled(false);
 
-auto valid_media_files(const fs::path& path)
+auto media_files(const fs::path& path)
 {
-    static auto is_regular_file = [](const fs::directory_entry& path) {
-        return fs::is_regular_file(path);
-    };
-    static auto is_valid = [](const mc::FileInfoPtr& file) {
-        return file != nullptr;
+    static auto convert = [](const fs::directory_entry& entry) -> mc::FileInfoPtr {
+        if (fs::is_regular_file(entry)) {
+            return mc::to_file_info_ptr(entry.path());
+        } else {
+            return nullptr;
+        }
     };
     return ranges::make_iterator_range(
                 fs::recursive_directory_iterator(path),
                 fs::recursive_directory_iterator())
-            | ranges::views::filter(is_regular_file)
-            | ranges::views::transform(mc::to_file_info_ptr)
-            | ranges::views::filter(is_valid);
+            | ranges::views::transform(convert);
 }
 
 template <typename Operation>
@@ -59,17 +58,16 @@ auto exec(const Config& config) -> void
         operationCancelled.store(true);
     });
 
-    spdlog::info("Checking input directory..");
     auto fileRegister = mc::FileRegister{config.outputDir, config.pattern};
     std::optional<fs::path> dest;
 
-    for (auto file : valid_media_files(config.inputDir)) {
+    for (auto file : media_files(config.inputDir)) {
         if (operationCancelled.load()) {
             spdlog::warn("Operation was cancelled..");
             break;
         }
         try {
-            if ((dest = fileRegister.add(file)).has_value()) {
+            if (file != nullptr && (dest = fileRegister.add(file)).has_value()) {
                 spdlog::info("Processing: {} -> {}",
                              file->path().string(),
                              dest.value().string());
@@ -106,7 +104,6 @@ int main(int argc, char *argv[])
         exec<mediacopier::FileOperationMoveJpeg>(config);
         break;
     }
-
     config.storePersistentConfig();
     return 0;
 }

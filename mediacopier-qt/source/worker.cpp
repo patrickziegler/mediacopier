@@ -65,27 +65,38 @@ auto is_operation_cancelled()
     return false;
 }
 
-auto valid_media_files(const fs::path& path)
+auto media_files(const fs::path& path)
 {
-    static auto is_regular_file = [](const fs::directory_entry& path) {
-        return fs::is_regular_file(path);
+    using itemized_directory_entry = std::pair<size_t, const fs::directory_entry&>;
+    using itemized_file_into_ptr = std::pair<size_t, mc::FileInfoPtr>;
+
+    static auto itemize = [](const fs::directory_entry& entry) -> itemized_directory_entry {
+        static size_t i = 0;
+        ++i;
+        return {i, entry};
     };
 
-    static auto is_valid = [](const mc::FileInfoPtr& file) {
-        return file != nullptr;
+    static auto convert = [](const itemized_directory_entry& entry) -> itemized_file_into_ptr {
+        if (fs::is_regular_file(entry.second)) {
+            return {entry.first, mc::to_file_info_ptr(entry.second.path())};
+        } else {
+            return {entry.first, nullptr};
+        }
     };
 
     return ranges::make_iterator_range(
                 fs::recursive_directory_iterator(path),
                 fs::recursive_directory_iterator())
-            | ranges::views::filter(is_regular_file)
-            | ranges::views::transform(mc::to_file_info_ptr)
-            | ranges::views::filter(is_valid);
+            | ranges::views::transform(itemize)
+            | ranges::views::transform(convert);
 }
 
-auto valid_media_file_count(const fs::path& inputDir) -> size_t
+auto directory_entries_count(const fs::path& path) -> size_t
 {
-    return ranges::distance(valid_media_files(inputDir));
+    return ranges::distance(
+                ranges::make_iterator_range(
+                    fs::recursive_directory_iterator(path),
+                    fs::recursive_directory_iterator()));
 }
 
 template <typename Operation>
@@ -154,17 +165,6 @@ void Worker::kill()
 
 void Worker::exec()
 {
-    // register callback for graceful shutdown via CTRL-C
-    std::signal(SIGINT, [](int) -> void {
-        operationCancelled.store(true);
-    });
-
-    spdlog::info("Checking input directory..");
-    m_fileCount = valid_media_file_count(m_config.inputDir());
-    m_progress = 0;
-
-    auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern()};
-
     ExecFuncPtr execute;
     switch (m_config.command()) {
     case Config::Command::COPY:
@@ -175,19 +175,26 @@ void Worker::exec()
         break;
     }
 
+    spdlog::info("Checking input directory..");
+    const auto count = directory_entries_count(m_config.inputDir());
+
+    // register callback for graceful shutdown via CTRL-C
+    std::signal(SIGINT, [](int) -> void {
+        operationCancelled.store(true);
+    });
+
+    auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern()};
     std::optional<fs::path> dest;
-    for (auto file : valid_media_files(m_config.inputDir())) {
+
+    for (auto [progress, file] : media_files(m_config.inputDir())) {
         if (is_operation_cancelled()) {
             spdlog::info("Operation was cancelled..");
             break;
         }
-        ++m_progress;
         try {
-            if ((dest = fileRegister.add(file)).has_value()) {
-                Q_EMIT status({m_config.command(), file->path(), dest.value(), m_fileCount, m_progress});
+            if (file != nullptr && (dest = fileRegister.add(file)).has_value()) {
+                Q_EMIT status({m_config.command(), file->path(), dest.value(), count, progress});
                 execute(dest.value(), file);
-            } else {
-                Q_EMIT status({m_config.command(), file->path(), "", m_fileCount, m_progress});
             }
         } catch (const std::exception& err) {
             spdlog::error(err.what());
