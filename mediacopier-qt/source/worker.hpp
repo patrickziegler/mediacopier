@@ -38,7 +38,8 @@ public:
     void kill();
 
 Q_SIGNALS:
-    void status(Status info);
+    void updateDescription(StatusDescription info);
+    void updateProgress(StatusProgress info);
     void execDone();
     void finished();
 

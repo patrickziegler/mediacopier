@@ -33,7 +33,8 @@ KMediaCopierJob::KMediaCopierJob(
     setProperty("destUrl", "file://" + QString::fromStdString(std::filesystem::absolute(dstDir)));
     setProperty("immediateProgressReporting", false);
 
-    QObject::connect(m_worker, &Worker::status, this, &KMediaCopierJob::update);
+    QObject::connect(m_worker, &Worker::updateDescription, this, &KMediaCopierJob::updateDescription);
+    QObject::connect(m_worker, &Worker::updateProgress, this, &KMediaCopierJob::updateProgress);
     QObject::connect(m_worker, &Worker::finished, this, &KMediaCopierJob::quit);
 }
 
@@ -42,15 +43,19 @@ void KMediaCopierJob::start()
     // nothing to do here
 }
 
-void KMediaCopierJob::update(Status info)
+void KMediaCopierJob::updateDescription(StatusDescription info)
 {
-    description(this, Config::commandString(info.command()),
+    description(this, Config::commandString(info.command),
                 qMakePair<QString, QString>(
-                    tr("Source"), QString::fromStdString(info.inputPath())),
+                    tr("Source"), QString::fromStdString(info.inputPath)),
                 qMakePair<QString, QString>(
-                    tr("Destination"), QString::fromStdString(info.outputPath())));
-    setTotalAmount(Files, info.fileCount());
-    setProcessedAmount(Files, info.progress());
+                    tr("Destination"), QString::fromStdString(info.outputPath)));
+}
+
+void KMediaCopierJob::updateProgress(StatusProgress info)
+{
+    setTotalAmount(Files, info.count);
+    setProcessedAmount(Files, info.progress);
 }
 
 void KMediaCopierJob::quit()

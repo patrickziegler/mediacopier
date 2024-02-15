@@ -22,7 +22,6 @@ target_sources(${TARGET_NAME} PRIVATE
     "source/config.cpp"
     "source/config.hpp"
     "source/main.cpp"
-    "source/status.cpp"
     "source/status.hpp"
     "source/worker.cpp"
     "source/worker.hpp"

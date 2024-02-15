@@ -18,33 +18,13 @@
 
 #include "config.hpp"
 
-class Status {
-public:
-    Status() {}
-    Status(Config::Command command,
-           std::filesystem::path inputPath,
-           std::filesystem::path outputPath,
-           size_t fileCount,
-           size_t progress) :
-        m_command{std::move(command)},
-        m_inputPath{std::move(inputPath)},
-        m_outputPath{std::move(outputPath)},
-        m_fileCount{std::move(fileCount)},
-        m_progress{std::move(progress)}
-    {
-        // nothing to do here
-    }
+struct StatusDescription {
+    Config::Command command;
+    std::filesystem::path inputPath;
+    std::filesystem::path outputPath;
+};
 
-    const Config::Command& command() const;
-    const std::filesystem::path& inputPath() const;
-    const std::filesystem::path& outputPath() const;
-    const size_t& fileCount() const;
-    const size_t& progress() const;
-
-private:
-    const Config::Command m_command = Config::Command::COPY;
-    const std::filesystem::path m_inputPath = "";
-    const std::filesystem::path m_outputPath = "";
-    const size_t m_fileCount = 0;
-    const size_t m_progress = 0;
+struct StatusProgress {
+    size_t count;
+    size_t progress;
 };

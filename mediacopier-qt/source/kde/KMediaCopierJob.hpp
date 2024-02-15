@@ -32,7 +32,8 @@ public:
     void start() override;
 
 public Q_SLOTS:
-    void update(Status info);
+    void updateDescription(StatusDescription info);
+    void updateProgress(StatusProgress info);
     void quit();
 
 protected:

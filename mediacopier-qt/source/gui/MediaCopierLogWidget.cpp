@@ -48,8 +48,8 @@ void MediaCopierLogWidget::clear()
     ui->logText->clear();
 }
 
-void MediaCopierLogWidget::update(Status info)
+void MediaCopierLogWidget::updateProgress(StatusProgress info)
 {
-    ui->logProgressBar->setMaximum(info.fileCount());
-    ui->logProgressBar->setValue(info.progress());
+    ui->logProgressBar->setMaximum(info.count);
+    ui->logProgressBar->setValue(info.progress);
 }
