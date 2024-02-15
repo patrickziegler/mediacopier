@@ -36,7 +36,7 @@ public:
     void clear();
 
 public Q_SLOTS:
-    void update(Status info);
+    void updateProgress(StatusProgress info);
 
 private:
     Ui::MediaCopierLogWidget* ui;

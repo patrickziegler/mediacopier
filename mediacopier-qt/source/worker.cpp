@@ -112,7 +112,8 @@ typedef void (*ExecFuncPtr)(const fs::path&, mc::FileInfoPtr);
 
 Worker::Worker(Config config) : m_config{std::move(config)}
 {
-    qRegisterMetaType<Status>("Status");
+    qRegisterMetaType<StatusDescription>("StatusDescription");
+    qRegisterMetaType<StatusProgress>("StatusProgress");
 
     QObject::connect(&m_thread, &QThread::started, this, &Worker::exec);
     QObject::connect(this, &Worker::execDone, &m_thread, &QThread::quit);
@@ -186,14 +187,16 @@ void Worker::exec()
     auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern()};
     std::optional<fs::path> dest;
 
+    spdlog::info("Executing operation..");
     for (auto [progress, file] : media_files(m_config.inputDir())) {
         if (is_operation_cancelled()) {
             spdlog::info("Operation was cancelled..");
             break;
         }
+        Q_EMIT updateProgress({count, progress});
         try {
             if (file != nullptr && (dest = fileRegister.add(file)).has_value()) {
-                Q_EMIT status({m_config.command(), file->path(), dest.value(), count, progress});
+                Q_EMIT updateDescription({m_config.command(), file->path(), dest.value()});
                 execute(dest.value(), file);
             }
         } catch (const std::exception& err) {
