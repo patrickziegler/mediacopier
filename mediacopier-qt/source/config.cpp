@@ -51,10 +51,8 @@ Config::Config(const QApplication& app)
                 "DST", "Output directory", "[DST]]]");
     QCommandLineOption optSlimGui(
                 "slim-gui", "Pattern to be used for creating new filenames");
-    QCommandLineOption optNoGui(
-                "no-gui", "Pattern to be used for creating new filenames");
 
-    parser.addOptions({optSlimGui, optNoGui});
+    parser.addOptions({optSlimGui});
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);

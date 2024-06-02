@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-project(MediaCopier VERSION 2.1.3)
+project(MediaCopier VERSION 2.1.4)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
