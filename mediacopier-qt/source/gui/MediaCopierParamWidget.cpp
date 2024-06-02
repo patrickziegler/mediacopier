@@ -96,7 +96,7 @@ void MediaCopierParamWidget::validateParameters()
     bool result = true;
 
     QPalette errorPalette;
-    errorPalette.setColor(QPalette::Base, QColor(255, 145, 145));
+    errorPalette.setColor(QPalette::Base, QColor(236, 116, 116));
     errorPalette.setColor(QPalette::Text, Qt::white);
 
     if (ui->dirsInputDirText->text().isEmpty() || !QDir(ui->dirsInputDirText->text()).exists()) {
@@ -123,6 +123,7 @@ void MediaCopierParamWidget::validateParameters()
     if (result) {
         validParameters();
     } else {
+        spdlog::error("Missing parameters, cannot start yet!");
         invalidParameters();
     }
 }

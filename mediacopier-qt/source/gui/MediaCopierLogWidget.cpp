@@ -30,7 +30,7 @@ MediaCopierLogWidget::MediaCopierLogWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->logText->setPlainText(
-                QString("%1 v%2")
+                QString("Welcome to %1 v%2")
                 .arg(mediacopier::MEDIACOPIER_PROJECT_NAME)
                 .arg(mediacopier::MEDIACOPIER_VERSION));
     auto sink = std::make_shared<spdlog::sinks::qt_sink_st>(ui->logText, "appendPlainText");
