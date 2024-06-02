@@ -22,6 +22,14 @@ Direct dependencies (library):
 Direct dependencies (tools):
 - range-v3 (https://github.com/ericniebler/range-v3)
 - Qt5 (https://doc.qt.io/qt-5/)
+- KJobWidgets (https://api.kde.org/frameworks/kjobwidgets/html/index.html)
+
+These dependencies can be installed via
+
+```sh
+# openSUSE
+zypper install spdlog-devel libexiv2-devel libjpeg8-devel range-v3-devel libQt5Gui-devel ki18n-devel kjobwidgets-devel
+```
 
 Clone this repository and create a build directory
 
