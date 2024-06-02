@@ -32,39 +32,41 @@ auto to_file_info_ptr(const fs::path& path) -> FileInfoPtr
     FileInfoPtr result = nullptr;
 
     try {
-        auto image = Exiv2::ImageFactory::open(path.string());
+        auto image = Exiv2::ImageFactory::open(Exiv2::ImageFactory::createIo(path, true));
 
-        if (image->imageType() != Exiv2::ImageType::none && image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
+        if (image.get() != nullptr && image->imageType() != Exiv2::ImageType::none && image->supportsMetadata(Exiv2::MetadataId::mdExif)) {
+
             image->readMetadata();
 
-            try {
-                if (image->mimeType() == "image/jpeg") {
+            if (image->mimeType() == "image/jpeg") {
+                try {
                     result = std::make_shared<FileInfoImageJpeg>(path, image->exifData());
+                } catch (const FileInfoImageJpegError& err) {
+                    spdlog::warn("Error reading jpeg metadata {0}: {1}", path.string(), err.what());
+                } catch (const FileInfoError& err) {
+                    // ignore, will be reported anyway when file is parsed as 'FileInfoImage'
                 }
-            } catch (const FileInfoImageJpegError& err) {
-                spdlog::warn("Error reading jpeg metadata {0}: {1}", path.string(), err.what());
-            } catch (const FileInfoError& err) {
-                // ignore, will be reported anyway when file is parsed as 'FileInfoImage'
             }
 
-            try {
-                if (!result) {
+            if (result == nullptr) {
+                try {
                     result = std::make_shared<FileInfoImage>(path, image->exifData());
+                } catch (const FileInfoError& err) {
+                    spdlog::warn("Couldn't find image metadata in {0}: {1}", path.string(), err.what());
                 }
-            } catch (const FileInfoError& err) {
-                spdlog::warn("Couldn't find image metadata in {0}: {1}", path.string(), err.what());
-            }
-
-        } else {
-            try {
-                result = std::make_shared<FileInfoVideo>(path);
-            }  catch (const FileInfoError& err) {
-                spdlog::warn("Couldn't find video metadata in {0}: {1}", path.string(), err.what());
             }
         }
 
     } catch (const Exiv2::Error& err) {
-        spdlog::warn("Is no media file: {0}", err.what());
+        spdlog::warn("Is no image file: {0}", err.what());
+    }
+
+    if (result == nullptr) {
+        try {
+            result = std::make_shared<FileInfoVideo>(path);
+        }  catch (const FileInfoError& err) {
+            spdlog::warn("Couldn't find video metadata in {0}: {1}", path.string(), err.what());
+        }
     }
 
     return result;
