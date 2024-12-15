@@ -28,7 +28,7 @@ These dependencies can be installed via
 
 ```sh
 # openSUSE
-zypper install spdlog-devel libexiv2-devel libjpeg8-devel range-v3-devel libQt5Gui-devel ki18n-devel kjobwidgets-devel
+zypper install spdlog-devel libexiv2-devel libjpeg8-devel range-v3-devel libQt5Gui-devel ki18n-devel kjobwidgets-devel ffmpeg-6-libavformat-devel ffmpeg-6-libavutil-devel toml11-devel cli11-devel libqt5-linguist-devel
 ```
 
 Clone this repository and create a build directory
@@ -40,6 +40,7 @@ cd MediaCopier && mkdir build && cd build
 
 Build and install the package
 ```sh
+export CXX=/usr/bin/g++-13 # set specific compiler (optional)
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DENABLE_QT=ON -DENABLE_KDE=ON -DCMAKE_BUILD_TYPE=release .. && make -j$(nproc) && sudo make install
 ```
 
