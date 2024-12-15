@@ -15,6 +15,11 @@ if(exiv2_VERSION VERSION_LESS "0.28")
     add_compile_definitions(EXIV2_HAS_TOLONG=1)
 endif()
 
+# just in case we need the timezone library
+# set(BUILD_TZ_LIB ON CACHE BOOL "")
+# set(USE_SYSTEM_TZ_DB ON CACHE BOOL "")
+add_subdirectory("extern/date")
+
 set(TARGET_NAME ${MEDIACOPIER_LIB_TARGET_NAME})
 
 configure_file(
@@ -62,8 +67,7 @@ target_sources(${TARGET_NAME} PRIVATE
 
 target_include_directories(${TARGET_NAME} PRIVATE
     "${AVFORMAT_INCLUDE_DIRS}"
-    "${LIBJPEG_INCLUDE_DIRS}"
-    "extern/date/include")
+    "${LIBJPEG_INCLUDE_DIRS}")
 
 target_include_directories(${TARGET_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
@@ -73,7 +77,7 @@ target_include_directories(${TARGET_NAME} PUBLIC
 target_link_libraries(${TARGET_NAME} PRIVATE
     "${AVFORMAT_LINK_LIBRARIES}"
     "${LIBJPEG_LINK_LIBRARIES}"
-    Exiv2::exiv2lib spdlog::spdlog)
+    date::date Exiv2::exiv2lib spdlog::spdlog)
 
 if(${ENABLE_TEST})
     add_subdirectory(test)
