@@ -20,7 +20,8 @@ struct Config
 {
     enum class Command {
         Copy,
-        Move
+        Move,
+        Sim,
     };
 
     enum class ParseResult {

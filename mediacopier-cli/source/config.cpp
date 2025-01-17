@@ -58,6 +58,12 @@ std::pair<Config::ParseResult, int> Config::parseArgs(int argc, char *argv[])
     moveapp->add_option("outputDir", outputDir)->required()->check(isValidPath, "DIR");
     moveapp->add_option("-p,--pattern", pattern);
 
+    auto simapp = app.add_subcommand("sim", "Simulate operation and dump info");
+    simapp->callback([this]() { cmd = Command::Sim; });
+    simapp->add_option("inputDir", inputDir)->required()->check(CLI::ExistingDirectory);
+    simapp->add_option("outputDir", outputDir)->required()->check(isValidPath, "DIR");
+    simapp->add_option("-p,--pattern", pattern);
+
     int ret = 0;
     try {
         app.parse(argc, argv);
