@@ -30,9 +30,11 @@ public:
     virtual auto accept(AbstractFileOperation& operation) const -> void = 0;
     auto path() const -> std::filesystem::path { return m_path; }
     auto timestamp() const -> std::chrono::system_clock::time_point { return m_timestamp; }
+    auto offset() const -> std::chrono::minutes { return m_offset; }
 protected:
     std::filesystem::path m_path;
     std::chrono::system_clock::time_point m_timestamp;
+    std::chrono::minutes m_offset = std::chrono::minutes::zero();
 };
 
 using FileInfoPtr = std::shared_ptr<AbstractFileInfo>;

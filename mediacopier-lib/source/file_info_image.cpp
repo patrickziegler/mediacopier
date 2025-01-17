@@ -22,9 +22,12 @@
 
 #include <array>
 
-static constexpr const std::array<char[29], 4> keysDateTime = {
+/* 'original' refers to the moment the picture was taken (shutter pressed),
+ * 'digitized' is the moment where the picture was scanned (should be the same for digital cams),
+ * the plain 'DateTime' is the fallback if the above keys are missing */
+
+static constexpr const std::array<char[29], 3> keysDateTime = {
     "Exif.Photo.DateTimeOriginal",
-    "Exif.Image.DateTimeOriginal",
     "Exif.Photo.DateTimeDigitized",
     "Exif.Image.DateTime",
 };
@@ -35,39 +38,63 @@ static constexpr const std::array<char[31], 3> keysSubSec = {
     "Exif.Photo.SubSecTime"
 };
 
+static constexpr const std::array<char[31], 3> keysOffset = {
+    "Exif.Photo.OffsetTimeOriginal",
+    "Exif.Photo.OffsetTimeDigitized",
+    "Exif.Photo.OffsetTime",
+};
+
 namespace mediacopier {
 
 FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) : AbstractFileInfo{std::move(path)}
 {
-    std::stringstream timestamp;
+    std::string key, value;
+    int hours, minutes;
+    char colon; // used for parsing timezone offset without scanning for separator
 
-    for (const std::string& key : keysDateTime) {
-        if (exif.findKey(Exiv2::ExifKey{key}) == exif.end()) {
-            continue;
-        }
-        std::string value = exif[key].toString();
-        if (value.length() > 0) {
-            timestamp << value;
+    size_t i = keysDateTime.size() + 1;
+    for (int j=0; j < keysDateTime.size(); ++j) {
+        key = keysDateTime[j];
+        if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
+            i = j;
             break;
         }
     }
+    if (i > keysDateTime.size()) {
+        throw FileInfoError{"No date information found"};
+    }
 
+    std::stringstream timestamp;
+    value = exif[key].toString();
+    timestamp << value;
+
+    key = keysSubSec[i];
+    if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
+        value = exif[key].toString();
+        if (value.size() > 0) {
+            timestamp << "." << value;
+        }
+    }
     if (timestamp.str().size() < 1) {
         throw FileInfoError{"No date information found"};
     }
 
-    for (const std::string& key : keysSubSec) {
-        if (exif.findKey(Exiv2::ExifKey{key}) == exif.end()) {
-            continue;
-        }
-        std::string value = exif[key].toString();
-        if (value.length() > 0) {
-            timestamp << "." << value;
-            break;
-        }
+    timestamp >> date::parse("%Y:%m:%d %T", m_timestamp);
+    if (timestamp.fail()) {
+        throw FileInfoError{"Invalid date info found"};
     }
 
-    timestamp >> date::parse("%Y:%m:%d %H:%M:%S", m_timestamp);
+    key = keysOffset[i];
+    if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
+        value = exif[key].toString();
+        timestamp.str(value);
+        timestamp.clear();
+        timestamp >> hours >> colon >> minutes;
+        if (hours < 0) {
+            minutes *= -1;
+        }
+        m_offset = std::chrono::hours(hours) + std::chrono::minutes(minutes);
+    }
 }
 
 auto FileInfoImage::accept(AbstractFileOperation& operation) const -> void
