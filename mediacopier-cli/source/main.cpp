@@ -18,6 +18,7 @@
 #include <mediacopier/file_register.hpp>
 #include <mediacopier/operation_copy_jpeg.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
+#include <mediacopier/operation_simulate.hpp>
 
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
@@ -68,9 +69,7 @@ auto exec(const Config& config) -> void
         }
         try {
             if (file != nullptr && (dest = fileRegister.add(file)).has_value()) {
-                spdlog::info("Processing: {} -> {}",
-                             file->path().string(),
-                             dest.value().string());
+                spdlog::info("Processing: {}", file->path().string());
                 Operation op(dest.value());
                 file->accept(op);
             }
@@ -102,6 +101,9 @@ int main(int argc, char *argv[])
         break;
     case Config::Command::Move:
         exec<mediacopier::FileOperationMoveJpeg>(config);
+        break;
+    case Config::Command::Sim:
+        exec<mediacopier::FileOperationSimulate>(config);
         break;
     }
     config.storePersistentConfig();

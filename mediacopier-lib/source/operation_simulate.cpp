@@ -16,6 +16,7 @@
 
 #include <mediacopier/operation_simulate.hpp>
 
+#include <date/date.h>
 #include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/file_info_video.hpp>
 #include <spdlog/spdlog.h>
@@ -23,11 +24,18 @@
 #include <chrono>
 #include <thread>
 
+static constexpr const char* PATTERN_TIMESTAMP = "%Y-%m-%d %H:%M:%S";
+
 namespace mediacopier {
 
 auto FileOperationSimulate::dumpFilePaths(const AbstractFileInfo& file) const -> void
 {
-    spdlog::info("{} -> {}", file.path().string(), m_destination.string());
+    std::ostringstream os;
+    date::to_stream(os, PATTERN_TIMESTAMP, file.timestamp());
+    spdlog::info("{} ({}, Offset: {} min) -> {}",
+                 file.path().filename().string(), os.str(),
+                 file.offset().count(),
+                 m_destination.string());
 }
 
 auto FileOperationSimulate::visit(const FileInfoImage& file) -> void
