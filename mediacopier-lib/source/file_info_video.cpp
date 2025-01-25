@@ -39,26 +39,46 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
 
     if (ret != 0) {
         av_strerror(ret, errbuf, sizeof(errbuf));
-        std::ostringstream ss;
-        ss << "Could not read metadata: " << errbuf;
-        throw FileInfoError{ss.str()};
+        std::ostringstream oss;
+        oss << "Could not read metadata: " << errbuf;
+        throw FileInfoError{oss.str()};
     }
 
+    std::string timestamp;
+
+    // 'creation_time' is the safe fallback that should be available everywhere, but it's utc
     tag = av_dict_get(fmt_ctx->metadata, "creation_time", nullptr, AV_DICT_IGNORE_SUFFIX);
-
-    if (!tag) {
-        avformat_close_input(&fmt_ctx);
-        throw FileInfoError{"'creation_time' not found in metadata"};
+    if (tag) {
+        timestamp = tag->value;
     }
 
-    // magic numbers assume the following format: 2018-01-01T01:01:01.000000Z
-    std::istringstream ss{tag->value};
-    ss >> date::parse("%Y-%m-%dT%H:%M:%S", m_timestamp);
+    // apple stores timezone offsets along withe timestamp, we use this info if it is available
+    tag = av_dict_get(fmt_ctx->metadata, "com.apple.quicktime.creationdate", nullptr, AV_DICT_IGNORE_SUFFIX);
+    if (tag) {
+        timestamp = tag->value;
+    }
 
     avformat_close_input(&fmt_ctx);
 
-    if (m_timestamp == std::chrono::system_clock::time_point{}) {
-        throw FileInfoError{"No date information found"};
+    if (timestamp.empty()) {
+        throw FileInfoError{"No date info found"};
+    }
+
+    std::chrono::system_clock::time_point tp;
+
+    std::istringstream iss{timestamp};
+    iss >> date::parse("%FT%T", tp); // parse into local time (without timezone offset)
+    if (iss.fail()) {
+        throw FileInfoError{"Invalid date info found"};
+    }
+
+    m_timestamp = tp;
+
+    iss.seekg(0, std::ios::beg); // we want to parse the timestamp once more
+    iss.clear();
+    iss >> date::parse("%FT%T%z", tp); // parse into utc
+    if (!iss.fail()) {
+        m_offset = std::chrono::duration_cast<std::chrono::minutes>(m_timestamp - tp);
     }
 }
 
