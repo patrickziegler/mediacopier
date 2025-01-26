@@ -59,10 +59,10 @@ auto exec(const Config& config) -> void
         operationCancelled.store(true);
     });
 
-    auto fileRegister = mc::FileRegister{config.outputDir, config.pattern};
+    auto fileRegister = mc::FileRegister{config.outputDir(), config.pattern(), config.useUtc()};
     std::optional<fs::path> dest;
 
-    for (auto file : media_files(config.inputDir)) {
+    for (auto file : media_files(config.inputDir())) {
         if (operationCancelled.load()) {
             spdlog::warn("Operation was cancelled..");
             break;
@@ -93,9 +93,8 @@ int main(int argc, char *argv[])
         return ret;
     }
     config.loadPersistentConfig();
-    config.finalize();
 
-    switch (config.cmd) {
+    switch (config.command()) {
     case Config::Command::Copy:
         exec<mediacopier::FileOperationCopyJpeg>(config);
         break;

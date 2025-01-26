@@ -30,13 +30,14 @@ using FileConflictMap = std::unordered_map<std::string, std::vector<std::filesys
 
 class FileRegister {
 public:
-    explicit FileRegister(std::filesystem::path destination, std::string pattern);
+    explicit FileRegister(std::filesystem::path destination, std::string pattern, bool useUtc);
     auto add(FileInfoPtr file) -> std::optional<std::filesystem::path>;
     auto removeDuplicates() -> void;
 private:
     auto constructDestinationPath(const FileInfoPtr&, size_t) const -> std::filesystem::path;
     std::filesystem::path m_destdir;
     std::string m_pattern;
+    bool m_useUtc;
     FileInfoMap m_register;
     FileConflictMap m_conflicts;
 };

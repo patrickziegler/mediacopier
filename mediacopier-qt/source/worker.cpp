@@ -184,7 +184,7 @@ void Worker::exec()
         operationCancelled.store(true);
     });
 
-    auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern()};
+    auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern(), false};
     std::optional<fs::path> dest;
 
     spdlog::info("Executing operation..");

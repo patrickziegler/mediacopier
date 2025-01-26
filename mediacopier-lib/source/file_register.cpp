@@ -25,7 +25,7 @@ namespace fs = std::filesystem;
 
 namespace mediacopier {
 
-FileRegister::FileRegister(fs::path destination, std::string pattern) : m_destdir{std::move(destination)}, m_pattern{std::move(pattern)}
+FileRegister::FileRegister(fs::path destination, std::string pattern, bool useUtc) : m_destdir{std::move(destination)}, m_pattern{std::move(pattern)}, m_useUtc{useUtc}
 {
     m_destdir /= ""; // this will append a trailing directory separator when necessary
 }
@@ -93,7 +93,12 @@ auto FileRegister::constructDestinationPath(const FileInfoPtr& file, size_t suff
     std::ostringstream os;
     os << m_destdir.string();
 
-    date::to_stream(os, m_pattern.c_str(), file->timestamp());
+    std::chrono::system_clock::time_point tp = file->timestamp();
+    if (m_useUtc) {
+        tp -= file->offset(); // convert local time to utc
+    }
+
+    date::to_stream(os, m_pattern.c_str(), tp);
 
     if (suffix > 0) {
         os << "_" << suffix;
