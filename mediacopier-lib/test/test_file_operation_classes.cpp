@@ -29,7 +29,7 @@ namespace mediacopier::test {
 template <typename T>
 static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDir) -> const fs::path
 {
-    FileRegister destinationRegister{dstBaseDir, DEFAULT_PATTERN};
+    FileRegister destinationRegister{dstBaseDir, DEFAULT_PATTERN, false};
     auto file = FileInfoFactory::createFromPath(srcPath);
     auto path = destinationRegister.add(file).value();
     T operation{path};
