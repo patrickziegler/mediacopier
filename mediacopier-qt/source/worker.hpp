@@ -30,7 +30,7 @@ class Worker : public QObject {
 
 public:
     Worker() = delete;
-    Worker(Config config);
+    Worker(Config config, const QString& description);
 
     void start();
     void suspend();

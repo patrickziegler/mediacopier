@@ -19,7 +19,6 @@
 #include "config.hpp"
 
 struct StatusDescription {
-    Config::Command command;
     std::filesystem::path inputPath;
     std::filesystem::path outputPath;
 };

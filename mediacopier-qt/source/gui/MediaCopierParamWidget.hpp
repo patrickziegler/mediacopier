@@ -16,13 +16,13 @@
 
 #pragma once
 
+#include "config.hpp"
+
 #include <QWidget>
 
 namespace Ui {
 class MediaCopierParamWidget;
 }
-
-class Config;
 
 class MediaCopierParamWidget : public QWidget
 {
@@ -33,6 +33,7 @@ public:
     ~MediaCopierParamWidget();
     void init(std::shared_ptr<Config> config);
     void validateParameters();
+    QString getCommandDescription(const Config::Command& command) const;
 
 Q_SIGNALS:
     void validParameters();
@@ -45,6 +46,7 @@ private Q_SLOTS:
     void onInputDirChanged(const QString& text);
     void onOutputDirChanged(const QString& text);
     void onPatternChanged(const QString& text);
+    void onTimezoneChanged(int index);
     void onCommandChanged(int index);
 
 private:

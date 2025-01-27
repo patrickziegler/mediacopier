@@ -23,17 +23,11 @@
 
 namespace fs = std::filesystem;
 
-static constexpr const char* CONFIG_FILE = ".mediacopier";
-static constexpr const char* DEFAULT_PATTERN = "%Y/%W/IMG_%Y%m%d_%H%M%S";
+static constexpr const char* MEDIACOPIER_CONFIG_FILE = ".mediacopier";
 
 static const std::map<QString, Config::Command> commands = {
-    {"copy", Config::Command::COPY},
-    {"move", Config::Command::MOVE}
-};
-
-static const std::map<Config::Command, QString> commandStrings = {
-    {Config::Command::COPY, QT_TRANSLATE_NOOP("Command", "Copy")},
-    {Config::Command::MOVE, QT_TRANSLATE_NOOP("Command", "Move")}
+    {"copy", Config::Command::Copy},
+    {"move", Config::Command::Move}
 };
 
 Config::Config(const QApplication& app)
@@ -42,7 +36,7 @@ Config::Config(const QApplication& app)
 
     parser.setApplicationDescription(
                 app.applicationName() +
-                ", Copyright (C) 2020-2024 Patrick Ziegler");
+                ", Copyright (C) 2020-2025 Patrick Ziegler");
     parser.addPositionalArgument(
                 "CMD", "Available commands: copy (default), move", "[CMD");
     parser.addPositionalArgument(
@@ -50,7 +44,7 @@ Config::Config(const QApplication& app)
     parser.addPositionalArgument(
                 "DST", "Output directory", "[DST]]]");
     QCommandLineOption optSlimGui(
-                "slim-gui", "Pattern to be used for creating new filenames");
+                "slim-gui", "Launch simplified user interface");
 
     parser.addOptions({optSlimGui});
     parser.addVersionOption();
@@ -70,22 +64,24 @@ Config::Config(const QApplication& app)
     if (parser.isSet("slim-gui")) {
         m_guiType = GuiType::Slim;
     }
-
-    m_pattern = DEFAULT_PATTERN;
 }
 
 bool Config::readConfigFile() noexcept
 {
-    const auto configFile = m_outputDir / CONFIG_FILE;
+    const auto configFile = m_outputDir / MEDIACOPIER_CONFIG_FILE;
     if (!fs::is_regular_file(configFile)) {
         return false;
     }
-    try {
-        const auto data = toml::parse(configFile);
-        m_pattern = toml::find<std::string>(data, "pattern");
-    } catch (const std::exception& err) {
-        spdlog::error("Failed to load config: " + std::string{err.what()});
-        return false;
+    const toml::value input = toml::parse(configFile);
+    if(input.contains("pattern") && input.at("pattern").is_string()) {
+        m_pattern = input.at("pattern").as_string();
+    }
+    if(input.contains("useUtc") && input.at("useUtc").is_boolean()) {
+        if (input.at("useUtc").as_boolean()) {
+            m_timezone = Timezone::Universal;
+        } else {
+            m_timezone = Timezone::Local;
+        }
     }
     return true;
 }
@@ -95,12 +91,32 @@ bool Config::writeConfigFile() const noexcept
     if (!fs::is_directory(m_outputDir)) {
         return false;
     }
-    auto configFile = m_outputDir / CONFIG_FILE;
-    toml::value data{{"pattern", m_pattern}};
-    std::ofstream out{configFile};
-    out << "# this file is updated on every run of mediacopier"
-        << ", manual changes might be lost\n" << data;
+    const auto configFile = m_outputDir / MEDIACOPIER_CONFIG_FILE;
+    toml::value output{{"pattern", m_pattern.get()}, {"useUtc", useUtc()}};
+    std::ofstream os{configFile};
+    os << "# this file is updated on every run of mediacopier"
+       << ", manual changes might be lost\n" << output;
     return true;
+}
+
+void Config::setInputDir(const QString& inputDir)
+{
+    m_inputDir = inputDir.toStdString();
+}
+
+void Config::setOutputDir(const QString& outputDir)
+{
+    m_outputDir = outputDir.toStdString();
+}
+
+void Config::setPattern(const QString& pattern)
+{
+    m_pattern = pattern.toStdString();
+}
+
+void Config::setTimezone(const Timezone& timezone)
+{
+    m_timezone = timezone;
 }
 
 void Config::setCommand(const Command& command)
@@ -117,27 +133,17 @@ void Config::setCommand(const QString& command)
     }
 }
 
-void Config::setPattern(const QString& pattern)
-{
-    m_pattern = pattern.toStdString();
-}
-
 void Config::resetPattern()
 {
-    m_pattern = DEFAULT_PATTERN;
+    m_pattern.reset();
 }
 
-void Config::setInputDir(const QString& inputDir)
+void Config::resetTimezone()
 {
-    m_inputDir = inputDir.toStdString();
+    m_timezone.reset();
 }
 
-void Config::setOutputDir(const QString& outputDir)
+bool Config::useUtc() const
 {
-    m_outputDir = outputDir.toStdString();
-}
-
-const QString Config::commandString(const Command& command)
-{
-    return QApplication::translate("Command", commandStrings.at(command).toStdString().c_str());
+    return m_timezone == Timezone::Universal;
 }

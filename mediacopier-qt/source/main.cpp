@@ -35,6 +35,9 @@ int run_gui(QApplication& app, std::shared_ptr<Config> config)
 
 int main(int argc, char *argv[])
 {
+#ifndef NDEBUG
+    spdlog::set_level(spdlog::level::debug);
+#endif
     try {
         QApplication app(argc, argv);
 
