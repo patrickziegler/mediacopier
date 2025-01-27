@@ -23,8 +23,9 @@
 
 KMediaCopierJob::KMediaCopierJob(
         Worker* worker,
+        QString command,
         const std::filesystem::path& dstDir) :
-    m_worker{worker}
+    m_command{std::move(command)}, m_worker{worker}
 {
     QApplication::setDesktopFileName("org.kde.dolphin");
 
@@ -45,7 +46,7 @@ void KMediaCopierJob::start()
 
 void KMediaCopierJob::updateDescription(StatusDescription info)
 {
-    description(this, Config::commandString(info.command),
+    description(this, m_command,
                 qMakePair<QString, QString>(
                     tr("Source"), QString::fromStdString(info.inputPath)),
                 qMakePair<QString, QString>(

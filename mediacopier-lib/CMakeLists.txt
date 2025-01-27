@@ -18,7 +18,7 @@ endif()
 # just in case we need the timezone library
 # set(BUILD_TZ_LIB ON CACHE BOOL "")
 # set(USE_SYSTEM_TZ_DB ON CACHE BOOL "")
-add_subdirectory("extern/date")
+add_subdirectory("extern/date" EXCLUDE_FROM_ALL)
 
 set(TARGET_NAME ${MEDIACOPIER_LIB_TARGET_NAME})
 

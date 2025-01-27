@@ -28,6 +28,7 @@ class KMediaCopierJob : public KJob {
 public:
     KMediaCopierJob(
             Worker* worker,
+            QString command,
             const std::filesystem::path& dstDir);
     void start() override;
 
@@ -42,5 +43,6 @@ protected:
     bool doResume() override;
 
 private:
+    QString m_command;
     Worker* m_worker;
 };

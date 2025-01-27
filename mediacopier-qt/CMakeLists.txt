@@ -67,6 +67,15 @@ if(${ENABLE_KDE})
     configure_file("source/kde/${DESKTOP_FILE_NAME}.in"
         "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}")
 
+    # install location has changed with version 5.85 according to [1], but [2] seems to contradict (?)
+    # [1] https://develop.kde.org/docs/apps/dolphin/service-menus/#where-the-servicemenus-are-located
+    # [2] https://invent.kde.org/documentation/develop-kde-org/-/issues/140
+    if(${KF5I18n_VERSION} VERSION_GREATER_EQUAL "5.85")
+        set(INSTALL_SERVICE_MENUS_DIR "${CMAKE_INSTALL_DATAROOTDIR}/kio/servicemenus")
+    else()
+        set(INSTALL_SERVICE_MENUS_DIR "${CMAKE_INSTALL_DATAROOTDIR}/kservices5/ServiceMenus")
+    endif()
+
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}"
-        DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/kservices5/ServiceMenus")
+        DESTINATION "${INSTALL_SERVICE_MENUS_DIR}")
 endif()

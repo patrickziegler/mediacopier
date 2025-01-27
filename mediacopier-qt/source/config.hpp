@@ -19,17 +19,53 @@
 #include <QApplication>
 
 #include <filesystem>
+#include <optional>
+
+constexpr const char* DEFAULT_PATTERN = "%Y/%W/IMG_%Y%m%d_%H%M%S";
+
+template <typename T>
+class Configurable {
+public:
+    Configurable(const T& defaultValue) :
+        defaultValue{defaultValue},
+        currentValue{std::nullopt} {}
+    Configurable& operator=(const T& value) {
+        currentValue = value;
+        return *this;
+    }
+    T get() const {
+        return currentValue.value_or(defaultValue);
+    }
+    operator T() const {
+        return currentValue.value_or(defaultValue);
+    }
+    void set(const T& value) {
+        currentValue = value;
+    }
+    void reset() {
+        currentValue.reset();
+    }
+    void setDefault(const T& value) {
+        defaultValue = value;
+    }
+private:
+    T defaultValue;
+    std::optional<T> currentValue;
+};
 
 class Config {
 public:
     enum class Command {
-        COPY,
-        MOVE
+        Copy,
+        Move
     };
-
+    enum class Timezone {
+        Universal,
+        Local
+    };
     enum class GuiType {
         Full,
-        Slim,
+        Slim
     };
 
     Config(const QApplication& app);
@@ -37,25 +73,30 @@ public:
     bool readConfigFile() noexcept;
     bool writeConfigFile() const noexcept;
 
-    void setCommand(const Command& command);
-    void setCommand(const QString& command);
-    void setPattern(const QString& pattern);
-    void resetPattern();
     void setInputDir(const QString& inputDir);
     void setOutputDir(const QString& outputDir);
+    void setPattern(const QString& pattern);
+    void setTimezone(const Timezone& timezone);
+    void setCommand(const Command& command);
+    void setCommand(const QString& command);
 
-    static const QString commandString(const Command& command);
+    void resetPattern();
+    void resetTimezone();
 
-    const Command& command() const { return m_command; }
+    bool useUtc() const;
+
     const GuiType& guiType() const { return m_guiType; }
-    const std::string& pattern() const { return m_pattern; }
     const std::filesystem::path& inputDir() const { return m_inputDir; }
     const std::filesystem::path& outputDir() const { return m_outputDir; }
+    const std::string pattern() const { return m_pattern; }
+    const Timezone timezone() const {return m_timezone; }
+    const Command& command() const { return m_command; }
 
-private:
-    Command m_command = Command::COPY;
+private:  
     GuiType m_guiType = GuiType::Full;
-    std::string m_pattern;
     std::filesystem::path m_inputDir;
     std::filesystem::path m_outputDir;
+    Configurable<std::string> m_pattern{DEFAULT_PATTERN};
+    Configurable<Timezone> m_timezone{Timezone::Universal};
+    Command m_command = Command::Copy;
 };

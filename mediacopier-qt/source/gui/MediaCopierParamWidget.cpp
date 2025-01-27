@@ -15,7 +15,6 @@
  */
 
 #include "gui/MediaCopierParamWidget.hpp"
-#include "config.hpp"
 
 #include <QAbstractButton>
 #include <QFileDialog>
@@ -33,21 +32,48 @@ const auto ask_for_directory = [](const QString& title) -> QString
                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 };
 
-static const QList<Config::Command> commands = {
-    Config::Command::COPY,
-    Config::Command::MOVE
+static const QList<QPair<QString, Config::Timezone>> paramTimezoneItems = {
+    QPair<QString, Config::Timezone>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Universal time (UTC)"), Config::Timezone::Universal),
+    QPair<QString, Config::Timezone>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Local time"), Config::Timezone::Local)
+
 };
+
+static const QList<QPair<QString, Config::Command>> paramCommandItems = {
+    QPair<QString, Config::Command>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Copy"), Config::Command::Copy),
+    QPair<QString, Config::Command>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Move"), Config::Command::Move)
+};
+
+static int getTimezoneIndex(const Config::Timezone& timezone) {
+    for (int i = 0; i < paramTimezoneItems.length(); ++i) {
+        if (paramTimezoneItems.at(i).second == timezone) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static int getCommandIndex(const Config::Command& command) {
+    for (int i = 0; i < paramCommandItems.length(); ++i) {
+        if (paramCommandItems.at(i).second == command) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 MediaCopierParamWidget::MediaCopierParamWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MediaCopierParamWidget)
 {
     ui->setupUi(this);
-
-    Q_FOREACH(Config::Command item, commands) {
-        ui->paramCommand->addItem(Config::commandString(item));
+    for (const auto& item : paramCommandItems) {
+        ui->paramCommand->addItem(tr(item.first.toStdString().c_str()));
+    }
+    for (const auto& item : paramTimezoneItems) {
+        ui->paramTimezone->addItem(tr(item.first.toStdString().c_str()));
     }
     ui->paramPattern->setEnabled(false);
+    ui->paramTimezone->setEnabled(false);
 }
 
 MediaCopierParamWidget::~MediaCopierParamWidget()
@@ -62,12 +88,8 @@ void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
     ui->dirsInputDirText->setText(QString::fromStdString(m_config->inputDir().string()));
     ui->dirsOutputDirText->setText(QString::fromStdString(m_config->outputDir().string()));
     ui->paramPattern->setText(m_config->pattern().c_str());
-    for (int i = 0; i < commands.length(); ++i) {
-        if (commands.at(i) == m_config->command()) {
-            ui->paramCommand->setCurrentIndex(i);
-            break;
-        }
-    }
+    ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->timezone()));
+    ui->paramCommand->setCurrentIndex(getCommandIndex(m_config->command()));
 
     connect(ui->dirsInputDirButton, &QToolButton::clicked,
             this, &MediaCopierParamWidget::onOpenInputDirClicked);
@@ -87,6 +109,9 @@ void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
     connect(ui->paramPattern, &QLineEdit::textChanged,
             this, &MediaCopierParamWidget::onPatternChanged);
 
+    connect(ui->paramTimezone, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &MediaCopierParamWidget::onTimezoneChanged);
+
     connect(ui->paramCommand, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MediaCopierParamWidget::onCommandChanged);
 }
@@ -96,7 +121,7 @@ void MediaCopierParamWidget::validateParameters()
     bool result = true;
 
     QPalette errorPalette;
-    errorPalette.setColor(QPalette::Base, QColor(236, 116, 116));
+    errorPalette.setColor(QPalette::Base, QColor("#ff7d7d"));
     errorPalette.setColor(QPalette::Text, Qt::white);
 
     if (ui->dirsInputDirText->text().isEmpty() || !QDir(ui->dirsInputDirText->text()).exists()) {
@@ -130,51 +155,73 @@ void MediaCopierParamWidget::validateParameters()
 
 void MediaCopierParamWidget::onOpenInputDirClicked()
 {
-    ui->dirsInputDirText->setText(ask_for_directory(QObject::tr("Source folder")));
+    ui->dirsInputDirText->setText(ask_for_directory(tr("Source folder")));
 }
 
 void MediaCopierParamWidget::onOpenOutputDirClicked()
 {
-    ui->dirsOutputDirText->setText(ask_for_directory(QObject::tr("Destination folder")));
+    ui->dirsOutputDirText->setText(ask_for_directory(tr("Destination folder")));
 }
 
 void MediaCopierParamWidget::onPatternUpdateClicked(bool checked)
 {
     ui->paramPattern->setEnabled(checked);
+    ui->paramTimezone->setEnabled(checked);
     if (!checked) {
         m_config->resetPattern();
+        m_config->resetTimezone();
         m_config->readConfigFile();
         ui->paramPattern->setText(m_config->pattern().c_str());
+        ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->timezone()));
     }
 }
 
 void MediaCopierParamWidget::onInputDirChanged(const QString& text)
 {
     m_config->setInputDir(text);
-    spdlog::debug("Changed input dir to " + m_config->outputDir().string());
+    spdlog::debug("Changed input dir to '" + m_config->outputDir().string() + "'");
 }
 
 void MediaCopierParamWidget::onOutputDirChanged(const QString& text)
 {
     m_config->setOutputDir(text);
-    spdlog::debug("Changed output dir to " + m_config->outputDir().string());
+    spdlog::debug("Changed output dir to '" + m_config->outputDir().string() + "'");
     if (!ui->paramPattern->isEnabled()) {
         m_config->resetPattern();
+        m_config->resetTimezone();
         if (QDir(text).exists()) {
             m_config->readConfigFile();
         }
     }
     ui->paramPattern->setText(m_config->pattern().c_str());
+    ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->timezone()));
 }
 
 void MediaCopierParamWidget::onPatternChanged(const QString& text)
 {
     m_config->setPattern(text);
-    spdlog::debug("Changed pattern to " + m_config->pattern());
+    spdlog::debug("Changed pattern to '" + m_config->pattern() + "'");
+}
+
+void MediaCopierParamWidget::onTimezoneChanged(int index)
+{
+    const auto& [description, timezone] = paramTimezoneItems.at(index);
+    m_config->setTimezone(timezone);
+    spdlog::debug("Changed timezone to '" + description.toStdString() + "'");
 }
 
 void MediaCopierParamWidget::onCommandChanged(int index)
 {
-    m_config->setCommand(commands.at(index));
-    spdlog::debug("Changed command to " + Config::commandString(commands.at(index)).toStdString());
+    const auto& [description, command] = paramCommandItems.at(index);
+    m_config->setCommand(command);
+    spdlog::debug("Changed command to '" + description.toStdString() + "'");
+}
+
+QString MediaCopierParamWidget::getCommandDescription(const Config::Command& command) const {
+    for (const auto& [d, c] : paramCommandItems) {
+        if (c == command) {
+            return tr(d.toStdString().c_str());
+        }
+    }
+    return {};
 }

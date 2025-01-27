@@ -22,7 +22,6 @@
 
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
-
 #include <mediacopier/operation_copy_jpeg.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
 
@@ -48,6 +47,7 @@ static volatile std::atomic<bool> operationCancelled(false);
 static volatile std::atomic<bool> operationSuspended(false);
 
 static constexpr const unsigned int DEFAULT_WAIT_MS = 200;
+static constexpr const char* MEDIACOPIER_LOG_FILE = ".mediacopier-log";
 
 auto is_operation_cancelled()
 {
@@ -110,7 +110,7 @@ typedef void (*ExecFuncPtr)(const fs::path&, mc::FileInfoPtr);
 
 } // namespace
 
-Worker::Worker(Config config) : m_config{std::move(config)}
+Worker::Worker(Config config, const QString& description) : m_config{std::move(config)}
 {
     qRegisterMetaType<StatusDescription>("StatusDescription");
     qRegisterMetaType<StatusProgress>("StatusProgress");
@@ -123,15 +123,13 @@ Worker::Worker(Config config) : m_config{std::move(config)}
 
 #ifdef ENABLE_KDE
     // tracker takes ownership of job
-    auto job = new KMediaCopierJob(this, m_config.outputDir());
+    auto job = new KMediaCopierJob(this, description, m_config.outputDir());
     m_tracker.registerJob(job);
 #endif
-
     if (spdlog::default_logger()->sinks().size() > 2) {
         spdlog::default_logger()->sinks().pop_back();
     }
-
-    auto logfile = m_config.outputDir() / ".mediacopier-log";
+    auto logfile = m_config.outputDir() / MEDIACOPIER_LOG_FILE;
     spdlog::default_logger()->sinks().push_back(
                 std::make_shared<spdlog::sinks::basic_file_sink_mt>(logfile.string(), true));
 };
@@ -168,10 +166,10 @@ void Worker::exec()
 {
     ExecFuncPtr execute;
     switch (m_config.command()) {
-    case Config::Command::COPY:
+    case Config::Command::Copy:
         execute = &::execute<mc::FileOperationCopyJpeg>;
         break;
-    case Config::Command::MOVE:
+    case Config::Command::Move:
         execute = &::execute<mc::FileOperationMoveJpeg>;
         break;
     }
@@ -184,7 +182,7 @@ void Worker::exec()
         operationCancelled.store(true);
     });
 
-    auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern(), false};
+    auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern(), m_config.useUtc()};
     std::optional<fs::path> dest;
 
     spdlog::info("Executing operation..");
@@ -196,7 +194,7 @@ void Worker::exec()
         Q_EMIT updateProgress({count, progress});
         try {
             if (file != nullptr && (dest = fileRegister.add(file)).has_value()) {
-                Q_EMIT updateDescription({m_config.command(), file->path(), dest.value()});
+                Q_EMIT updateDescription({file->path(), dest.value()});
                 execute(dest.value(), file);
             }
         } catch (const std::exception& err) {

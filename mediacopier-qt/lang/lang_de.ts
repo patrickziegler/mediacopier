@@ -2,27 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
-    <name>Command</name>
-    <message>
-        <location filename="../source/config.cpp" line="35"/>
-        <source>Copy</source>
-        <translation>Kopieren</translation>
-    </message>
-    <message>
-        <location filename="../source/config.cpp" line="36"/>
-        <source>Move</source>
-        <translation>Verschieben</translation>
-    </message>
-</context>
-<context>
     <name>KMediaCopierJob</name>
     <message>
-        <location filename="../source/kde/KMediaCopierJob.cpp" line="50"/>
+        <location filename="../source/kde/KMediaCopierJob.cpp" line="51"/>
         <source>Source</source>
         <translation>Quelle</translation>
     </message>
     <message>
-        <location filename="../source/kde/KMediaCopierJob.cpp" line="52"/>
+        <location filename="../source/kde/KMediaCopierJob.cpp" line="53"/>
         <source>Destination</source>
         <translation>Ziel</translation>
     </message>
@@ -38,22 +25,22 @@
 <context>
     <name>MediaCopierParamWidget</name>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="89"/>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="66"/>
         <source>Operation</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="30"/>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="43"/>
         <source>Input</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="76"/>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="149"/>
         <source>Pattern</source>
         <translation>Schema</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="66"/>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="53"/>
         <source>Output</source>
         <translation>Zielverzeichnis</translation>
     </message>
@@ -64,21 +51,38 @@
         <translation>Ändern</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="46"/>
-        <location filename="../source/gui/MediaCopierParamWidget.ui" line="53"/>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="30"/>
+        <location filename="../source/gui/MediaCopierParamWidget.ui" line="79"/>
         <source>...</source>
         <translation></translation>
     </message>
-</context>
-<context>
-    <name>QObject</name>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="133"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="37"/>
+        <source>Local time</source>
+        <translation>Lokale zeit</translation>
+    </message>
+    <message>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="36"/>
+        <source>Universal time (UTC)</source>
+        <translation>Koordinierte Weltzeit (UTC)</translation>
+    </message>
+    <message>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="42"/>
+        <source>Copy</source>
+        <translation>Kopieren</translation>
+    </message>
+    <message>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="43"/>
+        <source>Move</source>
+        <translation>Verschieben</translation>
+    </message>
+    <message>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="158"/>
         <source>Source folder</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="138"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="163"/>
         <source>Destination folder</source>
         <translation>Zielverzeichnis</translation>
     </message>
