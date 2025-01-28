@@ -47,17 +47,17 @@ public:
     void setCommand(const Command& command);
     void setCommand(const QString& command);
 
-    auto getGuiType() const -> const GuiType&;
+    auto getGuiType() const -> const GuiType;
     auto getInputDir() const -> const std::filesystem::path&;
     auto getOutputDir() const -> const std::filesystem::path&;
-    auto getPattern() const -> const std::string;
+    auto getPattern() const -> const std::string&;
     auto getTimezone() const -> const Timezone;
-    auto getCommand() const -> const Command&;
+    auto getCommand() const -> const Command;
 
     void resetPattern();
     void resetTimezone();
 
-    auto useUtc() const -> bool;
+    bool useUtc() const;
 
 private:  
     GuiType m_guiType = GuiType::Full;
