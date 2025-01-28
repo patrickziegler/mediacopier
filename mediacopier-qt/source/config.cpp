@@ -111,7 +111,7 @@ void Config::setCommand(const QString& command)
     }
 }
 
-auto Config::getGuiType() const -> const GuiType&
+auto Config::getGuiType() const -> const GuiType
 {
     return m_guiType;
 }
@@ -126,9 +126,9 @@ auto Config::getOutputDir() const -> const std::filesystem::path&
     return m_outputDir;
 }
 
-auto Config::getPattern() const -> const std::string
+auto Config::getPattern() const -> const std::string&
 {
-    return m_pattern;
+    return m_pattern.get();
 }
 
 auto Config::getTimezone() const -> const Timezone
@@ -136,7 +136,7 @@ auto Config::getTimezone() const -> const Timezone
     return (m_useUtc) ? Timezone::Universal : Timezone::Local;
 }
 
-auto Config::getCommand() const -> const Command& {
+auto Config::getCommand() const -> const Command {
     return m_command;
 }
 

@@ -39,8 +39,12 @@ public:
     void setDefault(const T& value) {
         defaultValue = value;
     }
-    T get() const {
-        return currentValue.value_or(defaultValue);
+    const T& get() const {
+        if (currentValue) {
+            return currentValue.value();
+        } else {
+            return defaultValue;
+        }
     }
     void reset() {
         currentValue.reset();
