@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
         auto config = std::make_shared<Config>(app);
 
-        switch (config->guiType()) {
+        switch (config->getGuiType()) {
         case Config::GuiType::Full:
             return run_gui<MediaCopierDialogFull>(app, config);
         case Config::GuiType::Slim:

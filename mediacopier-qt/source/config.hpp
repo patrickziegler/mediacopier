@@ -16,44 +16,11 @@
 
 #pragma once
 
+#include <mediacopier/persistent_config.hpp>
+
 #include <QApplication>
 
-#include <filesystem>
-#include <optional>
-
-constexpr const char* DEFAULT_PATTERN = "%Y/%W/IMG_%Y%m%d_%H%M%S";
-
-template <typename T>
-class Configurable {
-public:
-    Configurable(const T& defaultValue) :
-        defaultValue{defaultValue},
-        currentValue{std::nullopt} {}
-    Configurable& operator=(const T& value) {
-        currentValue = value;
-        return *this;
-    }
-    T get() const {
-        return currentValue.value_or(defaultValue);
-    }
-    operator T() const {
-        return currentValue.value_or(defaultValue);
-    }
-    void set(const T& value) {
-        currentValue = value;
-    }
-    void reset() {
-        currentValue.reset();
-    }
-    void setDefault(const T& value) {
-        defaultValue = value;
-    }
-private:
-    T defaultValue;
-    std::optional<T> currentValue;
-};
-
-class Config {
+class Config : public mediacopier::PersistentConfig {
 public:
     enum class Command {
         Copy,
@@ -80,23 +47,21 @@ public:
     void setCommand(const Command& command);
     void setCommand(const QString& command);
 
+    auto getGuiType() const -> const GuiType&;
+    auto getInputDir() const -> const std::filesystem::path&;
+    auto getOutputDir() const -> const std::filesystem::path&;
+    auto getPattern() const -> const std::string;
+    auto getTimezone() const -> const Timezone;
+    auto getCommand() const -> const Command&;
+
     void resetPattern();
     void resetTimezone();
 
-    bool useUtc() const;
-
-    const GuiType& guiType() const { return m_guiType; }
-    const std::filesystem::path& inputDir() const { return m_inputDir; }
-    const std::filesystem::path& outputDir() const { return m_outputDir; }
-    const std::string pattern() const { return m_pattern; }
-    const Timezone timezone() const {return m_timezone; }
-    const Command& command() const { return m_command; }
+    auto useUtc() const -> bool;
 
 private:  
     GuiType m_guiType = GuiType::Full;
     std::filesystem::path m_inputDir;
     std::filesystem::path m_outputDir;
-    Configurable<std::string> m_pattern{DEFAULT_PATTERN};
-    Configurable<Timezone> m_timezone{Timezone::Universal};
     Command m_command = Command::Copy;
 };

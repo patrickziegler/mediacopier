@@ -123,13 +123,13 @@ Worker::Worker(Config config, const QString& description) : m_config{std::move(c
 
 #ifdef ENABLE_KDE
     // tracker takes ownership of job
-    auto job = new KMediaCopierJob(this, description, m_config.outputDir());
+    auto job = new KMediaCopierJob(this, description, m_config.getOutputDir());
     m_tracker.registerJob(job);
 #endif
     if (spdlog::default_logger()->sinks().size() > 2) {
         spdlog::default_logger()->sinks().pop_back();
     }
-    auto logfile = m_config.outputDir() / MEDIACOPIER_LOG_FILE;
+    auto logfile = m_config.getOutputDir() / MEDIACOPIER_LOG_FILE;
     spdlog::default_logger()->sinks().push_back(
                 std::make_shared<spdlog::sinks::basic_file_sink_mt>(logfile.string(), true));
 };
@@ -165,7 +165,7 @@ void Worker::kill()
 void Worker::exec()
 {
     ExecFuncPtr execute;
-    switch (m_config.command()) {
+    switch (m_config.getCommand()) {
     case Config::Command::Copy:
         execute = &::execute<mc::FileOperationCopyJpeg>;
         break;
@@ -175,18 +175,18 @@ void Worker::exec()
     }
 
     spdlog::info("Checking input directory..");
-    const auto count = directory_entries_count(m_config.inputDir());
+    const auto count = directory_entries_count(m_config.getInputDir());
 
     // register callback for graceful shutdown via CTRL-C
     std::signal(SIGINT, [](int) -> void {
         operationCancelled.store(true);
     });
 
-    auto fileRegister = mc::FileRegister{m_config.outputDir(), m_config.pattern(), m_config.useUtc()};
+    auto fileRegister = mc::FileRegister{m_config.getOutputDir(), m_config.getPattern(), m_config.useUtc()};
     std::optional<fs::path> dest;
 
     spdlog::info("Executing operation..");
-    for (auto [progress, file] : media_files(m_config.inputDir())) {
+    for (auto [progress, file] : media_files(m_config.getInputDir())) {
         if (is_operation_cancelled()) {
             spdlog::info("Operation was cancelled..");
             break;

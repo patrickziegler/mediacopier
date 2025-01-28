@@ -18,13 +18,6 @@
 
 #include <QCommandLineParser>
 
-#include <spdlog/spdlog.h>
-#include <toml.hpp>
-
-namespace fs = std::filesystem;
-
-static constexpr const char* MEDIACOPIER_CONFIG_FILE = ".mediacopier";
-
 static const std::map<QString, Config::Command> commands = {
     {"copy", Config::Command::Copy},
     {"move", Config::Command::Move}
@@ -68,34 +61,19 @@ Config::Config(const QApplication& app)
 
 bool Config::readConfigFile() noexcept
 {
-    const auto configFile = m_outputDir / MEDIACOPIER_CONFIG_FILE;
-    if (!fs::is_regular_file(configFile)) {
+    m_pattern.resetDefault();
+    m_useUtc.resetDefault();
+    try {
+        loadPersistentConfig(m_outputDir);
+    } catch(...) {
         return false;
-    }
-    const toml::value input = toml::parse(configFile);
-    if(input.contains("pattern") && input.at("pattern").is_string()) {
-        m_pattern = input.at("pattern").as_string();
-    }
-    if(input.contains("useUtc") && input.at("useUtc").is_boolean()) {
-        if (input.at("useUtc").as_boolean()) {
-            m_timezone = Timezone::Universal;
-        } else {
-            m_timezone = Timezone::Local;
-        }
     }
     return true;
 }
 
 bool Config::writeConfigFile() const noexcept
 {
-    if (!fs::is_directory(m_outputDir)) {
-        return false;
-    }
-    const auto configFile = m_outputDir / MEDIACOPIER_CONFIG_FILE;
-    toml::value output{{"pattern", m_pattern.get()}, {"useUtc", useUtc()}};
-    std::ofstream os{configFile};
-    os << "# this file is updated on every run of mediacopier"
-       << ", manual changes might be lost\n" << output;
+    storePersistentConfig(m_outputDir);
     return true;
 }
 
@@ -116,7 +94,7 @@ void Config::setPattern(const QString& pattern)
 
 void Config::setTimezone(const Timezone& timezone)
 {
-    m_timezone = timezone;
+    m_useUtc = (timezone == Timezone::Universal);
 }
 
 void Config::setCommand(const Command& command)
@@ -133,6 +111,35 @@ void Config::setCommand(const QString& command)
     }
 }
 
+auto Config::getGuiType() const -> const GuiType&
+{
+    return m_guiType;
+}
+
+auto Config::getInputDir() const -> const std::filesystem::path&
+{
+    return m_inputDir;
+}
+
+auto Config::getOutputDir() const -> const std::filesystem::path&
+{
+    return m_outputDir;
+}
+
+auto Config::getPattern() const -> const std::string
+{
+    return m_pattern;
+}
+
+auto Config::getTimezone() const -> const Timezone
+{
+    return (m_useUtc) ? Timezone::Universal : Timezone::Local;
+}
+
+auto Config::getCommand() const -> const Command& {
+    return m_command;
+}
+
 void Config::resetPattern()
 {
     m_pattern.reset();
@@ -140,10 +147,10 @@ void Config::resetPattern()
 
 void Config::resetTimezone()
 {
-    m_timezone.reset();
+    m_useUtc.reset();
 }
 
 bool Config::useUtc() const
 {
-    return m_timezone == Timezone::Universal;
+    return m_useUtc;
 }

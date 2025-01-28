@@ -85,11 +85,11 @@ void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
 {
     m_config = std::move(config);
 
-    ui->dirsInputDirText->setText(QString::fromStdString(m_config->inputDir().string()));
-    ui->dirsOutputDirText->setText(QString::fromStdString(m_config->outputDir().string()));
-    ui->paramPattern->setText(m_config->pattern().c_str());
-    ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->timezone()));
-    ui->paramCommand->setCurrentIndex(getCommandIndex(m_config->command()));
+    ui->dirsInputDirText->setText(QString::fromStdString(m_config->getInputDir().string()));
+    ui->dirsOutputDirText->setText(QString::fromStdString(m_config->getOutputDir().string()));
+    ui->paramPattern->setText(m_config->getPattern().c_str());
+    ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->getTimezone()));
+    ui->paramCommand->setCurrentIndex(getCommandIndex(m_config->getCommand()));
 
     connect(ui->dirsInputDirButton, &QToolButton::clicked,
             this, &MediaCopierParamWidget::onOpenInputDirClicked);
@@ -168,46 +168,51 @@ void MediaCopierParamWidget::onPatternUpdateClicked(bool checked)
     ui->paramPattern->setEnabled(checked);
     ui->paramTimezone->setEnabled(checked);
     if (!checked) {
+        // revert to defaults as given in the config file or original defaults (built-in)
         m_config->resetPattern();
         m_config->resetTimezone();
         m_config->readConfigFile();
-        ui->paramPattern->setText(m_config->pattern().c_str());
-        ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->timezone()));
+        ui->paramPattern->setText(m_config->getPattern().c_str());
+        ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->getTimezone()));
+    } else {
+        // this ensures that the current values won't be overridden by defaults later
+        m_config->setPattern(ui->paramPattern->text());
+        m_config->setTimezone(paramTimezoneItems.at(ui->paramTimezone->currentIndex()).second);
     }
 }
 
 void MediaCopierParamWidget::onInputDirChanged(const QString& text)
 {
     m_config->setInputDir(text);
-    spdlog::debug("Changed input dir to '" + m_config->outputDir().string() + "'");
+    spdlog::debug("Changed input dir to '" + m_config->getOutputDir().string() + "'");
 }
 
 void MediaCopierParamWidget::onOutputDirChanged(const QString& text)
 {
     m_config->setOutputDir(text);
-    spdlog::debug("Changed output dir to '" + m_config->outputDir().string() + "'");
-    if (!ui->paramPattern->isEnabled()) {
-        m_config->resetPattern();
-        m_config->resetTimezone();
-        if (QDir(text).exists()) {
-            m_config->readConfigFile();
-        }
-    }
-    ui->paramPattern->setText(m_config->pattern().c_str());
-    ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->timezone()));
+    spdlog::debug("Changed output dir to '" + m_config->getOutputDir().string() + "'");
+    m_config->readConfigFile(); // this will only update the default values
+    ui->paramPattern->setText(m_config->getPattern().c_str());
+    ui->paramTimezone->setCurrentIndex(getTimezoneIndex(m_config->getTimezone()));
 }
 
 void MediaCopierParamWidget::onPatternChanged(const QString& text)
 {
-    m_config->setPattern(text);
-    spdlog::debug("Changed pattern to '" + m_config->pattern() + "'");
+    // without this check, we wouldn't be able to fall back to defaults
+    if (m_config->getPattern() != text.toStdString()) {
+        m_config->setPattern(text);
+        spdlog::debug("Changed pattern to '" + m_config->getPattern() + "'");
+    }
 }
 
 void MediaCopierParamWidget::onTimezoneChanged(int index)
 {
     const auto& [description, timezone] = paramTimezoneItems.at(index);
-    m_config->setTimezone(timezone);
-    spdlog::debug("Changed timezone to '" + description.toStdString() + "'");
+    // without this check, we wouldn't be able to fall back to defaults
+    if (m_config->getTimezone() != timezone) {
+        m_config->setTimezone(timezone);
+        spdlog::debug("Changed timezone to '" + description.toStdString() + "'");
+    }
 }
 
 void MediaCopierParamWidget::onCommandChanged(int index)
