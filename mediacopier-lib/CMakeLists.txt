@@ -1,6 +1,7 @@
 find_package(exiv2 REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(toml11 REQUIRED)
 
 # inspired by https://github.com/Exiv2/exiv2/commit/130064dc76d2494b6fd473b293f2f32d36eb88f3,
 # needed here because package in Ubuntu 22.04 was not updated yet
@@ -53,6 +54,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "include/mediacopier/operation_move.hpp"
     "include/mediacopier/operation_move_jpeg.hpp"
     "include/mediacopier/operation_simulate.hpp"
+    "include/mediacopier/persistent_config.hpp"
     "source/duplicate_check.cpp"
     "source/file_info_factory.cpp"
     "source/file_info_image.cpp"
@@ -63,7 +65,8 @@ target_sources(${TARGET_NAME} PRIVATE
     "source/operation_copy_jpeg.cpp"
     "source/operation_move.cpp"
     "source/operation_move_jpeg.cpp"
-    "source/operation_simulate.cpp")
+    "source/operation_simulate.cpp"
+    "source/persistent_config.cpp")
 
 target_include_directories(${TARGET_NAME} PRIVATE
     "${AVFORMAT_INCLUDE_DIRS}"

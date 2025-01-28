@@ -29,7 +29,7 @@
 #include <atomic>
 #include <csignal>
 
-#include "config.hpp"
+#include "cli.hpp"
 
 namespace fs = std::filesystem;
 namespace mc = mediacopier;
@@ -52,17 +52,17 @@ auto media_files(const fs::path& path)
 }
 
 template <typename Operation>
-auto exec(const Config& config) -> void
+auto exec(const mc::Cli& cli) -> void
 {
     // register callback for graceful shutdown via CTRL-C
     std::signal(SIGINT, [](int) -> void {
         operationCancelled.store(true);
     });
 
-    auto fileRegister = mc::FileRegister{config.outputDir(), config.pattern(), config.useUtc()};
+    auto fileRegister = mc::FileRegister{cli.outputDir(), cli.pattern(), cli.useUtc()};
     std::optional<fs::path> dest;
 
-    for (auto file : media_files(config.inputDir())) {
+    for (auto file : media_files(cli.inputDir())) {
         if (operationCancelled.load()) {
             spdlog::warn("Operation was cancelled..");
             break;
@@ -87,24 +87,24 @@ auto exec(const Config& config) -> void
 
 int main(int argc, char *argv[])
 {
-    Config config;
-    const auto& [res, ret] = config.parseArgs(argc, argv);
-    if (res != Config::ParseResult::Continue) {
+    mc::Cli cli;
+    const auto& [res, ret] = cli.parseArgs(argc, argv);
+    if (res != mc::Cli::ParseResult::Continue) {
         return ret;
     }
-    config.loadPersistentConfig();
-
-    switch (config.command()) {
-    case Config::Command::Copy:
-        exec<mediacopier::FileOperationCopyJpeg>(config);
+    const auto& outputDir = cli.outputDir();
+    cli.loadPersistentConfig(outputDir);
+    switch (cli.command()) {
+    case mc::Cli::Command::Copy:
+        exec<mediacopier::FileOperationCopyJpeg>(cli);
         break;
-    case Config::Command::Move:
-        exec<mediacopier::FileOperationMoveJpeg>(config);
+    case mc::Cli::Command::Move:
+        exec<mediacopier::FileOperationMoveJpeg>(cli);
         break;
-    case Config::Command::Sim:
-        exec<mediacopier::FileOperationSimulate>(config);
+    case mc::Cli::Command::Sim:
+        exec<mediacopier::FileOperationSimulate>(cli);
         break;
     }
-    config.storePersistentConfig();
+    cli.storePersistentConfig(outputDir);
     return 0;
 }
