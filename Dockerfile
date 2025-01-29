@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # preventing interactive tzinfo config on `apt-get install cmake`
 ARG DEBIAN_FRONTEND=noninteractive

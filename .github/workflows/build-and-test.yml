@@ -7,8 +7,9 @@ jobs:
     strategy:
       matrix:
         config:
-        - {name: "Ubuntu 22.04 (GCC)", os: "ubuntu-22.04", CC: "gcc", CXX: "g++"}
-        - {name: "Ubuntu 22.04 (Clang)", os: "ubuntu-22.04", CC: "clang", CXX: "clang++"}
+        # using gcc-11 as advised here https://github.com/linux-test-project/lcov/issues/209
+        - {name: "Ubuntu 24.04 (GCC)", os: "ubuntu-24.04", CC: "gcc-11", CXX: "g++-11"}
+        - {name: "Ubuntu 24.04 (Clang)", os: "ubuntu-24.04", CC: "clang", CXX: "clang++"}
 
     name: ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
@@ -17,7 +18,7 @@ jobs:
     - name: Install dependencies
       env:
         DEBIAN_FRONTEND: "noninteractive"
-      run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs librange-v3-dev libspdlog-dev libturbojpeg0-dev libtoml11-dev
+      run: sudo apt-get update && sudo apt-get install -y build-essential gcc-11 g++-11 pkg-config cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs librange-v3-dev libspdlog-dev libturbojpeg0-dev libtoml11-dev
 
     - name: Checkout repository
       uses: actions/checkout@v2
