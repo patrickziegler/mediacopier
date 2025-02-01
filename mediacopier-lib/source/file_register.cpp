@@ -37,23 +37,9 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
 
     while (suffix < std::numeric_limits<size_t>::max()) {
         auto dest = constructDestinationPath(file, suffix);
-        auto item = m_register.find(dest.string());
-
-        if (item != m_register.end()) {
-            const auto& knownFile = item->second;
-            if (is_duplicate(file->path(), knownFile->path())) {
-                spdlog::info("Ignoring duplicate: {0} (same as {1})", file->path().filename().string(), knownFile->path().filename().string());
-                return {};
-            }
-            // possible duplicate of 'item' at destination
-            conflicts.push_back(item->first);
-            ++suffix;
-            continue;
-        }
-
         if (fs::exists(dest)) {
             if (is_duplicate(file->path(), dest)) {
-                spdlog::info("Ignoring already exsiting: {0} (same as {1})", file->path().filename().string(), dest.filename().string());
+                spdlog::info("Ignoring already existing: {0} (same as {1})", file->path().filename().string(), dest.filename().string());
                 return {};
             }
             // possible duplicate of 'dest'
@@ -61,11 +47,20 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
             ++suffix;
             continue;
         }
-
+        auto item = m_register.find(dest.string());
+        if (item != m_register.end()) {
+            if (is_duplicate(file->path(), item->second->path())) {
+                spdlog::info("Ignoring duplicate: {0} (same as {1})", file->path().filename().string(), item->second->path().filename().string());
+                return {};
+            }
+            // possible duplicate of 'item' at destination
+            conflicts.push_back(dest);
+            ++suffix;
+            continue;
+        }
         if (conflicts.size() > 0) {
             m_conflicts[dest.string()] = std::move(conflicts);
         }
-
         m_register[dest.string()] = std::move(file);
         return {std::move(dest)};
     }

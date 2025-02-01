@@ -61,7 +61,7 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     avformat_close_input(&fmt_ctx);
 
     if (timestamp.empty()) {
-        throw FileInfoError{"No date info found"};
+        throw FileInfoError{"No date information found"};
     }
 
     std::chrono::system_clock::time_point tp;
@@ -69,7 +69,7 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     std::istringstream iss{timestamp};
     iss >> date::parse("%FT%T", tp); // parse into local time (without timezone offset)
     if (iss.fail()) {
-        throw FileInfoError{"Invalid date info found"};
+        throw FileInfoError{"Invalid date information found"};
     }
 
     m_timestamp = tp;
