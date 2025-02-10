@@ -57,32 +57,33 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="37"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="41"/>
         <source>Local time</source>
         <translation>Lokale zeit</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="36"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="40"/>
         <source>Universal time (UTC)</source>
         <translation>Koordinierte Weltzeit (UTC)</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="42"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="46"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="43"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="47"/>
         <source>Move</source>
         <translation>Verschieben</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="158"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="162"/>
         <source>Source folder</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="163"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="169"/>
+        <location filename="../source/gui/MediaCopierParamWidget.cpp" line="171"/>
         <source>Destination folder</source>
         <translation>Zielverzeichnis</translation>
     </message>
