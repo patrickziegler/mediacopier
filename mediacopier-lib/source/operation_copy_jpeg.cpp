@@ -99,8 +99,8 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
     int flags = 0;
 
     if (tjTransform(tjInstance, inputBufPtr.get(), inputBufSize, 1, &outputBuf, &outputBufSize, &xform, flags) < 0) {
-        tjDestroy(tjInstance);
         spdlog::warn("Could not execute transformation ({0}): {1}", file.path().string(), tjGetErrorStr());
+        tjDestroy(tjInstance);
         return false;
     }
 
@@ -111,19 +111,18 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
     unique_file_t outputFile(std::fopen(dest.string().c_str(), "wb"), &std::fclose);
 
     if (!outputFile) {
-        tjDestroy(tjInstance);
         spdlog::warn("Could not open file for writing ({0})", dest.string());
+        tjDestroy(tjInstance);
         return false;
     }
 
     if (fwrite(outputBufPtr.get(), outputBufSize, 1, outputFile.get()) < 1) {
-        tjDestroy(tjInstance);
         spdlog::warn("Could not write to output file ({0})", dest.string());
+        tjDestroy(tjInstance);
         return false;
     }
 
     tjDestroy(tjInstance);
-
     return true;
 }
 
