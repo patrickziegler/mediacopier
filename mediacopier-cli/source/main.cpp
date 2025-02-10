@@ -69,7 +69,7 @@ auto exec(const mc::Cli& cli) -> void
         }
         try {
             if (file != nullptr && (dest = fileRegister.add(file)).has_value()) {
-                spdlog::info("Processing: {}", file->path().string());
+                spdlog::info("Processing: {0} -> {1}", file->path().string(), dest.value().string());
                 Operation op(dest.value());
                 file->accept(op);
             }

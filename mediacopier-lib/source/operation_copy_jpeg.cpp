@@ -137,10 +137,8 @@ auto FileOperationCopyJpeg::copyFileJpeg(const FileInfoImageJpeg& file) const ->
     if (file.orientation() != upright && copy_rotate_jpeg(file, m_destination) && reset_exif_orientation(m_destination)) {
         return;
     }
-    fs::copy_file(file.path(), m_destination, fs::copy_options::overwrite_existing, err);
-    if (err.value()) {
-        spdlog::warn("Could not copy jpeg file ({0}): {1}", file.path().string(), err.message());
-    }
+    spdlog::warn("Fallback to regular copy operation for {}", file.path().string());
+    copyFile(file);
 }
 
 auto FileOperationCopyJpeg::visit(const FileInfoImage& file) -> void

@@ -194,6 +194,7 @@ void Worker::exec()
         Q_EMIT updateProgress({count, progress});
         try {
             if (file != nullptr && (dest = fileRegister.add(file)).has_value()) {
+                spdlog::debug("Processing: {0} -> {1}", file->path().string(), dest.value().string());
                 Q_EMIT updateDescription({file->path(), dest.value()});
                 execute(dest.value(), file);
             }
