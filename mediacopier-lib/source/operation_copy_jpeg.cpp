@@ -32,7 +32,7 @@ constexpr static const auto upright = FileInfoImageJpeg::Orientation::ROT_0;
 
 auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexcept -> bool
 {
-    using unique_file_t = std::unique_ptr<std::FILE, decltype(&std::fclose)>;
+    using unique_file_t = std::unique_ptr<std::FILE, int(*)(std::FILE*)>;
     using unique_buf_t = std::unique_ptr<unsigned char, decltype(&tjFree)>;
 
     // ----------------- prepare transformation parameters
