@@ -16,6 +16,7 @@
 
 #include <mediacopier/operation_move.hpp>
 
+#include <mediacopier/error.hpp>
 #include <mediacopier/file_info_image_jpeg.hpp>
 #include <mediacopier/file_info_video.hpp>
 #include <spdlog/spdlog.h>
@@ -27,14 +28,17 @@ namespace mediacopier {
 auto FileOperationMove::moveFile(const AbstractFileInfo& file) const -> void
 {
     std::error_code err;
-    fs::create_directories(m_destination.parent_path(), err);
-    if (err.value()) {
-        spdlog::warn("Could not create parent path ({0}): {1}", m_destination.parent_path().string(), err.message());
-        return;
-    }
+    fs::create_directories(m_destination.parent_path()); // may throw
     fs::rename(file.path(), m_destination, err);
-    if (err.value()) {
-        spdlog::warn("Could not move file ({0}): {1}", file.path().string(), err.message());
+    if (err.value() == EXDEV) {
+        spdlog::debug("Move accross filesystems, fallback to copy + remove approach");
+        fs::copy_file(file.path(), m_destination, fs::copy_options::overwrite_existing); // may throw
+        fs::remove(file.path(), err);
+        if (err) {
+            spdlog::warn("Failed to remove the original file: ({0}): {1}", file.path().string(), err.message());
+        }
+    } else if (err) {
+        throw mediacopier::FileOperationError{"Failed to move file " + file.path().string() + ": " + err.message()};
     }
 }
 

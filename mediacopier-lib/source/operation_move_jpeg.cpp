@@ -35,13 +35,14 @@ auto FileOperationMoveJpeg::moveFileJpeg(const FileInfoImageJpeg& file) const ->
         return;
     }
     if (file.orientation() != upright && copy_rotate_jpeg(file, m_destination) && reset_exif_orientation(m_destination)) {
-        fs::remove(file.path());
+        fs::remove(file.path(), err);
+        if (err) {
+            spdlog::warn("Failed to remove the original file: ({0}): {1}", file.path().string(), err.message());
+        }
         return;
     }
-    fs::rename(file.path(), m_destination, err);
-    if (err.value()) {
-        spdlog::warn("Could not move jpeg file ({0}): {1}", file.path().string(), err.message());
-    }
+    spdlog::warn("Fallback to regular move operation for {}", file.path().string());
+    moveFile(file);
 }
 
 auto FileOperationMoveJpeg::visit(const FileInfoImage& file) -> void
