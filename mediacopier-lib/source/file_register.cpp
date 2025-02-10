@@ -70,13 +70,15 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
 
 auto FileRegister::removeDuplicates() -> void
 {
-    for (const auto& [path, conflicts] : m_conflicts)
-    {
-        for (const auto& conflict : conflicts)
-        {
+    std::error_code err;
+    for (const auto& [path, conflicts] : m_conflicts) {
+        for (const auto& conflict : conflicts) {
             if (fs::exists(path) && fs::exists(conflict) && is_duplicate(path, conflict)) {
                 spdlog::info("Removing duplicate: {0} same as {1}", path, conflict.string());
-                fs::remove(path);
+                fs::remove(path, err);
+                if (err) {
+                    spdlog::warn("Failed to remove the duplicate file: ({0}): {1}", path, err.message());
+                }
                 break;
             }
         }
