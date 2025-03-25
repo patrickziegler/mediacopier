@@ -15,20 +15,27 @@ The app focusses on integrating into the native [KDE Plasma](https://kde.org/de/
 
 Direct dependencies (library):
 - spdlog (https://github.com/gabime/spdlog) >=[1.9.2](https://github.com/gabime/spdlog/releases/tag/v1.9.2)
+- toml11 (https://github.com/ToruNiina/toml11)
 - Exiv2 (https://exiv2.org/)
 - libjpeg-turbo (https://libjpeg-turbo.org/)
 - ffmpeg (https://www.ffmpeg.org/download.html)
 
 Direct dependencies (tools):
+- CLI11 (https://github.com/CLIUtils/CLI11)
 - range-v3 (https://github.com/ericniebler/range-v3)
 - Qt5 (https://doc.qt.io/qt-5/)
 - KJobWidgets (https://api.kde.org/frameworks/kjobwidgets/html/index.html)
 
-These dependencies can be installed via
+For example on openSUSE, these dependencies can be installed via
 
 ```sh
-# openSUSE
-zypper install spdlog-devel libexiv2-devel libjpeg8-devel range-v3-devel libQt5Gui-devel ki18n-devel kjobwidgets-devel ffmpeg-6-libavformat-devel ffmpeg-6-libavutil-devel toml11-devel cli11-devel libqt5-linguist-devel
+zypper install spdlog-devel toml11-devel libexiv2-devel libjpeg8-devel ffmpeg-6-libavformat-devel ffmpeg-6-libavutil-devel # for the core library
+zypper install cli11-devel range-v3-devel # for the pure command line interface
+zypper install libQt5Widgets-devel libqt5-linguist-devel ki18n-devel kjobwidgets-devel # for the Qt5 based graphical user interface
+zypper install ki18n-devel kjobwidgets-devel # for the KDE Plasma integration with Qt5
+zypper install qt6-core-devel qt6-widgets-devel qt6-statemachine-devel qt6-linguist-devel # for Qt6 based graphical user interface 
+zypper install kf6-ki18n-devel kf6-kjobwidgets-devel # for the KDE Plasma integration with Qt6
+zypper install gtest lcov exiftool ImageMagick # for testing
 ```
 
 Clone this repository and create a build directory
@@ -46,15 +53,16 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DENABLE_QT=ON -DENABLE_KDE=ON -DCMAKE_B
 
 Available cmake flags
 
-| Flag                   | Description                               | Default   |
-|------------------------|-------------------------------------------|-----------|
-| `ENABLE_CLI`           | Build simple CLI tool                     | `ON`      |
-| `ENABLE_QT`            | Build Qt based graphical user interface   | `OFF`     |
-| `ENABLE_KDE`           | Enable KDE integration for GUI            | `OFF`     |
-| `ENABLE_SHARED_LIB`    | Build shared instead of static lib        | `OFF`     |
-| `ENABLE_TEST`          | Enable test targets                       | `OFF`     |
-| `ENABLE_TEST_COVERAGE` | Enable test and coverage targets          | `OFF`     |
-| `INSTALL_DEV_FILES`    | Install library headers and cmake targets | `OFF`     |
+| Flag                   | Description                                                | Default   |
+|------------------------|------------------------------------------------------------|-----------|
+| `ENABLE_CLI`           | Build simple CLI tool                                      | `ON`      |
+| `ENABLE_QT`            | Build Qt5 based graphical user interface                   | `OFF`     |
+| `ENABLE_QT6`           | Build Qt6 based graphical user interface                   | `OFF`     |
+| `ENABLE_KDE`           | Enable KDE Plasma integration for graphical user interface | `OFF`     |
+| `ENABLE_SHARED_LIB`    | Build shared instead of static lib                         | `OFF`     |
+| `ENABLE_TEST`          | Enable test targets                                        | `OFF`     |
+| `ENABLE_TEST_COVERAGE` | Enable test and coverage targets                           | `OFF`     |
+| `INSTALL_DEV_FILES`    | Install library headers and cmake targets                  | `OFF`     |
 
 ### :factory: Containerized build environment
 

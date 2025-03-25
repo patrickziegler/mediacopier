@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-project(MediaCopier VERSION 2.2.2)
+project(MediaCopier VERSION 2.2.3)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,8 +29,9 @@ if(${MSVC})
 endif()
 
 option(ENABLE_CLI "Build cli tool" ON)
-option(ENABLE_QT "Build Qt based graphical user interface" OFF)
-option(ENABLE_KDE "Enable KDE integration for cli tool" OFF)
+option(ENABLE_QT "Build Qt5 based graphical user interface" OFF)
+option(ENABLE_QT6 "Build Qt6 based graphical user interface" OFF)
+option(ENABLE_KDE "Enable KDE Plasma integration for graphical user interface" OFF)
 option(ENABLE_SHARED_LIB "Build shared instead of static lib" OFF)
 option(ENABLE_TEST "Enable test targets" OFF)
 option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
@@ -51,7 +52,7 @@ if(${ENABLE_CLI})
     add_subdirectory(mediacopier-cli)
 endif()
 
-if(${ENABLE_QT})
+if(${ENABLE_QT} OR ${ENABLE_QT6})
     add_subdirectory(mediacopier-qt)
 endif()
 
