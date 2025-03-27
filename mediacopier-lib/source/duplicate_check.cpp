@@ -60,7 +60,7 @@ static auto prepare_input_stream(const fs::path& file) -> std::unique_ptr<std::i
     if (magic == 0xd8ff) { // is jpeg file
         seek_jpeg_data(input.get());
     }
-    return std::move(input);
+    return input;
 }
 
 namespace mediacopier {

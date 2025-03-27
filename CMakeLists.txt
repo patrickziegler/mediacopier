@@ -7,6 +7,7 @@ project(MediaCopier VERSION 2.2.3)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(${MSVC})
     # range-v3 library needs permissive ruleset when compiled with MSVC

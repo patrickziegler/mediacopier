@@ -53,7 +53,7 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) 
     char colon; // used for parsing timezone offset without scanning for separator
 
     size_t i = keysDateTime.size() + 1;
-    for (int j=0; j < keysDateTime.size(); ++j) {
+    for (size_t j=0; j < keysDateTime.size(); ++j) {
         key = keysDateTime[j];
         if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
             i = j;
