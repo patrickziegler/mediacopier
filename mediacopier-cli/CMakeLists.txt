@@ -1,5 +1,5 @@
 find_package(CLI11 REQUIRED)
-find_package(spdlog 1.9.2 REQUIRED)
+find_package(spdlog REQUIRED)
 
 set(TARGET_NAME mediacopier-cli)
 
