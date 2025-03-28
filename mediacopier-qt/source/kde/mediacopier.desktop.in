@@ -7,6 +7,7 @@ X-KDE-Priority=TopLevel
 X-KDE-Submenu=Transfer media files
 X-KDE-Submenu[de]=Medien übertragen
 X-KDE-Priority=TopLevel
+X-KDE-MaxNumberOfUrls=1
 
 [Desktop Action mediacopier-copy]
 Name=Copy media files to ...
