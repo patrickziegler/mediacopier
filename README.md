@@ -59,7 +59,6 @@ Available cmake flags
 | `ENABLE_QT`            | Build Qt5 based graphical user interface                   | `OFF`     |
 | `ENABLE_QT6`           | Build Qt6 based graphical user interface                   | `OFF`     |
 | `ENABLE_KDE`           | Enable KDE Plasma integration for graphical user interface | `OFF`     |
-| `ENABLE_SHARED_LIB`    | Build shared instead of static lib                         | `OFF`     |
 | `ENABLE_TEST`          | Enable test targets                                        | `OFF`     |
 | `ENABLE_TEST_COVERAGE` | Enable test and coverage targets                           | `OFF`     |
 | `INSTALL_DEV_FILES`    | Install library headers and cmake targets                  | `OFF`     |

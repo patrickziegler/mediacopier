@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
 project(MediaCopier VERSION 2.2.3)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -33,28 +31,29 @@ option(ENABLE_CLI "Build cli tool" ON)
 option(ENABLE_QT "Build Qt5 based graphical user interface" OFF)
 option(ENABLE_QT6 "Build Qt6 based graphical user interface" OFF)
 option(ENABLE_KDE "Enable KDE Plasma integration for graphical user interface" OFF)
-option(ENABLE_SHARED_LIB "Build shared instead of static lib" OFF)
 option(ENABLE_TEST "Enable test targets" OFF)
 option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
 option(INSTALL_DEV_FILES "Install library headers and cmake targets" OFF)
 
-if(${ENABLE_TEST_COVERAGE})
-    set(CMAKE_CXX_FLAGS "-g -O0 --coverage")
-    set(CMAKE_EXE_LINKER_FLAGS "--coverage")
-    set(ENABLE_TEST ON)
-    include(TestCoverage)
-endif()
+set(MEDIACOPIER_CORE_LIB libmediacopier-core)
+set(MEDIACOPIER_UI_LIB libmediacopier-ui)
 
-set(MEDIACOPIER_LIB_TARGET_NAME mediacopier-lib)
-
-add_subdirectory(mediacopier-lib)
+add_subdirectory(lib/core)
 
 if(${ENABLE_CLI})
-    add_subdirectory(mediacopier-cli)
+    add_subdirectory(app/mediacopier-cli)
+endif()
+
+if(${ENABLE_QT} OR ${ENABLE_QT6} OR ${ENABLE_KDE})
+    add_subdirectory(lib/ui)
 endif()
 
 if(${ENABLE_QT} OR ${ENABLE_QT6})
-    add_subdirectory(mediacopier-qt)
+    add_subdirectory(app/mediacopier)
+endif()
+
+if(${ENABLE_KDE})
+    add_subdirectory(app/mediacopier-plasma)
 endif()
 
 if(${ENABLE_TEST})
