@@ -1,5 +1,0 @@
-<RCC>
-  <qresource prefix="/translations" lang="de">
-    <file alias="lang.qm">@CMAKE_CURRENT_BINARY_DIR@/lang_de.qm</file>
-  </qresource>
-</RCC>
