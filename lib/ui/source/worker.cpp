@@ -63,27 +63,17 @@ auto is_operation_cancelled()
 
 auto media_files(const fs::path& path)
 {
-    using itemized_directory_entry = std::pair<size_t, const fs::directory_entry&>;
-    using itemized_file_into_ptr = std::pair<size_t, mc::FileInfoPtr>;
-
-    static auto itemize = [](const fs::directory_entry& entry) -> itemized_directory_entry {
-        static size_t i = 0;
-        ++i;
-        return {i, entry};
-    };
-
-    static auto convert = [](const itemized_directory_entry& entry) -> itemized_file_into_ptr {
-        if (fs::is_regular_file(entry.second)) {
-            return {entry.first, mc::to_file_info_ptr(entry.second.path())};
+    static auto convert = [](const fs::directory_entry& entry) -> mc::FileInfoPtr {
+        if (fs::is_regular_file(entry)) {
+            return mc::to_file_info_ptr(entry.path());
         } else {
-            return {entry.first, nullptr};
+            return nullptr;
         }
     };
 
     return ranges::make_iterator_range(
                 fs::recursive_directory_iterator(path),
                 fs::recursive_directory_iterator())
-            | ranges::views::transform(itemize)
             | ranges::views::transform(convert);
 }
 
@@ -177,7 +167,9 @@ void Worker::exec()
     std::optional<fs::path> dest;
 
     spdlog::info("Executing operation..");
-    for (auto [progress, file] : media_files(m_config->getInputDir())) {
+    size_t progress = 0;
+    for (auto file : media_files(m_config->getInputDir())) {
+        ++progress;
         if (is_operation_cancelled()) {
             spdlog::info("Operation was cancelled..");
             break;
