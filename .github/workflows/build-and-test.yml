@@ -31,7 +31,7 @@ jobs:
         CXX: ${{matrix.config.CXX}}
         BUILD_DIR: "build/"
       run: |
-        cmake -B ${BUILD_DIR} -DENABLE_CLI=OFF -DENABLE_QT=OFF -DENABLE_TEST=ON
+        cmake -B ${BUILD_DIR} -DSKIP_CLI=ON -DSKIP_GUI=ON -DSKIP_KDE=ON -DENABLE_TEST=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}
         ctest --test-dir ${BUILD_DIR} -V
 
@@ -41,7 +41,7 @@ jobs:
         CXX: ${{matrix.config.CXX}}
         BUILD_DIR: "build-coverage/"
       run: |
-        cmake -B ${BUILD_DIR} -DENABLE_CLI=OFF -DENABLE_QT=OFF -DENABLE_TEST_COVERAGE=ON
+        cmake -B ${BUILD_DIR} -DSKIP_CLI=ON -DSKIP_GUI=ON -DSKIP_KDE=ON -DENABLE_TEST_COVERAGE=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}
         cmake --build ${BUILD_DIR} --target coverage
       if: matrix.config.CC == 'gcc'

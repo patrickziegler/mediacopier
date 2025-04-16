@@ -1,11 +1,11 @@
 set(QT_LIBS)
 
-if(ENABLE_QT6)
-    find_package(Qt6 REQUIRED COMPONENTS Core Widgets StateMachine LinguistTools)
-    list(APPEND QT_LIBS Qt6::Core Qt6::Widgets Qt6::StateMachine)
-else()
+if(${USE_QT5})
     find_package(Qt5 REQUIRED COMPONENTS Core Widgets LinguistTools)
     list(APPEND QT_LIBS Qt5::Core Qt5::Widgets)
+else()
+    find_package(Qt6 REQUIRED COMPONENTS Core Widgets StateMachine LinguistTools)
+    list(APPEND QT_LIBS Qt6::Core Qt6::Widgets Qt6::StateMachine)
 endif()
 
 find_package(spdlog 1.9.2 REQUIRED) # qt_sink_* available since v1.9.2

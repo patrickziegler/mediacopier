@@ -1,11 +1,19 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(MediaCopier VERSION 2.2.3)
+project(MediaCopier VERSION 2.3.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+option(SKIP_GUI "Don't build graphical user interface" OFF)
+option(SKIP_CLI "Don't build command line interface" OFF)
+option(SKIP_KDE "Don't build KDE Plasma integration" OFF)
+option(USE_QT5 "Build against Qt5 libraries (legacy)" OFF)
+option(ENABLE_TEST "Enable test targets" OFF)
+option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
+option(INSTALL_DEV_FILES "Install library headers and cmake targets" OFF)
 
 if(${MSVC})
     # range-v3 library needs permissive ruleset when compiled with MSVC
@@ -27,32 +35,24 @@ if(${MSVC})
     set(CLI_TARGET_FLAGS WIN32)
 endif()
 
-option(ENABLE_CLI "Build cli tool" ON)
-option(ENABLE_QT "Build Qt5 based graphical user interface" OFF)
-option(ENABLE_QT6 "Build Qt6 based graphical user interface" OFF)
-option(ENABLE_KDE "Enable KDE Plasma integration for graphical user interface" OFF)
-option(ENABLE_TEST "Enable test targets" OFF)
-option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
-option(INSTALL_DEV_FILES "Install library headers and cmake targets" OFF)
-
 set(MEDIACOPIER_CORE_LIB libmediacopier-core)
 set(MEDIACOPIER_UI_LIB libmediacopier-ui)
 
 add_subdirectory(lib/core)
 
-if(${ENABLE_CLI})
-    add_subdirectory(app/mediacopier-cli)
-endif()
-
-if(${ENABLE_QT} OR ${ENABLE_QT6} OR ${ENABLE_KDE})
+if(NOT ${SKIP_GUI} OR NOT ${SKIP_KDE})
     add_subdirectory(lib/ui)
 endif()
 
-if(${ENABLE_QT} OR ${ENABLE_QT6})
+if(NOT ${SKIP_GUI})
     add_subdirectory(app/mediacopier)
 endif()
 
-if(${ENABLE_KDE})
+if(NOT ${SKIP_CLI})
+    add_subdirectory(app/mediacopier-cli)
+endif()
+
+if(NOT ${SKIP_KDE})
     add_subdirectory(app/mediacopier-plasma)
 endif()
 

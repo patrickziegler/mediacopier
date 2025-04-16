@@ -126,8 +126,6 @@ if(${INSTALL_DEV_FILES})
         FILES "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
             "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
         DESTINATION "${TARGETS_INSTALL_DIR}")
-
-elseif(${ENABLE_SHARED_LIB})
-    install(TARGETS ${TARGET_NAME})
-
 endif()
+
+install(TARGETS ${TARGET_NAME})

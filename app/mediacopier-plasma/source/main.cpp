@@ -21,8 +21,10 @@
 
 #include <KJob>
 #include <KUiServerV2JobTracker>
+
 #include <QApplication>
 #include <QTranslator>
+
 #include <spdlog/spdlog.h>
 
 class KMediaCopierJob : public KJob {
