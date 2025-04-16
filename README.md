@@ -103,13 +103,13 @@ podman run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
 Inside the container, run the test suite with the following commands
 
 ```sh
-cmake -DUSE_QT5=ON -DSKIP_GUI=ON -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
+cmake -DUSE_QT5=ON -DSKIP_GUI=ON -DSKIP_KDE=ON -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
 ```
 
 Alternatively, create a test coverage report like this (result can also be found [here](https://coveralls.io/github/patrickziegler/MediaCopier))
 
 ```sh
-cmake -DUSE_QT5=ON -DSKIP_GUI=ON -DENABLE_TEST_COVERAGE=ON /usr/src/mediacopier/ && make -j $(nproc) && make coverage
+cmake -DUSE_QT5=ON -DSKIP_GUI=ON -DSKIP_KDE=ON -DENABLE_TEST_COVERAGE=ON /usr/src/mediacopier/ && make -j $(nproc) && make coverage
 ```
 
 ### :paperclip: Build Instructions for Windows
@@ -123,7 +123,7 @@ Prepare the [vcpkg](https://github.com/microsoft/vcpkg#using-vcpkg-with-cmake) e
 
 Use the vcpkg toolchain file with cmake
 ```sh
-cmake -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -B build -S .
+cmake -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DSKIP_KDE=ON -B build -S .
 cmake --build build --config Release
 ```
 
