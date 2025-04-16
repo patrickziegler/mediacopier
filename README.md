@@ -11,6 +11,19 @@ The app focusses on integrating into the native [KDE Plasma](https://kde.org/de/
 
 ## Getting Started
 
+### :anchor: Install via Package Manager
+
+#### openSUSE
+
+[![build result](https://build.opensuse.org/projects/home:zipat:mediacopier/packages/mediacopier/badge.svg?type=default)](https://build.opensuse.org/package/show/home:zipat:mediacopier/mediacopier)
+
+There are packages being built with the [Open Build Service](https://openbuildservice.org/). You can add the repostory to your distribution and install `mediacopier` easily with the following commands:
+
+```
+zypper ar -f https://download.opensuse.org/repositories/home:/zipat:/mediacopier/openSUSE_Tumbleweed/ mediacopier
+zypper in mediacopier-plasma
+```
+
 ### :hammer: Build and Install
 
 Direct dependencies (library):
@@ -48,20 +61,20 @@ cd MediaCopier && mkdir build && cd build
 Build and install the package
 ```sh
 export CXX=/usr/bin/g++-13 # set specific compiler (optional)
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DENABLE_QT=ON -DENABLE_KDE=ON -DCMAKE_BUILD_TYPE=release .. && make -j$(nproc) && sudo make install
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=release .. && make -j$(nproc) && sudo make install
 ```
 
 Available cmake flags
 
-| Flag                   | Description                                                | Default   |
-|------------------------|------------------------------------------------------------|-----------|
-| `ENABLE_CLI`           | Build simple CLI tool                                      | `ON`      |
-| `ENABLE_QT`            | Build Qt5 based graphical user interface                   | `OFF`     |
-| `ENABLE_QT6`           | Build Qt6 based graphical user interface                   | `OFF`     |
-| `ENABLE_KDE`           | Enable KDE Plasma integration for graphical user interface | `OFF`     |
-| `ENABLE_TEST`          | Enable test targets                                        | `OFF`     |
-| `ENABLE_TEST_COVERAGE` | Enable test and coverage targets                           | `OFF`     |
-| `INSTALL_DEV_FILES`    | Install library headers and cmake targets                  | `OFF`     |
+| Flag                   | Description                                      | Default |
+|------------------------|--------------------------------------------------|---------|
+| `SKIP_GUI`             | Don't build graphical user interface             | `OFF`   |
+| `SKIP_CLI`             | Don't build plain command line interface         | `OFF`   |
+| `SKIP_KDE`             | Don't build KDE Plasma integration               | `OFF`   |
+| `USE_QT5`              | Build against Qt5 libraries (legacy)             | `OFF`   |
+| `ENABLE_TEST`          | Enable test targets                              | `OFF`   |
+| `ENABLE_TEST_COVERAGE` | Enable test and coverage targets                 | `OFF`   |
+| `INSTALL_DEV_FILES`    | Install library headers and cmake targets        | `OFF`   |
 
 ### :factory: Containerized build environment
 
@@ -90,13 +103,13 @@ podman run -it --rm -v ${PWD}:/usr/src/mediacopier mediacopier-build
 Inside the container, run the test suite with the following commands
 
 ```sh
-cmake -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
+cmake -DUSE_QT5=ON -DSKIP_GUI=ON -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
 ```
 
 Alternatively, create a test coverage report like this (result can also be found [here](https://coveralls.io/github/patrickziegler/MediaCopier))
 
 ```sh
-cmake -DENABLE_TEST_COVERAGE=ON /usr/src/mediacopier/ && make -j $(nproc) && make coverage
+cmake -DUSE_QT5=ON -DSKIP_GUI=ON -DENABLE_TEST_COVERAGE=ON /usr/src/mediacopier/ && make -j $(nproc) && make coverage
 ```
 
 ### :paperclip: Build Instructions for Windows
