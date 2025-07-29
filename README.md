@@ -1,4 +1,4 @@
-# :camera: mediacopier
+# <img width="64px" src="https://raw.githubusercontent.com/patrickziegler/mediacopier/refs/heads/master/app/mediacopier/mediacopier.svg"> mediacopier
 
 [![Build Status](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml/badge.svg?branch=master)](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml?query=branch%3Amaster)
 
@@ -42,7 +42,7 @@ Direct dependencies (tools):
 For example on openSUSE, these dependencies can be installed via
 
 ```sh
-zypper install spdlog-devel toml11-devel libexiv2-devel libjpeg8-devel ffmpeg-6-libavformat-devel ffmpeg-6-libavutil-devel # for the core library
+zypper install spdlog-devel toml11-devel libexiv2-devel libjpeg8-devel ffmpeg-7-libavformat-devel ffmpeg-7-libavutil-devel # for the core library
 zypper install cli11-devel range-v3-devel # for the pure command line interface
 zypper install libQt5Widgets-devel libqt5-linguist-devel ki18n-devel kjobwidgets-devel # for the Qt5 based graphical user interface
 zypper install ki18n-devel kjobwidgets-devel # for the KDE Plasma integration with Qt5
