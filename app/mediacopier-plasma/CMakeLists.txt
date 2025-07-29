@@ -23,10 +23,18 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 
 install(TARGETS ${TARGET_NAME})
 
-set(DESKTOP_FILE_NAME "mediacopier.desktop")
+set(DESKTOP_FILE_NAME "${TARGET_NAME}.desktop")
 
 configure_file("${DESKTOP_FILE_NAME}.in"
     "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}")
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications")
+
+set(SERVICE_MENU_FILE_NAME "servicemenu/${TARGET_NAME}.desktop")
+
+configure_file("${SERVICE_MENU_FILE_NAME}.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${SERVICE_MENU_FILE_NAME}")
 
 # install location has changed with version 5.85 according to [1], but [2] seems to contradict (?)
 # [1] https://develop.kde.org/docs/apps/dolphin/service-menus/#where-the-servicemenus-are-located
@@ -37,5 +45,5 @@ else()
     set(INSTALL_SERVICE_MENUS_DIR "${CMAKE_INSTALL_DATAROOTDIR}/kservices5/ServiceMenus")
 endif()
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_FILE_NAME}"
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${SERVICE_MENU_FILE_NAME}"
     DESTINATION "${INSTALL_SERVICE_MENUS_DIR}")
