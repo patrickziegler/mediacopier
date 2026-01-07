@@ -2,7 +2,7 @@
 Categories=Application;System;Graphics;Photography;Qt;
 StartupNotify=true
 Exec=@CMAKE_INSTALL_PREFIX@/bin/@TARGET_NAME@
-Name=MediaCopier
+Name=MediaCopier (Plasma)
 GenericName=Copy and rename media files
 GenericName[de]=Übertrage und sortiere Mediensammlungen
 Terminal=false
