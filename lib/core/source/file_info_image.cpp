@@ -16,11 +16,11 @@
 
 #include <mediacopier/file_info_image.hpp>
 
-#include <date/date.h>
 #include <mediacopier/abstract_operation.hpp>
 #include <mediacopier/error.hpp>
 
 #include <array>
+#include <chrono>
 
 /* 'original' refers to the moment the picture was taken (shutter pressed),
  * 'digitized' is the moment where the picture was scanned (should be the same for digital cams),
@@ -79,7 +79,7 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) 
         throw FileInfoError{"No date information found"};
     }
 
-    timestamp >> date::parse("%Y:%m:%d %T", m_timestamp);
+    timestamp >> std::chrono::parse("%Y:%m:%d %T", m_timestamp);
     if (timestamp.fail()) {
         throw FileInfoError{"Invalid date info found"};
     }

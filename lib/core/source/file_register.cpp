@@ -16,10 +16,12 @@
 
 #include <mediacopier/file_register.hpp>
 
-#include <date/date.h>
 #include <mediacopier/duplicate_check.hpp>
 #include <mediacopier/error.hpp>
+
 #include <spdlog/spdlog.h>
+
+#include <format>
 
 namespace fs = std::filesystem;
 
@@ -95,7 +97,7 @@ auto FileRegister::constructDestinationPath(const FileInfoPtr& file, size_t suff
         tp -= file->offset(); // convert local time to utc
     }
 
-    date::to_stream(os, m_pattern.c_str(), tp);
+    os << std::vformat("{:" + m_pattern + "}", std::make_format_args(tp));
 
     if (suffix > 0) {
         os << "_" << suffix;

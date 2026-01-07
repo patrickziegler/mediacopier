@@ -18,7 +18,6 @@
 
 #include "file_info_type_detector.hpp"
 
-#include <date/date.h>
 #include <gtest/gtest.h>
 #include <mediacopier/file_info_factory.hpp>
 
@@ -30,7 +29,7 @@ static auto parse_timestamp(std::string timestamp) -> const std::chrono::system_
 {
     std::istringstream ss{timestamp};
     std::chrono::system_clock::time_point ts;
-    ss >> date::parse("%Y-%m-%d %H:%M:%S", ts);
+    ss >> std::chrono::parse("%Y-%m-%d %H:%M:%S", ts);
     return ts; // right result was verified manually
 };
 

@@ -16,7 +16,6 @@
 
 #include <mediacopier/file_info_video.hpp>
 
-#include <date/date.h>
 #include <mediacopier/abstract_operation.hpp>
 #include <mediacopier/error.hpp>
 
@@ -25,6 +24,7 @@ extern "C"
 #include <libavformat/avformat.h>
 }
 
+#include <chrono>
 #include <sstream>
 
 namespace mediacopier {
@@ -67,7 +67,7 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     std::chrono::system_clock::time_point tp;
 
     std::istringstream iss{timestamp};
-    iss >> date::parse("%FT%T", tp); // parse into local time (without timezone offset)
+    iss >> std::chrono::parse("%FT%T", tp); // parse into local time (without timezone offset)
     if (iss.fail()) {
         throw FileInfoError{"Invalid date information found"};
     }
@@ -76,7 +76,7 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
 
     iss.seekg(0, std::ios::beg); // we want to parse the timestamp once more
     iss.clear();
-    iss >> date::parse("%FT%T%z", tp); // parse into utc
+    iss >> std::chrono::parse("%FT%T%z", tp); // parse into utc
     if (!iss.fail()) {
         m_offset = std::chrono::duration_cast<std::chrono::minutes>(m_timestamp - tp);
     }

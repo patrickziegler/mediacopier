@@ -7,12 +7,11 @@ set(TARGET_NAME mediacopier-unittest)
 add_executable(${TARGET_NAME})
 
 target_sources(${TARGET_NAME} PRIVATE
+    "common_test_fixtures.hpp"
+    "file_info_type_detector.hpp"
     "test_file_info_classes.cpp"
     "test_file_operation_classes.cpp"
     "test_file_register.cpp")
-
-target_include_directories(${TARGET_NAME} PRIVATE
-    "../extern/date/include")
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     gtest gtest_main "${MEDIACOPIER_CORE_LIB}")

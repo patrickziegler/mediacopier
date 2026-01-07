@@ -1,7 +1,8 @@
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-find_package(exiv2 REQUIRED)
 find_package(PkgConfig REQUIRED)
+
+find_package(exiv2 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(toml11 REQUIRED)
 
@@ -17,11 +18,6 @@ pkg_check_modules(LIBJPEG REQUIRED libturbojpeg)
 if(exiv2_VERSION VERSION_LESS "0.28")
     add_compile_definitions(EXIV2_HAS_TOLONG=1)
 endif()
-
-# just in case we need the timezone library
-# set(BUILD_TZ_LIB ON CACHE BOOL "")
-# set(USE_SYSTEM_TZ_DB ON CACHE BOOL "")
-add_subdirectory("extern/date" EXCLUDE_FROM_ALL)
 
 set(TARGET_NAME ${MEDIACOPIER_CORE_LIB})
 
@@ -76,7 +72,7 @@ target_include_directories(${TARGET_NAME} PUBLIC
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     ${AVFORMAT_LINK_LIBRARIES} ${LIBJPEG_LINK_LIBRARIES}
-    date::date Exiv2::exiv2lib spdlog::spdlog)
+    Exiv2::exiv2lib spdlog::spdlog)
 
 if(${ENABLE_TEST_COVERAGE})
     set(CMAKE_CXX_FLAGS "-g -O0 --coverage")
