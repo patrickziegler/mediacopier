@@ -20,14 +20,11 @@
 #include <mediacopier/operation_move_jpeg.hpp>
 #include <mediacopier/operation_simulate.hpp>
 
-#include <range/v3/view/filter.hpp>
-#include <range/v3/view/transform.hpp>
-#include <range/v3/iterator_range.hpp>
-
 #include <spdlog/spdlog.h>
 
 #include <atomic>
 #include <csignal>
+#include <ranges>
 
 #include "cli.hpp"
 
@@ -45,10 +42,10 @@ auto media_files(const fs::path& path)
             return nullptr;
         }
     };
-    return ranges::make_iterator_range(
+    return std::ranges::subrange(
                 fs::recursive_directory_iterator(path),
                 fs::recursive_directory_iterator())
-            | ranges::views::transform(convert);
+            | std::ranges::views::transform(convert);
 }
 
 template <typename Operation>

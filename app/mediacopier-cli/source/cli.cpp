@@ -20,8 +20,6 @@
 
 #include <CLI/CLI.hpp>
 
-#include <fstream>
-
 namespace fs = std::filesystem;
 namespace mc = mediacopier;
 
