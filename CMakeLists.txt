@@ -13,7 +13,6 @@ option(SKIP_KDE "Don't build KDE Plasma integration" OFF)
 option(USE_QT5 "Build against Qt5 libraries (legacy)" OFF)
 option(ENABLE_TEST "Enable test targets" OFF)
 option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
-option(INSTALL_DEV_FILES "Install library headers and cmake targets" OFF)
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
