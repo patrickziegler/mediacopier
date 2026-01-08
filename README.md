@@ -76,7 +76,6 @@ Available cmake flags
 | `USE_QT5`              | Build against Qt5 libraries (legacy)             | `OFF`   |
 | `ENABLE_TEST`          | Enable test targets                              | `OFF`   |
 | `ENABLE_TEST_COVERAGE` | Enable test and coverage targets                 | `OFF`   |
-| `INSTALL_DEV_FILES`    | Install library headers and cmake targets        | `OFF`   |
 
 ### :factory: Containerized build environment
 
