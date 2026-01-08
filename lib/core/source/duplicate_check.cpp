@@ -16,8 +16,8 @@
 
 #include <mediacopier/duplicate_check.hpp>
 
-#include <vector>
 #include <fstream>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -26,8 +26,8 @@ constexpr static const size_t CHUNKS_MAX = 128;
 
 static auto seek_jpeg_data(std::ifstream* input) noexcept -> bool
 {
-    uint8_t s1=0, s2=0;
-    uint16_t buf=0;
+    uint8_t s1 = 0, s2 = 0;
+    uint16_t buf = 0;
 
     input->seekg(2, std::ios_base::beg);
 
@@ -52,7 +52,7 @@ static auto prepare_input_stream(const fs::path& file) -> std::unique_ptr<std::i
     if (!fs::exists(file)) {
         throw std::runtime_error(file.string() + " does not exist");
     }
-    auto input = std::make_unique<std::ifstream>(file,  std::ios_base::in | std::ios_base::binary);
+    auto input = std::make_unique<std::ifstream>(file, std::ios_base::in | std::ios_base::binary);
 
     uint16_t magic;
     input->read(reinterpret_cast<char*>(&magic), 2);
@@ -82,10 +82,10 @@ auto is_duplicate(const fs::path& file1, const fs::path& file2) -> bool
             return false;
         }
         input1->read(buffer.data(), BUFFER_SIZE);
-        chunk1 = {buffer.begin(), buffer.begin() + input1->gcount()};
+        chunk1 = { buffer.begin(), buffer.begin() + input1->gcount() };
 
         input2->read(buffer.data(), BUFFER_SIZE);
-        chunk2 = {buffer.begin(), buffer.begin() + input2->gcount()};
+        chunk2 = { buffer.begin(), buffer.begin() + input2->gcount() };
 
         if (chunk1 != chunk2) {
             return false;

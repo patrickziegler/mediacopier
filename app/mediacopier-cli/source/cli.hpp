@@ -20,8 +20,7 @@
 
 namespace mediacopier {
 
-class Cli : public PersistentConfig
-{
+class Cli : public PersistentConfig {
 public:
     enum class Command {
         Copy,
@@ -32,12 +31,13 @@ public:
         Continue,
         Break
     };
-    std::pair<ParseResult, int> parseArgs(int argc, char *argv[]);
+    std::pair<ParseResult, int> parseArgs(int argc, char* argv[]);
     auto command() const -> Command { return m_command; }
     auto inputDir() const -> const std::filesystem::path& { return m_inputDir; }
     auto outputDir() const -> const std::filesystem::path& { return m_outputDir; }
     auto pattern() const -> const std::string& { return m_pattern.get(); }
     auto useUtc() const -> bool { return m_useUtc; }
+
 private:
     Command m_command = Command::Copy;
     std::filesystem::path m_inputDir;

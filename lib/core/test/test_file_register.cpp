@@ -34,7 +34,7 @@ protected:
 
         auto file = FileInfoFactory::createFromPath(srcPath);
 
-        FileRegister dst{m_dstBaseDir, DEFAULT_PATTERN, false};
+        FileRegister dst { m_dstBaseDir, DEFAULT_PATTERN, false };
         auto path1 = dst.add(file);
         ASSERT_TRUE(path1.has_value());
 
@@ -42,7 +42,7 @@ protected:
         auto path2 = dst.add(file);
         ASSERT_FALSE(path2.has_value());
 
-        FileOperationCopyJpeg copy{path1.value()};
+        FileOperationCopyJpeg copy { path1.value() };
         file->accept(copy);
     }
 
@@ -55,7 +55,7 @@ TEST_F(FileRegisterTests, multipleAddSameSource)
 
     executeCopyOperation(srcPath);
 
-    FileRegister dst{m_dstBaseDir, DEFAULT_PATTERN, false};
+    FileRegister dst { m_dstBaseDir, DEFAULT_PATTERN, false };
 
     // binary equal destination already exists, file should be ignored
     auto path = dst.add(to_file_info_ptr(srcPath));
@@ -69,7 +69,7 @@ TEST_F(FileRegisterTests, multipleAddDifferentSource)
 
     executeCopyOperation(srcPath);
 
-    FileRegister dst{m_dstBaseDir, DEFAULT_PATTERN, false};
+    FileRegister dst { m_dstBaseDir, DEFAULT_PATTERN, false };
 
     // file is added because image at destination is different
     auto path1 = dst.add(to_file_info_ptr(srcPath));

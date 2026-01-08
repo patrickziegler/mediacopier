@@ -19,8 +19,7 @@
 #include <mediacopier/file_info_video.hpp>
 #include <spdlog/spdlog.h>
 
-extern "C"
-{
+extern "C" {
 #include <turbojpeg.h>
 }
 
@@ -32,7 +31,7 @@ constexpr static const auto upright = FileInfoImageJpeg::Orientation::ROT_0;
 
 auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexcept -> bool
 {
-    using unique_file_t = std::unique_ptr<std::FILE, int(*)(std::FILE*)>;
+    using unique_file_t = std::unique_ptr<std::FILE, int (*)(std::FILE*)>;
     using unique_buf_t = std::unique_ptr<unsigned char, decltype(&tjFree)>;
 
     // ----------------- prepare transformation parameters
@@ -42,8 +41,7 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
 
     xform.options |= TJXOPT_PERFECT; // will cause tjTransform to return error when no perfect rotation is possible
 
-    switch (static_cast<FileInfoImageJpeg::Orientation>(file.orientation()))
-    {
+    switch (static_cast<FileInfoImageJpeg::Orientation>(file.orientation())) {
     case FileInfoImageJpeg::Orientation::ROT_180:
         xform.op = TJXOP_ROT180;
         break;
@@ -73,7 +71,7 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
         return false;
     }
 
-    unique_buf_t inputBufPtr((unsigned char*) tjAlloc(inputBufSize), &tjFree);
+    unique_buf_t inputBufPtr((unsigned char*)tjAlloc(inputBufSize), &tjFree);
 
     if (!inputBufPtr) {
         spdlog::warn("Could not allocate input buffer ({0})", file.path().string());
@@ -95,7 +93,7 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
     }
 
     unsigned long outputBufSize = 0;
-    unsigned char * outputBuf = nullptr; // will be owned (and deleted) by outputBufPtr
+    unsigned char* outputBuf = nullptr; // will be owned (and deleted) by outputBufPtr
     int flags = 0;
 
     if (tjTransform(tjInstance, inputBufPtr.get(), inputBufSize, 1, &outputBuf, &outputBufSize, &xform, flags) < 0) {

@@ -30,12 +30,11 @@ const char* stringDestination();
 
 class QApplication;
 
-class MediaCopierDialogSlim : public QDialog
-{
+class MediaCopierDialogSlim : public QDialog {
     Q_OBJECT
 
 public:
-    explicit MediaCopierDialogSlim(QWidget *parent=nullptr);
+    explicit MediaCopierDialogSlim(QWidget* parent = nullptr);
     ~MediaCopierDialogSlim();
     void init(std::shared_ptr<Config> config, std::unique_ptr<WorkerFactory> factory);
 

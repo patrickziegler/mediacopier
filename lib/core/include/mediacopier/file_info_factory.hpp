@@ -26,7 +26,8 @@ auto to_file_info_ptr(const std::filesystem::path& path) -> FileInfoPtr;
 
 class FileInfoFactory {
 public:
-    static auto createFromPath(const std::filesystem::path path) -> FileInfoPtr {
+    static auto createFromPath(const std::filesystem::path path) -> FileInfoPtr
+    {
         return to_file_info_ptr(path);
     }
 };

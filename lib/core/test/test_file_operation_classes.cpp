@@ -29,17 +29,17 @@ namespace mediacopier::test {
 template <typename T>
 static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDir) -> const fs::path
 {
-    FileRegister destinationRegister{dstBaseDir, DEFAULT_PATTERN, false};
+    FileRegister destinationRegister { dstBaseDir, DEFAULT_PATTERN, false };
     auto file = FileInfoFactory::createFromPath(srcPath);
     auto path = destinationRegister.add(file).value();
-    T operation{path};
+    T operation { path };
     file->accept(operation);
     return path;
 }
 
 class FileOperationTests : public CommonTestFixtures {
 protected:
-    auto checkAllOperations(std::string srcName, std::string dstName, std::string timestamp, const FileInfoImageJpeg::Orientation& orientation, const FileInfoImageJpeg::Orientation& orientationFixed, std::function<void (fs::path, const FileInfoImageJpeg::Orientation&, const std::string&)> checkFileInfoCustom) -> void
+    auto checkAllOperations(std::string srcName, std::string dstName, std::string timestamp, const FileInfoImageJpeg::Orientation& orientation, const FileInfoImageJpeg::Orientation& orientationFixed, std::function<void(fs::path, const FileInfoImageJpeg::Orientation&, const std::string&)> checkFileInfoCustom) -> void
     {
         fs::remove_all(m_dstBaseDir1);
         fs::remove_all(m_dstBaseDir2);

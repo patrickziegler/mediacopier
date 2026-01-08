@@ -32,8 +32,9 @@ static constexpr const size_t DEFAULT_DIALOG_WIDTH = 700;
 static constexpr const size_t DEFAULT_DIALOG_HEIGHT = 550;
 static constexpr const unsigned int DEFAULT_WAIT_MS = 200;
 
-MediaCopierDialogFull::MediaCopierDialogFull(QWidget *parent) :
-    QDialog(parent), ui(new Ui::MediaCopierDialogFull)
+MediaCopierDialogFull::MediaCopierDialogFull(QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::MediaCopierDialogFull)
 {
     ui->setupUi(this);
     this->resize(DEFAULT_DIALOG_WIDTH, DEFAULT_DIALOG_HEIGHT);
@@ -52,11 +53,11 @@ void MediaCopierDialogFull::init(std::shared_ptr<Config> config)
     m_config = std::move(config);
     ui->param->init(m_config);
 
-    auto s1 = new QState(fsm);         // waiting for input
-    auto s2 = new QState(fsm);         // checking parameters
-    auto s3 = new QState(fsm);         // executing operation
-    auto s4 = new QState(fsm);         // aborting operation
-    auto s5 = new QFinalState(fsm);    // closing dialog
+    auto s1 = new QState(fsm); // waiting for input
+    auto s2 = new QState(fsm); // checking parameters
+    auto s3 = new QState(fsm); // executing operation
+    auto s4 = new QState(fsm); // aborting operation
+    auto s5 = new QFinalState(fsm); // closing dialog
 
     s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::accepted, s2);
     s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::rejected, s5);

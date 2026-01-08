@@ -33,6 +33,7 @@ public:
     explicit FileRegister(std::filesystem::path destination, std::string pattern, bool useUtc);
     auto add(FileInfoPtr file) -> std::optional<std::filesystem::path>;
     auto removeDuplicates() -> void;
+
 private:
     auto constructDestinationPath(const FileInfoPtr&, size_t) const -> std::filesystem::path;
     std::filesystem::path m_destdir;

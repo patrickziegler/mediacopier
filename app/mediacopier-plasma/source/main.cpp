@@ -30,8 +30,9 @@
 class KMediaCopierJob : public KJob {
 
 public:
-    KMediaCopierJob(Worker* worker, QString command, const std::filesystem::path& dstDir) :
-        m_command{std::move(command)}, m_worker{worker}
+    KMediaCopierJob(Worker* worker, QString command, const std::filesystem::path& dstDir)
+        : m_command { std::move(command) }
+        , m_worker { worker }
     {
         QApplication::setDesktopFileName("org.kde.dolphin");
         setCapabilities(Killable | Suspendable);
@@ -42,37 +43,46 @@ public:
         QObject::connect(m_worker, &Worker::updateProgress, this, &KMediaCopierJob::updateProgress);
         QObject::connect(m_worker, &Worker::finished, this, &KMediaCopierJob::quit);
     }
-    void start() override {
+    void start() override
+    {
         // nothing to do here
     }
 public Q_SLOTS:
-    void updateDescription(StatusDescription info) {
+    void updateDescription(StatusDescription info)
+    {
         description(this, m_command,
-                    qMakePair<QString, QString>(
-                        QCoreApplication::translate("Strings", stringSource()), QString::fromStdString(info.inputPath)),
-                    qMakePair<QString, QString>(
-                        QCoreApplication::translate("Strings", stringDestination()), QString::fromStdString(info.outputPath)));
+            qMakePair<QString, QString>(
+                QCoreApplication::translate("Strings", stringSource()), QString::fromStdString(info.inputPath)),
+            qMakePair<QString, QString>(
+                QCoreApplication::translate("Strings", stringDestination()), QString::fromStdString(info.outputPath)));
     }
-    void updateProgress(StatusProgress info) {
+    void updateProgress(StatusProgress info)
+    {
         setTotalAmount(Files, info.count);
         setProcessedAmount(Files, info.progress);
     }
-    void quit() {
+    void quit()
+    {
         emitResult();
     }
+
 protected:
-    bool doKill() override {
+    bool doKill() override
+    {
         m_worker->kill();
         return true;
     }
-    bool doSuspend() override {
+    bool doSuspend() override
+    {
         m_worker->suspend();
         return true;
     }
-    bool doResume() override {
+    bool doResume() override
+    {
         m_worker->resume();
         return true;
     }
+
 private:
     QString m_command;
     Worker* m_worker;
@@ -80,23 +90,30 @@ private:
 
 class PlasmaWorker : public Worker {
 public:
-    PlasmaWorker(std::shared_ptr<Config> config, const QString& description) : Worker(config) {
+    PlasmaWorker(std::shared_ptr<Config> config, const QString& description)
+        : Worker(config)
+    {
         auto job = new KMediaCopierJob(this, description, m_config->getOutputDir());
         m_tracker.registerJob(job);
     }
+
 private:
     KUiServerV2JobTracker m_tracker;
 };
 
 class PlasmaWorkerFactory : public WorkerFactory {
 public:
-    explicit PlasmaWorkerFactory(std::shared_ptr<Config> config) : WorkerFactory(config) {}
-    std::unique_ptr<Worker> make_worker(const QString& description) override {
+    explicit PlasmaWorkerFactory(std::shared_ptr<Config> config)
+        : WorkerFactory(config)
+    {
+    }
+    std::unique_ptr<Worker> make_worker(const QString& description) override
+    {
         return std::make_unique<PlasmaWorker>(m_config, description);
     }
 };
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 #ifndef NDEBUG
     spdlog::set_level(spdlog::level::debug);

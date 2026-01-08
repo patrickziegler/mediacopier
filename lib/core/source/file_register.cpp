@@ -27,7 +27,10 @@ namespace fs = std::filesystem;
 
 namespace mediacopier {
 
-FileRegister::FileRegister(fs::path destination, std::string pattern, bool useUtc) : m_destdir{std::move(destination)}, m_pattern{std::move(pattern)}, m_useUtc{useUtc}
+FileRegister::FileRegister(fs::path destination, std::string pattern, bool useUtc)
+    : m_destdir { std::move(destination) }
+    , m_pattern { std::move(pattern) }
+    , m_useUtc { useUtc }
 {
     m_destdir /= ""; // this will append a trailing directory separator when necessary
 }
@@ -64,10 +67,10 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
             m_conflicts[dest.string()] = std::move(conflicts);
         }
         m_register[dest.string()] = std::move(file);
-        return {std::move(dest)};
+        return { std::move(dest) };
     }
 
-    throw FileInfoError{"Unable to find unique filename"};
+    throw FileInfoError { "Unable to find unique filename" };
 }
 
 auto FileRegister::removeDuplicates() -> void
@@ -103,7 +106,7 @@ auto FileRegister::constructDestinationPath(const FileInfoPtr& file, size_t suff
         os << "_" << suffix;
     }
     os << file->path().extension().string();
-    return {os.str()};
+    return { os.str() };
 }
 
 } // namespace mediacopier

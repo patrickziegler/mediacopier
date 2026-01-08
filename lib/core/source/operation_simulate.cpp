@@ -32,9 +32,9 @@ auto FileOperationSimulate::dumpFilePaths(const AbstractFileInfo& file) const ->
     auto tp = file.timestamp();
     os << std::vformat(PATTERN_TIMESTAMP, std::make_format_args(tp));
     spdlog::info("{} ({}, Offset: {} min) -> {}",
-                 file.path().filename().string(), os.str(),
-                 file.offset().count(),
-                 m_destination.string());
+        file.path().filename().string(), os.str(),
+        file.offset().count(),
+        m_destination.string());
 }
 
 auto FileOperationSimulate::visit(const FileInfoImage& file) -> void

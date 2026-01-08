@@ -46,22 +46,23 @@ static constexpr const std::array<char[31], 3> keysOffset = {
 
 namespace mediacopier {
 
-FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) : AbstractFileInfo{std::move(path)}
+FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif)
+    : AbstractFileInfo { std::move(path) }
 {
     std::string key, value;
     int hours, minutes;
     char colon; // used for parsing timezone offset without scanning for separator
 
     size_t i = keysDateTime.size() + 1;
-    for (size_t j=0; j < keysDateTime.size(); ++j) {
+    for (size_t j = 0; j < keysDateTime.size(); ++j) {
         key = keysDateTime[j];
-        if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
+        if (exif.findKey(Exiv2::ExifKey { key }) != exif.end()) {
             i = j;
             break;
         }
     }
     if (i > keysDateTime.size()) {
-        throw FileInfoError{"No date information found"};
+        throw FileInfoError { "No date information found" };
     }
 
     std::stringstream timestamp;
@@ -69,23 +70,23 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif) 
     timestamp << value;
 
     key = keysSubSec[i];
-    if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
+    if (exif.findKey(Exiv2::ExifKey { key }) != exif.end()) {
         value = exif[key].toString();
         if (value.size() > 0) {
             timestamp << "." << value;
         }
     }
     if (timestamp.str().size() < 1) {
-        throw FileInfoError{"No date information found"};
+        throw FileInfoError { "No date information found" };
     }
 
     timestamp >> std::chrono::parse("%Y:%m:%d %T", m_timestamp);
     if (timestamp.fail()) {
-        throw FileInfoError{"Invalid date info found"};
+        throw FileInfoError { "Invalid date info found" };
     }
 
     key = keysOffset[i];
-    if (exif.findKey(Exiv2::ExifKey{key}) != exif.end()) {
+    if (exif.findKey(Exiv2::ExifKey { key }) != exif.end()) {
         value = exif[key].toString();
         timestamp.str(value);
         timestamp.clear();

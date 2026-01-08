@@ -23,18 +23,18 @@
 namespace fs = std::filesystem;
 namespace mc = mediacopier;
 
-std::pair<mc::Cli::ParseResult, int> mc::Cli::parseArgs(int argc, char *argv[])
+std::pair<mc::Cli::ParseResult, int> mc::Cli::parseArgs(int argc, char* argv[])
 {
-    CLI::App app{mediacopier::MEDIACOPIER_PROJECT_NAME};
+    CLI::App app { mediacopier::MEDIACOPIER_PROJECT_NAME };
     app.set_version_flag("-v,--version", mediacopier::MEDIACOPIER_VERSION);
 
     static const auto& isValidPath = [](const std::string& path) -> std::string {
         try {
             if (fs::absolute(path).empty()) {
-                throw CLI::ValidationError{"Empty string is not a valid path"};
+                throw CLI::ValidationError { "Empty string is not a valid path" };
             }
-        } catch(const fs::filesystem_error& err) {
-            throw CLI::ValidationError{"Invalid path definition: " + std::string{err.what()}};
+        } catch (const fs::filesystem_error& err) {
+            throw CLI::ValidationError { "Invalid path definition: " + std::string { err.what() } };
         }
         return {};
     };
@@ -65,13 +65,13 @@ std::pair<mc::Cli::ParseResult, int> mc::Cli::parseArgs(int argc, char *argv[])
     int ret = 0;
     try {
         app.parse(argc, argv);
-        return {ParseResult::Continue, ret};
-    } catch(const CLI::Success &err) {
+        return { ParseResult::Continue, ret };
+    } catch (const CLI::Success& err) {
         // printing help message or version info
         ret = app.exit(err);
-        return {ParseResult::Break, ret};
-    } catch(const CLI::ParseError &err) {
+        return { ParseResult::Break, ret };
+    } catch (const CLI::ParseError& err) {
         ret = app.exit(err);
-        return {ParseResult::Break, ret};
+        return { ParseResult::Break, ret };
     }
 }

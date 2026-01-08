@@ -23,7 +23,7 @@
 
 #include <spdlog/spdlog.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 #ifndef NDEBUG
     spdlog::set_level(spdlog::level::debug);
