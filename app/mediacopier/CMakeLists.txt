@@ -25,3 +25,5 @@ set(ICON_FILE_NAME "${TARGET_NAME}.svg")
 
 install(FILES "${ICON_FILE_NAME}"
     DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps")
+
+register_code_format_target(${TARGET_NAME})

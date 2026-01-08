@@ -47,3 +47,5 @@ endif()
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${SERVICE_MENU_FILE_NAME}"
     DESTINATION "${INSTALL_SERVICE_MENUS_DIR}")
+
+register_code_format_target(${TARGET_NAME})

@@ -54,3 +54,5 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     spdlog::spdlog ${QT_LIBS} ${MEDIACOPIER_CORE_LIB})
 
 install(TARGETS ${TARGET_NAME})
+
+register_code_format_target(${TARGET_NAME})

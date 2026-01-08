@@ -2,7 +2,7 @@ find_package(GTest)
 
 add_subdirectory(data)
 
-set(TARGET_NAME mediacopier-unittest)
+set(TARGET_NAME libmediacopier-core-unittest)
 
 add_executable(${TARGET_NAME})
 
@@ -25,3 +25,5 @@ gtest_discover_tests(${TARGET_NAME}
     TEST_PREFIX "${TARGET_NAME}_")
 
 enable_testing()
+
+register_code_format_target(${TARGET_NAME})

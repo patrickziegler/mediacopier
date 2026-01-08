@@ -16,6 +16,8 @@ option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+include(ClangFormat)
+
 if(${ENABLE_TEST_COVERAGE})
     set(ENABLE_TEST ON)
     include(TestCoverage)
@@ -56,3 +58,5 @@ endif()
 if(${ENABLE_TEST})
     enable_testing()
 endif()
+
+add_code_format_targets()

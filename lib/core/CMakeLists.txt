@@ -84,3 +84,5 @@ if(${ENABLE_TEST})
 endif()
 
 install(TARGETS ${TARGET_NAME})
+
+register_code_format_target(${TARGET_NAME})
