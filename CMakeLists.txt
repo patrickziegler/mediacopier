@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.23)
 
 project(MediaCopier VERSION 2.3.1)
 
@@ -13,10 +13,15 @@ option(SKIP_KDE "Don't build KDE Plasma integration" OFF)
 option(USE_QT5 "Build against Qt5 libraries (legacy)" OFF)
 option(ENABLE_TEST "Enable test targets" OFF)
 option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
+option(ENABLE_CLANG_TIDY "Enable static code analysis with clang-tidy" OFF)
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(ClangFormat)
+
+if(${ENABLE_CLANG_TIDY})
+    include(ClangTidy)
+endif()
 
 if(${ENABLE_TEST_COVERAGE})
     set(ENABLE_TEST ON)

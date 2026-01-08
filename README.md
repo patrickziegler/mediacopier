@@ -50,7 +50,7 @@ zypper install libQt5Widgets-devel libqt5-linguist-devel ki18n-devel kjobwidgets
 zypper install ki18n-devel kjobwidgets-devel # for the KDE Plasma integration with Qt5
 zypper install qt6-core-devel qt6-widgets-devel qt6-statemachine-devel qt6-linguist-devel # for Qt6 based graphical user interface 
 zypper install kf6-ki18n-devel kf6-kjobwidgets-devel # for the KDE Plasma integration with Qt6
-zypper install gtest lcov exiftool ImageMagick # for testing
+zypper install gtest lcov clang exiftool ImageMagick # for testing
 ```
 
 Clone this repository and create a build directory
@@ -76,6 +76,7 @@ Available cmake flags
 | `USE_QT5`              | Build against Qt5 libraries (legacy)             | `OFF`   |
 | `ENABLE_TEST`          | Enable test targets                              | `OFF`   |
 | `ENABLE_TEST_COVERAGE` | Enable test and coverage targets                 | `OFF`   |
+| `ENABLE_CLANG_TIDY`    | Enable static code analysis with `clang-tidy`    | `OFF`   |
 
 ### :factory: Containerized build environment
 
@@ -89,8 +90,9 @@ docker run -it --rm -v ${PWD}:/run/src/mediacopier -u $(id -u):$(id -g) mediacop
 Inside the container, run the test suite or generate coverage reports with the following commands
 
 ```sh
+cmake -DUSE_QT5=ON -DENABLE_CLANG_TIDY=ON /run/src/mediacopier/ && make formatcheck && make -j $(nproc)
 cmake -DUSE_QT5=ON -DENABLE_TEST=ON /run/src/mediacopier/ && make -j $(nproc) && make test
-cmake -DUSE_QT5=ON -DENABLE_TEST_COVERAGE=ON /run/src/mediacopier/ && make -j $(nproc) && make test && make coverage
+cmake -DUSE_QT5=ON -DENABLE_TEST_COVERAGE=ON /run/src/mediacopier/ && make formatcheck && make -j $(nproc) && make test && make coverage
 ```
 
 ### :paperclip: Build Instructions for Windows
