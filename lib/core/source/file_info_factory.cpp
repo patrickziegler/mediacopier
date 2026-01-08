@@ -64,7 +64,7 @@ auto to_file_info_ptr(const fs::path& path) -> FileInfoPtr
     if (result == nullptr) {
         try {
             result = std::make_shared<FileInfoVideo>(path);
-        }  catch (const FileInfoError& err) {
+        } catch (const FileInfoError& err) {
             spdlog::warn("Couldn't find video metadata in {0}: {1}", path.string(), err.what());
         }
     }

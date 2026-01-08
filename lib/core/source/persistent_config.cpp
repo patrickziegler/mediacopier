@@ -31,10 +31,10 @@ auto PersistentConfig::loadPersistentConfig(const fs::path& outputDir) -> void
         return;
     }
     const toml::value input = toml::parse(persistentConfigFile);
-    if(input.contains("pattern") && input.at("pattern").is_string()) {
+    if (input.contains("pattern") && input.at("pattern").is_string()) {
         m_pattern.setDefault(input.at("pattern").as_string());
     }
-    if(input.contains("useUtc") && input.at("useUtc").is_boolean()) {
+    if (input.contains("useUtc") && input.at("useUtc").is_boolean()) {
         m_useUtc.setDefault(input.at("useUtc").as_boolean());
     }
 }
@@ -45,10 +45,11 @@ auto PersistentConfig::storePersistentConfig(const fs::path& outputDir) const ->
         return;
     }
     const auto persistentConfigFile = outputDir / PERSISTENT_CONFIG;
-    toml::value output{{"pattern", m_pattern.get()}, {"useUtc", m_useUtc.get()}};
-    std::ofstream os{persistentConfigFile};
+    toml::value output { { "pattern", m_pattern.get() }, { "useUtc", m_useUtc.get() } };
+    std::ofstream os { persistentConfigFile };
     os << "# this file is updated on every run of mediacopier"
-       << ", manual changes might be lost\n" << output;
+       << ", manual changes might be lost\n"
+       << output;
 }
 
 } // namespace mediacopier

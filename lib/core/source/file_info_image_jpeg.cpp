@@ -37,7 +37,7 @@ auto reset_exif_orientation(const fs::path& path) noexcept -> bool
         image->setExifData(exif);
         image->writeMetadata();
 
-    } catch(const std::exception& err) {
+    } catch (const std::exception& err) {
         spdlog::warn("Could not reset exif orientation tag ({0}): {1}", path.string(), err.what());
         return false;
     }
@@ -45,12 +45,13 @@ auto reset_exif_orientation(const fs::path& path) noexcept -> bool
     return true;
 }
 
-FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif) : FileInfoImage{std::move(path), exif}
+FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData& exif)
+    : FileInfoImage { std::move(path), exif }
 {
-    const auto& item = exif.findKey(Exiv2::ExifKey{"Exif.Image.Orientation"});
+    const auto& item = exif.findKey(Exiv2::ExifKey { "Exif.Image.Orientation" });
 
     if (item == exif.end()) {
-        throw FileInfoImageJpegError{"Field 'Exif.Image.Orientation' not found in metadata"};
+        throw FileInfoImageJpegError { "Field 'Exif.Image.Orientation' not found in metadata" };
     }
 
 #ifdef EXIV2_HAS_TOLONG
@@ -60,7 +61,7 @@ FileInfoImageJpeg::FileInfoImageJpeg(std::filesystem::path path, Exiv2::ExifData
 #endif
 
     if (orientation < static_cast<long>(Orientation::ROT_0) || orientation > static_cast<long>(Orientation::ROT_90)) {
-        throw FileInfoImageJpegError{"Invalid orientation value"};
+        throw FileInfoImageJpegError { "Invalid orientation value" };
     }
 
     m_orientation = static_cast<Orientation>(orientation);

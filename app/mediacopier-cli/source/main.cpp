@@ -43,9 +43,9 @@ auto media_files(const fs::path& path)
         }
     };
     return std::ranges::subrange(
-                fs::recursive_directory_iterator(path),
-                fs::recursive_directory_iterator())
-            | std::ranges::views::transform(convert);
+               fs::recursive_directory_iterator(path),
+               fs::recursive_directory_iterator())
+        | std::ranges::views::transform(convert);
 }
 
 template <typename Operation>
@@ -56,7 +56,7 @@ auto exec(const mc::Cli& cli) -> void
         operationCancelled.store(true);
     });
 
-    auto fileRegister = mc::FileRegister{cli.outputDir(), cli.pattern(), cli.useUtc()};
+    auto fileRegister = mc::FileRegister { cli.outputDir(), cli.pattern(), cli.useUtc() };
     std::optional<fs::path> dest;
 
     for (auto file : media_files(cli.inputDir())) {
@@ -82,7 +82,7 @@ auto exec(const mc::Cli& cli) -> void
     std::signal(SIGINT, SIG_DFL);
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 #ifndef NDEBUG
     spdlog::set_level(spdlog::level::debug);

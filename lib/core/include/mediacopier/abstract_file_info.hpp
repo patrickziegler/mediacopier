@@ -25,12 +25,15 @@ class AbstractFileOperation;
 class AbstractFileInfo {
 public:
     AbstractFileInfo(std::filesystem::path path)
-        : m_path{std::move(path)} {}
+        : m_path { std::move(path) }
+    {
+    }
     virtual ~AbstractFileInfo() = default;
     virtual auto accept(AbstractFileOperation& operation) const -> void = 0;
     auto path() const -> std::filesystem::path { return m_path; }
     auto timestamp() const -> std::chrono::system_clock::time_point { return m_timestamp; }
     auto offset() const -> std::chrono::minutes { return m_offset; }
+
 protected:
     std::filesystem::path m_path;
     std::chrono::system_clock::time_point m_timestamp;

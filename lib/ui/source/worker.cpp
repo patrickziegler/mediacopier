@@ -21,8 +21,8 @@
 #include <mediacopier/operation_copy_jpeg.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
 
-#include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 #include <atomic>
 #include <chrono>
@@ -69,17 +69,17 @@ auto media_files(const fs::path& path)
     };
 
     return std::ranges::subrange(
-                fs::recursive_directory_iterator(path),
-                fs::recursive_directory_iterator())
-            | std::ranges::views::transform(convert);
+               fs::recursive_directory_iterator(path),
+               fs::recursive_directory_iterator())
+        | std::ranges::views::transform(convert);
 }
 
 auto directory_entries_count(const fs::path& path) -> size_t
 {
     return std::ranges::distance(
-                std::ranges::subrange(
-                    fs::recursive_directory_iterator(path),
-                    fs::recursive_directory_iterator()));
+        std::ranges::subrange(
+            fs::recursive_directory_iterator(path),
+            fs::recursive_directory_iterator()));
 }
 
 template <typename Operation>
@@ -93,7 +93,8 @@ typedef void (*ExecFuncPtr)(const fs::path&, mc::FileInfoPtr);
 
 } // namespace
 
-Worker::Worker(std::shared_ptr<Config> config) : m_config{std::move(config)}
+Worker::Worker(std::shared_ptr<Config> config)
+    : m_config { std::move(config) }
 {
     qRegisterMetaType<StatusDescription>("StatusDescription");
     qRegisterMetaType<StatusProgress>("StatusProgress");
@@ -109,7 +110,7 @@ Worker::Worker(std::shared_ptr<Config> config) : m_config{std::move(config)}
     }
     auto logfile = m_config->getOutputDir() / MEDIACOPIER_LOG_FILE;
     spdlog::default_logger()->sinks().push_back(
-                std::make_shared<spdlog::sinks::basic_file_sink_mt>(logfile.string(), true));
+        std::make_shared<spdlog::sinks::basic_file_sink_mt>(logfile.string(), true));
 }
 
 void Worker::start()
@@ -135,7 +136,7 @@ void Worker::kill()
     operationCancelled.store(true);
 
     // block until request was recognized
-    while(operationCancelled.load()) {
+    while (operationCancelled.load()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_WAIT_MS));
     }
 }
@@ -160,7 +161,7 @@ void Worker::exec()
         operationCancelled.store(true);
     });
 
-    auto fileRegister = mc::FileRegister{m_config->getOutputDir(), m_config->getPattern(), m_config->useUtc()};
+    auto fileRegister = mc::FileRegister { m_config->getOutputDir(), m_config->getPattern(), m_config->useUtc() };
     std::optional<fs::path> dest;
 
     spdlog::info("Executing operation..");
@@ -171,11 +172,11 @@ void Worker::exec()
             spdlog::info("Operation was cancelled..");
             break;
         }
-        Q_EMIT updateProgress({count, progress});
+        Q_EMIT updateProgress({ count, progress });
         try {
             if (file != nullptr && (dest = fileRegister.add(file)).has_value()) {
                 spdlog::debug("Processing: {0} -> {1}", file->path().string(), dest.value().string());
-                Q_EMIT updateDescription({file->path(), dest.value()});
+                Q_EMIT updateDescription({ file->path(), dest.value() });
                 execute(dest.value(), file);
             }
         } catch (const std::exception& err) {

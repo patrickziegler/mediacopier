@@ -26,6 +26,7 @@ public:
     auto visit(const FileInfoImage& file) -> void override;
     auto visit(const FileInfoImageJpeg& file) -> void override;
     auto visit(const FileInfoVideo& file) -> void override;
+
 protected:
     auto moveFileJpeg(const FileInfoImageJpeg& file) const -> void;
 };

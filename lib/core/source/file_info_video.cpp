@@ -19,8 +19,7 @@
 #include <mediacopier/abstract_operation.hpp>
 #include <mediacopier/error.hpp>
 
-extern "C"
-{
+extern "C" {
 #include <libavformat/avformat.h>
 }
 
@@ -29,7 +28,8 @@ extern "C"
 
 namespace mediacopier {
 
-FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path}
+FileInfoVideo::FileInfoVideo(std::filesystem::path path)
+    : AbstractFileInfo { path }
 {
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionaryEntry* tag = nullptr;
@@ -41,7 +41,7 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
         av_strerror(ret, errbuf, sizeof(errbuf));
         std::ostringstream oss;
         oss << "Could not read metadata: " << errbuf;
-        throw FileInfoError{oss.str()};
+        throw FileInfoError { oss.str() };
     }
 
     std::string timestamp;
@@ -61,15 +61,15 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path) : AbstractFileInfo{path
     avformat_close_input(&fmt_ctx);
 
     if (timestamp.empty()) {
-        throw FileInfoError{"No date information found"};
+        throw FileInfoError { "No date information found" };
     }
 
     std::chrono::system_clock::time_point tp;
 
-    std::istringstream iss{timestamp};
+    std::istringstream iss { timestamp };
     iss >> std::chrono::parse("%FT%T", tp); // parse into local time (without timezone offset)
     if (iss.fail()) {
-        throw FileInfoError{"Invalid date information found"};
+        throw FileInfoError { "Invalid date information found" };
     }
 
     m_timestamp = tp;

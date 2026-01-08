@@ -22,36 +22,46 @@
 template <typename T>
 class Configurable {
 public:
-    Configurable(const T& defaultValue) :
-        originalValue{defaultValue},
-        defaultValue{defaultValue},
-        currentValue{std::nullopt} {}
-    Configurable& operator=(const T& value) {
+    Configurable(const T& defaultValue)
+        : originalValue { defaultValue }
+        , defaultValue { defaultValue }
+        , currentValue { std::nullopt }
+    {
+    }
+    Configurable& operator=(const T& value)
+    {
         currentValue = value;
         return *this;
     }
-    operator T() const {
+    operator T() const
+    {
         return currentValue.value_or(defaultValue);
     }
-    void set(const T& value) {
+    void set(const T& value)
+    {
         currentValue = value;
     }
-    void setDefault(const T& value) {
+    void setDefault(const T& value)
+    {
         defaultValue = value;
     }
-    const T& get() const {
+    const T& get() const
+    {
         if (currentValue) {
             return currentValue.value();
         } else {
             return defaultValue;
         }
     }
-    void reset() {
+    void reset()
+    {
         currentValue.reset();
     }
-    void resetDefault() {
+    void resetDefault()
+    {
         defaultValue = originalValue;
     }
+
 private:
     T originalValue;
     T defaultValue;
@@ -68,9 +78,10 @@ public:
     virtual ~PersistentConfig() = default;
     auto loadPersistentConfig(const std::filesystem::path& path) -> void;
     auto storePersistentConfig(const std::filesystem::path& path) const -> void;
+
 protected:
-    Configurable<std::string> m_pattern{DEFAULT_PATTERN};
-    Configurable<bool> m_useUtc{DEFAULT_USE_UTC};
+    Configurable<std::string> m_pattern { DEFAULT_PATTERN };
+    Configurable<bool> m_useUtc { DEFAULT_USE_UTC };
 };
 
 } // namespace mediacopier

@@ -38,7 +38,7 @@ auto FileOperationMove::moveFile(const AbstractFileInfo& file) const -> void
             spdlog::warn("Failed to remove the original file: ({0}): {1}", file.path().string(), err.message());
         }
     } else if (err) {
-        throw mediacopier::FileOperationError{"Failed to move file " + file.path().string() + ": " + err.message()};
+        throw mediacopier::FileOperationError { "Failed to move file " + file.path().string() + ": " + err.message() };
     }
 }
 

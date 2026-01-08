@@ -64,13 +64,13 @@
         <translation>Verschieben</translation>
     </message>
     <message>
-        <location filename="../source/widgets/MediaCopierParamWidget.cpp" line="162"/>
+        <location filename="../source/widgets/MediaCopierParamWidget.cpp" line="164"/>
         <source>Source folder</source>
         <translation>Quellverzeichnis</translation>
     </message>
     <message>
-        <location filename="../source/widgets/MediaCopierParamWidget.cpp" line="169"/>
         <location filename="../source/widgets/MediaCopierParamWidget.cpp" line="171"/>
+        <location filename="../source/widgets/MediaCopierParamWidget.cpp" line="173"/>
         <source>Destination folder</source>
         <translation>Zielverzeichnis</translation>
     </message>

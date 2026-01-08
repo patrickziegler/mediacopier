@@ -27,12 +27,11 @@ class MediaCopierDialogFull;
 
 class QApplication;
 
-class MediaCopierDialogFull : public QDialog
-{
+class MediaCopierDialogFull : public QDialog {
     Q_OBJECT
 
 public:
-    explicit MediaCopierDialogFull(QWidget *parent=nullptr);
+    explicit MediaCopierDialogFull(QWidget* parent = nullptr);
     ~MediaCopierDialogFull();
     void init(std::shared_ptr<Config> config);
 

@@ -26,12 +26,11 @@ class MediaCopierLogWidget;
 
 class QApplication;
 
-class MediaCopierLogWidget : public QWidget
-{
+class MediaCopierLogWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit MediaCopierLogWidget(QWidget *parent=nullptr);
+    explicit MediaCopierLogWidget(QWidget* parent = nullptr);
     ~MediaCopierLogWidget();
     void clear();
 

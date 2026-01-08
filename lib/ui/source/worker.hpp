@@ -62,11 +62,16 @@ protected:
 class WorkerFactory {
 public:
     WorkerFactory() = delete;
-    explicit WorkerFactory(std::shared_ptr<Config> config) : m_config{std::move(config)} {}
-    virtual ~WorkerFactory() {}
-    virtual std::unique_ptr<Worker> make_worker(const QString& /* description */) {
+    explicit WorkerFactory(std::shared_ptr<Config> config)
+        : m_config { std::move(config) }
+    {
+    }
+    virtual ~WorkerFactory() { }
+    virtual std::unique_ptr<Worker> make_worker(const QString& /* description */)
+    {
         return std::make_unique<Worker>(m_config);
     }
+
 protected:
     std::shared_ptr<Config> m_config;
 };

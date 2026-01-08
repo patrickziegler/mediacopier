@@ -17,8 +17,8 @@
 #include "widgets/MediaCopierParamWidget.hpp"
 
 #include <QAbstractButton>
-#include <QFileDialog>
 #include <QCheckBox>
+#include <QFileDialog>
 
 #include <spdlog/spdlog.h>
 
@@ -28,7 +28,7 @@
 static const auto ask_for_directory(const QString& title, const QDir& dir) -> QString
 {
     return QFileDialog::getExistingDirectory(
-                0, title, dir.absolutePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        0, title, dir.absolutePath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 }
 
 static const auto ask_for_directory(const QString& title) -> QString
@@ -47,7 +47,8 @@ static const QList<QPair<QString, Config::Command>> paramCommandItems = {
     QPair<QString, Config::Command>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Move"), Config::Command::Move)
 };
 
-static int getTimezoneIndex(const Config::Timezone& timezone) {
+static int getTimezoneIndex(const Config::Timezone& timezone)
+{
     for (int i = 0; i < paramTimezoneItems.length(); ++i) {
         if (paramTimezoneItems.at(i).second == timezone) {
             return i;
@@ -56,7 +57,8 @@ static int getTimezoneIndex(const Config::Timezone& timezone) {
     return -1;
 }
 
-static int getCommandIndex(const Config::Command& command) {
+static int getCommandIndex(const Config::Command& command)
+{
     for (int i = 0; i < paramCommandItems.length(); ++i) {
         if (paramCommandItems.at(i).second == command) {
             return i;
@@ -65,9 +67,9 @@ static int getCommandIndex(const Config::Command& command) {
     return -1;
 }
 
-MediaCopierParamWidget::MediaCopierParamWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::MediaCopierParamWidget)
+MediaCopierParamWidget::MediaCopierParamWidget(QWidget* parent)
+    : QWidget(parent)
+    , ui(new Ui::MediaCopierParamWidget)
 {
     ui->setupUi(this);
     for (const auto& item : paramCommandItems) {
@@ -96,28 +98,28 @@ void MediaCopierParamWidget::init(std::shared_ptr<Config> config)
     ui->paramCommand->setCurrentIndex(getCommandIndex(m_config->getCommand()));
 
     connect(ui->dirsInputDirButton, &QToolButton::clicked,
-            this, &MediaCopierParamWidget::onOpenInputDirClicked);
+        this, &MediaCopierParamWidget::onOpenInputDirClicked);
 
     connect(ui->dirsOutputDirButton, &QToolButton::clicked,
-            this, &MediaCopierParamWidget::onOpenOutputDirClicked);
+        this, &MediaCopierParamWidget::onOpenOutputDirClicked);
 
     connect(ui->paramPatternUpdate, &QCheckBox::clicked,
-            this, &MediaCopierParamWidget::onPatternUpdateClicked);
+        this, &MediaCopierParamWidget::onPatternUpdateClicked);
 
     connect(ui->dirsInputDirText, &QLineEdit::textChanged,
-            this, &MediaCopierParamWidget::onInputDirChanged);
+        this, &MediaCopierParamWidget::onInputDirChanged);
 
     connect(ui->dirsOutputDirText, &QLineEdit::textChanged,
-            this, &MediaCopierParamWidget::onOutputDirChanged);
+        this, &MediaCopierParamWidget::onOutputDirChanged);
 
     connect(ui->paramPattern, &QLineEdit::textChanged,
-            this, &MediaCopierParamWidget::onPatternChanged);
+        this, &MediaCopierParamWidget::onPatternChanged);
 
     connect(ui->paramTimezone, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &MediaCopierParamWidget::onTimezoneChanged);
+        this, &MediaCopierParamWidget::onTimezoneChanged);
 
     connect(ui->paramCommand, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &MediaCopierParamWidget::onCommandChanged);
+        this, &MediaCopierParamWidget::onCommandChanged);
 }
 
 void MediaCopierParamWidget::validateParameters()
@@ -164,7 +166,7 @@ void MediaCopierParamWidget::onOpenInputDirClicked()
 
 void MediaCopierParamWidget::onOpenOutputDirClicked()
 {
-    QDir inputDir{ui->dirsInputDirText->text()};
+    QDir inputDir { ui->dirsInputDirText->text() };
     if (inputDir.exists()) {
         ui->dirsOutputDirText->setText(ask_for_directory(tr("Destination folder"), inputDir));
     } else {
@@ -231,7 +233,8 @@ void MediaCopierParamWidget::onCommandChanged(int index)
     spdlog::debug("Changed command to '" + description.toStdString() + "'");
 }
 
-QString MediaCopierParamWidget::getCommandDescription(const Config::Command& command) const {
+QString MediaCopierParamWidget::getCommandDescription(const Config::Command& command) const
+{
     for (const auto& [d, c] : paramCommandItems) {
         if (c == command) {
             return tr(d.toStdString().c_str());

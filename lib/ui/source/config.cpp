@@ -19,8 +19,8 @@
 #include <QCommandLineParser>
 
 static const std::map<QString, Config::Command> commands = {
-    {"copy", Config::Command::Copy},
-    {"move", Config::Command::Move}
+    { "copy", Config::Command::Copy },
+    { "move", Config::Command::Move }
 };
 
 Config::Config(const QApplication& app)
@@ -28,14 +28,13 @@ Config::Config(const QApplication& app)
     QCommandLineParser parser;
 
     parser.setApplicationDescription(
-                app.applicationName() +
-                ", Copyright (C) 2020-2025 Patrick Ziegler");
+        app.applicationName() + ", Copyright (C) 2020-2025 Patrick Ziegler");
     parser.addPositionalArgument(
-                "CMD", "Available commands: copy (default), move", "[CMD");
+        "CMD", "Available commands: copy (default), move", "[CMD");
     parser.addPositionalArgument(
-                "SRC", "Input directory", "[SRC");
+        "SRC", "Input directory", "[SRC");
     parser.addPositionalArgument(
-                "DST", "Output directory", "[DST]]]");
+        "DST", "Output directory", "[DST]]]");
 
     parser.addVersionOption();
     parser.addHelpOption();
@@ -59,7 +58,7 @@ bool Config::readConfigFile() noexcept
     m_useUtc.resetDefault();
     try {
         loadPersistentConfig(m_outputDir);
-    } catch(...) {
+    } catch (...) {
         return false;
     }
     return true;
@@ -125,7 +124,8 @@ auto Config::getTimezone() const -> const Timezone
     return (m_useUtc) ? Timezone::Universal : Timezone::Local;
 }
 
-auto Config::getCommand() const -> const Command {
+auto Config::getCommand() const -> const Command
+{
     return m_command;
 }
 
