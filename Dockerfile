@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     imagemagick \
     lcov \
+    clang-tidy \
+    clang-format \
     libavformat-dev \
     libexiv2-dev \
     libgtest-dev \
