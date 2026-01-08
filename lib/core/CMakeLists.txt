@@ -27,6 +27,11 @@ configure_file(
 
 add_library(${TARGET_NAME} SHARED)
 
+if(${ENABLE_TEST_COVERAGE})
+    target_compile_options(${TARGET_NAME} PRIVATE --coverage -O0 -g)
+    target_link_options(${TARGET_NAME} PRIVATE --coverage)
+endif()
+
 string(REPLACE "." "_" VERSION_WITH_UNDERSCORES ${CMAKE_PROJECT_VERSION})
 
 set_target_properties(${TARGET_NAME} PROPERTIES
@@ -73,13 +78,6 @@ target_include_directories(${TARGET_NAME} PUBLIC
 target_link_libraries(${TARGET_NAME} PRIVATE
     ${AVFORMAT_LINK_LIBRARIES} ${LIBJPEG_LINK_LIBRARIES}
     Exiv2::exiv2lib spdlog::spdlog)
-
-if(${ENABLE_TEST_COVERAGE})
-    set(CMAKE_CXX_FLAGS "-g -O0 --coverage")
-    set(CMAKE_EXE_LINKER_FLAGS "--coverage")
-    set(ENABLE_TEST ON)
-    include(TestCoverage)
-endif()
 
 if(${ENABLE_TEST})
     add_subdirectory(test)
