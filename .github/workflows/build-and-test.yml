@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       env:
         DEBIAN_FRONTEND: "noninteractive"
-      run: sudo apt-get update && sudo apt-get install -y build-essential gcc-14 g++-14 pkg-config cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs libspdlog-dev libturbojpeg0-dev libtoml11-dev
+      run: sudo apt-get update && sudo apt-get install -y build-essential gcc-14 g++-14 pkg-config cmake ffmpeg imagemagick lcov libavformat-dev libexiv2-dev libgtest-dev libimage-exiftool-perl libjpeg-turbo-progs libspdlog-dev libturbojpeg0-dev libtoml11-dev qtbase5-dev qttools5-dev libkf5i18n-dev libkf5jobwidgets-dev
 
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
         CXX: ${{matrix.config.CXX}}
         BUILD_DIR: "build/"
       run: |
-        cmake -B ${BUILD_DIR} -DSKIP_CLI=ON -DSKIP_GUI=ON -DSKIP_KDE=ON -DENABLE_TEST=ON
+        cmake -B ${BUILD_DIR} -DENABLE_TEST=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}
         ctest --test-dir ${BUILD_DIR} -V
 
@@ -40,8 +40,9 @@ jobs:
         CXX: ${{matrix.config.CXX}}
         BUILD_DIR: "build-coverage/"
       run: |
-        cmake -B ${BUILD_DIR} -DSKIP_CLI=ON -DSKIP_GUI=ON -DSKIP_KDE=ON -DENABLE_TEST_COVERAGE=ON
+        cmake -B ${BUILD_DIR} -DENABLE_TEST_COVERAGE=ON
         MAKEFLAGS=-j$(nproc) cmake --build ${BUILD_DIR}
+        cmake --build ${BUILD_DIR} --target test
         cmake --build ${BUILD_DIR} --target coverage
       if: matrix.config.CC == 'gcc'
 
@@ -49,5 +50,5 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
-        path-to-lcov: build-coverage/coverage/trace.info
+        path-to-lcov: build-coverage/coverage/trace_filtered.info
       if: matrix.config.CC == 'gcc'

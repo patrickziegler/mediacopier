@@ -1,7 +1,7 @@
 # <img width="64px" src="https://raw.githubusercontent.com/patrickziegler/mediacopier/refs/heads/master/app/mediacopier/mediacopier.svg"> mediacopier
 
 [![Build Status](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml/badge.svg?branch=master)](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml?query=branch%3Amaster)
-[![Coverage Status](https://coveralls.io/repos/github/patrickziegler/MediaCopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/MediaCopier?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/patrickziegler/mediacopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/mediacopier?branch=master)
 
 This is an app that searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
 The original creation date is used to **generate a folder structure** and unique filenames.
@@ -84,14 +84,14 @@ Build und run the container image as specified in the `Dockerfile` with the foll
 
 ```sh
 docker build -t mediacopier-build .
-docker run -it --rm -v ${PWD}:/usr/src/mediacopier -u $(id -u):$(id -g) mediacopier-build
+docker run -it --rm -v ${PWD}:/run/src/mediacopier -u $(id -u):$(id -g) mediacopier-build
 ```
 
-Inside the container, run the test suite with the following commands
+Inside the container, run the test suite or generate coverage reports with the following commands
 
 ```sh
-export CC=gcc-14 CXX=g++-14
-cmake -DUSE_QT5=ON -DSKIP_KDE=ON -DENABLE_TEST=ON /usr/src/mediacopier/ && make -j $(nproc) && make test
+cmake -DUSE_QT5=ON -DENABLE_TEST=ON /run/src/mediacopier/ && make -j $(nproc) && make test
+cmake -DUSE_QT5=ON -DENABLE_TEST_COVERAGE=ON /run/src/mediacopier/ && make -j $(nproc) && make test && make coverage
 ```
 
 ### :paperclip: Build Instructions for Windows

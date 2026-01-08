@@ -15,6 +15,13 @@ option(ENABLE_TEST "Enable test targets" OFF)
 option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
 option(INSTALL_DEV_FILES "Install library headers and cmake targets" OFF)
 
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+if(${ENABLE_TEST_COVERAGE})
+    set(ENABLE_TEST ON)
+    include(TestCoverage)
+endif()
+
 if(${MSVC})
     # Exiv2 still uses std::auto_ptr, MSCV needs to be specifically asked to support that
     # https://github.com/Exiv2/exiv2/issues/46

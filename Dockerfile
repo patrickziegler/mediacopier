@@ -19,13 +19,19 @@ RUN apt-get update && apt-get install -y \
     libjpeg-turbo-progs \
     libspdlog-dev \
     libturbojpeg0-dev \
-    qtbase5-dev \
-    qttools5-dev \
     libcli11-dev \
     libtoml11-dev \
+    qtbase5-dev \
+    qttools5-dev \
+    libkf5i18n-dev \
+    libkf5jobwidgets-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # workaround for https://bugs.launchpad.net/ubuntu/+source/toml11/+bug/1978418
 RUN ln -s /usr/lib/share/cmake/toml11/ /usr/lib/x86_64-linux-gnu/cmake/toml11
+
+ENV CC=gcc-14 \
+    CXX=g++-14 \
+    LCOV_GCOV_TOOL=gcov-14
 
 WORKDIR /tmp/build
