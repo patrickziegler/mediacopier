@@ -30,6 +30,24 @@ shift $(($OPTIND - 1))
 
 set -x
 
+if which magick >/dev/null 2>&1; then
+    MAGICK_CMD="magick"
+elif which convert >/dev/null 2>&1; then
+    MAGICK_CMD="convert"
+else
+    echo "Error: neither 'magick' nor 'convert' installed"
+    exit 1
+fi
+
+# Example usage: convert input.jpg to output.png
+INPUT_FILE="input.jpg"
+OUTPUT_FILE="output.png"
+
+$IM_CMD "$INPUT_FILE" "$OUTPUT_FILE"
+
+echo "Conversion done using '$IM_CMD'."
+
+
 SCRIPT=`readlink -f "$0"`
 SCRIPT_PATH=`dirname "${SCRIPT}"`
 
@@ -73,9 +91,9 @@ mkdir -p "${DATA_PATH}"
 
 touch "${TEXT_FILE}"
 
-convert "${IMG_ORIGINAL}" -resize 64x64 -quality 25 -colorspace GRAY "${IMG_64_ROT0}"
+${MAGICK_CMD} "${IMG_ORIGINAL}" -resize 64x64 -quality 25 -colorspace GRAY "${IMG_64_ROT0}"
 
-convert "${IMG_ORIGINAL}" -resize 16x16 -rotate 90 -colorspace GRAY "${IMG_RAW_COPY}"
+${MAGICK_CMD} "${IMG_ORIGINAL}" -resize 16x16 -rotate 90 -colorspace GRAY "${IMG_RAW_COPY}"
 exiftool -overwrite_original -DateTimeOriginal="2019-02-05 12:09:32" "${IMG_RAW_COPY}"
 exiftool -overwrite_original -n -Orientation=8 "${IMG_RAW_COPY}"
 
@@ -95,7 +113,7 @@ exiftool -overwrite_original -n -Orientation=3 "${IMG_64_ROT180}" -SubSecTimeOri
 exiftool -overwrite_original -DateTimeOriginal="2019-02-05 12:13:32" "${IMG_64_ROT270}"
 exiftool -overwrite_original -n -Orientation=6 "${IMG_64_ROT270}" -SubSecTimeOriginal=123
 
-convert "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY}"
+${MAGICK_CMD} "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY}"
 
 cp "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY_TIMESTAMP_MISSING}"
 exiftool -overwrite_original -DateTimeOriginal= "${IMG_64_ROT270_COPY_TIMESTAMP_MISSING}"
@@ -103,12 +121,12 @@ exiftool -overwrite_original -DateTimeOriginal= "${IMG_64_ROT270_COPY_TIMESTAMP_
 cp "${IMG_64_ROT270}" "${IMG_64_ROT270_COPY_ORIENTATION_MISSING}"
 exiftool -overwrite_original -Orientation= "${IMG_64_ROT270_COPY_ORIENTATION_MISSING}"
 
-convert "${IMG_64_ROT270}" -quality 25 "${IMG_64_ROT270_COPY_LOW_QUALITY}"
+${MAGICK_CMD} "${IMG_64_ROT270}" -quality 25 "${IMG_64_ROT270_COPY_LOW_QUALITY}"
 
 # --- Create image with corrupted rotation as described in [2]
 
 jpegtran -optimize -rotate 90 "${IMG_64_ROT0}" > "${IMG_50_ROT90}"
-convert "${IMG_50_ROT90}" -resize 50x50 -quality 25 "${IMG_50_ROT90}"
+${MAGICK_CMD} "${IMG_50_ROT90}" -resize 50x50 -quality 25 "${IMG_50_ROT90}"
 
 jpegtran -optimize -rotate 270 "${IMG_50_ROT90}" > "${IMG_50_ROT0}" # IMG_50_ROT0 will be corrupted!
 
