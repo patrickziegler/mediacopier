@@ -44,7 +44,10 @@ static const QList<QPair<QString, Config::Timezone>> paramTimezoneItems = {
 
 static const QList<QPair<QString, Config::Command>> paramCommandItems = {
     QPair<QString, Config::Command>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Copy"), Config::Command::Copy),
-    QPair<QString, Config::Command>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Move"), Config::Command::Move)
+    QPair<QString, Config::Command>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Move"), Config::Command::Move),
+#ifndef NDEBUG
+    QPair<QString, Config::Command>(QT_TRANSLATE_NOOP("MediaCopierParamWidget", "Simulate"), Config::Command::Sim)
+#endif
 };
 
 static int getTimezoneIndex(const Config::Timezone& timezone)

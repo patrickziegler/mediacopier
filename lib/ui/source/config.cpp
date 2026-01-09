@@ -20,7 +20,10 @@
 
 static const std::map<QString, Config::Command> commands = {
     { "copy", Config::Command::Copy },
-    { "move", Config::Command::Move }
+    { "move", Config::Command::Move },
+#ifndef NDEBUG
+    { "sim", Config::Command::Sim }
+#endif
 };
 
 Config::Config(const QApplication& app)
@@ -28,7 +31,7 @@ Config::Config(const QApplication& app)
     QCommandLineParser parser;
 
     parser.setApplicationDescription(
-        app.applicationName() + ", Copyright (C) 2020-2025 Patrick Ziegler");
+        app.applicationName() + ", Copyright (C) 2020-2026 Patrick Ziegler");
     parser.addPositionalArgument(
         "CMD", "Available commands: copy (default), move", "[CMD");
     parser.addPositionalArgument(

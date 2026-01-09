@@ -20,6 +20,9 @@
 #include <mediacopier/file_register.hpp>
 #include <mediacopier/operation_copy_jpeg.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
+#ifndef NDEBUG
+#include <mediacopier/operation_simulate.hpp>
+#endif
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
@@ -153,6 +156,11 @@ void Worker::exec()
     case Config::Command::Move:
         execute = &::execute<mc::FileOperationMoveJpeg>;
         break;
+#ifndef NDEBUG
+    case Config::Command::Sim:
+        execute = &::execute<mc::FileOperationSimulate>;
+        break;
+#endif
     }
 
     spdlog::info("Checking input directory..");

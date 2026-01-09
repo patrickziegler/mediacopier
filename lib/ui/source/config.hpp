@@ -24,7 +24,10 @@ class Config : public mediacopier::PersistentConfig {
 public:
     enum class Command {
         Copy,
-        Move
+        Move,
+#ifndef NDEBUG
+        Sim
+#endif
     };
     enum class Timezone {
         Universal,

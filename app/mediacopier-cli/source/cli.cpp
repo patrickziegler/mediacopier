@@ -55,12 +55,14 @@ std::pair<mc::Cli::ParseResult, int> mc::Cli::parseArgs(int argc, char** argv)
     moveapp->add_option("-p,--pattern", m_pattern, "Pattern to be used for constructing filenames");
     moveapp->add_flag("-u,--utc", setUseUtc, "Use UTC timestamps when constructing filenames");
 
+#ifndef NDEBUG
     auto simapp = app.add_subcommand("sim", "Simulate operation and dump info");
     simapp->callback([this]() { m_command = Command::Sim; });
     simapp->add_option("inputDir", m_inputDir)->required()->check(CLI::ExistingDirectory);
     simapp->add_option("outputDir", m_outputDir)->required()->check(isValidPath, "DIR");
     simapp->add_option("-p,--pattern", m_pattern, "Pattern to be used for constructing filenames");
     simapp->add_flag("-u,--utc", setUseUtc, "Use UTC timestamps when constructing filenames");
+#endif
 
     int ret = 0;
     try {
