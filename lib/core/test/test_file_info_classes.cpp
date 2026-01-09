@@ -15,49 +15,123 @@
  */
 
 #include "common_test_fixtures.hpp"
-
-namespace fs = std::filesystem;
+#include <fstream>
 
 namespace mediacopier::test {
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class FileInfoTests : public CommonTestFixtures {
-    using CommonTestFixtures::SetUp;
 };
 
-TEST_F(FileInfoTests, validFileInfoImageJpeg)
+TEST_F(FileInfoTests, validFileInfoImageJpegOrientation)
 {
-    checkFileInfoType(m_testDataDirOrig / "lena64_rot0.jpg", FileInfoType::FileInfoImageJpeg);
-    checkFileInfoJpegAttrs(m_testDataDirOrig / "lena64_rot0.jpg", FileInfoImageJpeg::Orientation::ROT_0, "2019-02-05 12:10:32.123456");
-    checkFileInfoJpegAttrs(m_testDataDirOrig / "lena64_rot90.jpg", FileInfoImageJpeg::Orientation::ROT_90, "2019-02-05 12:11:32");
-    checkFileInfoJpegAttrs(m_testDataDirOrig / "lena64_rot180.jpg", FileInfoImageJpeg::Orientation::ROT_180, "2019-02-05 12:12:32.1234");
-    checkFileInfoJpegAttrs(m_testDataDirOrig / "lena64_rot270.jpg", FileInfoImageJpeg::Orientation::ROT_270, "2019-02-05 12:13:32.123");
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:10:32");
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
+    checkFileInfoType(img.path(), FileInfoType::FileInfoImageJpeg);
+
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
+    checkFileInfoJpegOrientation(img.path(), FileInfoImageJpeg::Orientation::ROT_0);
+
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_90);
+    checkFileInfoJpegOrientation(img.path(), FileInfoImageJpeg::Orientation::ROT_90);
+
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_180);
+    checkFileInfoJpegOrientation(img.path(), FileInfoImageJpeg::Orientation::ROT_180);
+
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_270);
+    checkFileInfoJpegOrientation(img.path(), FileInfoImageJpeg::Orientation::ROT_270);
 }
 
-TEST_F(FileInfoTests, invalidFileInfoImageJpeg)
+TEST_F(FileInfoTests, validFileInfoImageJpegDateTime)
 {
-    checkFileInfoType(m_testDataDirOrig / "lena64_rot270_orientation_missing.jpg", FileInfoType::FileInfoImage);
-    checkFileValid(m_testDataDirOrig / "lena64_rot270_timestamp_missing.jpg");
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:10:32");
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
+    checkFileInfoType(img.path(), FileInfoType::FileInfoImageJpeg);
+    checkFileInfoDateTime(img.path(), "2019-02-05 12:10:32");
+
+    img.setExif("SubSecTimeOriginal", "123456");
+    checkFileInfoDateTime(img.path(), "2019-02-05 12:10:32.123456");
+
+    img.setExif("SubSecTimeOriginal", "32");
+    checkFileInfoDateTime(img.path(), "2019-02-05 12:10:32.32");
+
+    img.setExif("SubSecTimeOriginal", "1234");
+    checkFileInfoDateTime(img.path(), "2019-02-05 12:10:32.1234");
+
+    img.setExif("SubSecTimeOriginal", "123");
+    checkFileInfoDateTime(img.path(), "2019-02-05 12:10:32.123");
+}
+
+TEST_F(FileInfoTests, validFileInfoImageRaw)
+{
+    ImageTestFile img;
+    img.copy(workdir() / "test.tiff");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:10:32");
+    img.setExif("SubSecTimeOriginal", "123456");
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
+    checkFileInfoType(img.path(), FileInfoType::FileInfoImage);
+    checkFileInfoDateTime(img.path(), "2019-02-05 12:10:32.123456");
+}
+
+TEST_F(FileInfoTests, invalidFileInfoImageOrientationMissing)
+{
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:10:32");
+    // Orientation missing, should be FileInfoImage type
+    checkFileInfoType(img.path(), FileInfoType::FileInfoImage);
+}
+
+TEST_F(FileInfoTests, invalidFileInfoImageDateTimeMissing)
+{
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    // DateTime missing, should be invalid
+    checkFileInvalid(img.path());
 }
 
 TEST_F(FileInfoTests, validFileInfoVideo)
 {
-    checkFileInfoType(m_testDataDirOrig / "roundhay_garden_scene.mov", FileInfoType::FileInfoVideo);
-    checkFileInfoType(m_testDataDirOrig / "roundhay_garden_scene.mp4", FileInfoType::FileInfoVideo);
-    checkFileInfoType(m_testDataDirOrig / "roundhay_garden_scene.webm", FileInfoType::FileInfoVideo);
-    checkFileInfoAttrs(m_testDataDirOrig / "roundhay_garden_scene.mov", "2018-01-01 01:01:01");
-    checkFileInfoAttrs(m_testDataDirOrig / "roundhay_garden_scene.mp4", "2018-01-01 01:01:01");
-    checkFileInfoAttrs(m_testDataDirOrig / "roundhay_garden_scene.webm", "2018-01-01 01:01:01");
+    VideoTestFile vid1;
+    vid1.copy(workdir() / "test1.mp4");
+    vid1.setCreationTime("2018-01-01 01:01:01Z");
+    checkFileInfoType(vid1.path(), FileInfoType::FileInfoVideo);
+    checkFileInfoDateTime(vid1.path(), "2018-01-01 01:01:01");
+
+    VideoTestFile vid2;
+    vid2.convert(workdir() / "test2.mov", VideoConvPreset::MOV);
+    vid2.setCreationTime("2018-01-01 01:01:01Z");
+    checkFileInfoType(vid2.path(), FileInfoType::FileInfoVideo);
+    checkFileInfoDateTime(vid2.path(), "2018-01-01 01:01:01");
+
+    VideoTestFile vid3;
+    vid3.convert(workdir() / "test3.mkv", VideoConvPreset::MKV);
+    vid3.setCreationTime("2018-01-01 01:01:01Z");
+    checkFileInfoType(vid3.path(), FileInfoType::FileInfoVideo);
+    checkFileInfoDateTime(vid3.path(), "2018-01-01 01:01:01");
 }
 
 TEST_F(FileInfoTests, invalidFileInfoVideo)
 {
-    checkFileValid(m_testDataDirOrig / "video_timestamp_missing.mov");
-    checkFileValid(m_testDataDirOrig / "video_broken.webm");
+    VideoTestFile vid;
+    vid.copy(workdir() / "test.mp4");
+    vid.dropMetadata();
+    // creation_time missing, should be invalid
+    checkFileInvalid(vid.path());
 }
 
 TEST_F(FileInfoTests, unkownFileType)
 {
-    checkFileValid(m_testDataDirOrig / "dummy.txt");
+    fs::path path = workdir() / "hello.txt";
+    std::ofstream output(path);
+    output << "Hello!";
+    output.close();
+    // file is neither image nor video, should be invalid
+    checkFileInvalid(path);
 }
 
 } // namespace mediacopier::test

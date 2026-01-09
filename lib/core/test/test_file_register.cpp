@@ -26,15 +26,17 @@ namespace mediacopier::test {
 
 class FileRegisterTests : public CommonTestFixtures {
 public:
-    using CommonTestFixtures::SetUp;
-
-    auto executeCopyOperation(const fs::path& srcPath) -> void
+    auto dstdir() const
     {
-        fs::remove_all(m_dstBaseDir);
+        return workdir() / "dst";
+    }
+    auto executeCopyOperation(const fs::path& srcPath) const
+    {
+        fs::remove_all(dstdir());
 
         auto file = FileInfoFactory::createFromPath(srcPath);
 
-        FileRegister dst { m_dstBaseDir, DEFAULT_PATTERN, false };
+        FileRegister dst { dstdir(), DEFAULT_PATTERN, false };
         auto path1 = dst.add(file);
         ASSERT_TRUE(path1.has_value());
 
@@ -45,17 +47,21 @@ public:
         FileOperationCopyJpeg copy { path1.value() };
         file->accept(copy);
     }
-
-    fs::path m_dstBaseDir = m_testDataDir / "tmp";
 };
 
 TEST_F(FileRegisterTests, multipleAddSameSource)
 {
-    const auto& srcPath = m_testDataDirOrig / "lena64_rot0.jpg";
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:10:32");
+    img.setExif("SubSecTimeOriginal", "123456");
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
+
+    const auto srcPath = img.path();
 
     executeCopyOperation(srcPath);
 
-    FileRegister dst { m_dstBaseDir, DEFAULT_PATTERN, false };
+    FileRegister dst { dstdir(), DEFAULT_PATTERN, false };
 
     // binary equal destination already exists, file should be ignored
     auto path = dst.add(to_file_info_ptr(srcPath));
@@ -64,12 +70,27 @@ TEST_F(FileRegisterTests, multipleAddSameSource)
 
 TEST_F(FileRegisterTests, multipleAddDifferentSource)
 {
-    const auto& srcPath = m_testDataDirOrig / "lena64_rot270.jpg";
-    const auto& srcPathMod = m_testDataDirOrig / "lena64_rot270_low_quality.jpg";
+    ImageTestFile img1;
+    img1.convert(workdir() / "test1.jpg");
+    img1.rotate(Rotation::R270);
+    img1.setExif("DateTimeOriginal", "2019-02-05 12:13:32");
+    img1.setExif("SubSecTimeOriginal", "123");
+    img1.setExif(FileInfoImageJpeg::Orientation::ROT_270);
+
+    ImageTestFile img2;
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
+    img2.convert(workdir() / "test2.jpg", "64x64", 20);
+    img2.rotate(Rotation::R270);
+    img2.setExif("DateTimeOriginal", "2019-02-05 12:13:32");
+    img2.setExif("SubSecTimeOriginal", "123");
+    img2.setExif(FileInfoImageJpeg::Orientation::ROT_270);
+
+    const auto srcPath = img1.path();
+    const auto srcPathMod = img2.path();
 
     executeCopyOperation(srcPath);
 
-    FileRegister dst { m_dstBaseDir, DEFAULT_PATTERN, false };
+    FileRegister dst { dstdir(), DEFAULT_PATTERN, false };
 
     // file is added because image at destination is different
     auto path1 = dst.add(to_file_info_ptr(srcPath));
