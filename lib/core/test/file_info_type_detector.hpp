@@ -31,17 +31,17 @@ enum class FileInfoType {
 
 class FileInfoTypeDetector : public AbstractFileOperation {
 public:
-    auto visit(const FileInfoImage& /*file*/) -> void
+    auto visit(const FileInfoImage& /*file*/) -> void override
     {
         m_lastType = FileInfoType::FileInfoImage;
     }
 
-    auto visit(const FileInfoImageJpeg& /*file*/) -> void
+    auto visit(const FileInfoImageJpeg& /*file*/) -> void override
     {
         m_lastType = FileInfoType::FileInfoImageJpeg;
     }
 
-    auto visit(const FileInfoVideo& /*file*/) -> void
+    auto visit(const FileInfoVideo& /*file*/) -> void override
     {
         m_lastType = FileInfoType::FileInfoVideo;
     }

@@ -38,7 +38,7 @@ static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDi
 }
 
 class FileOperationTests : public CommonTestFixtures {
-protected:
+public:
     auto checkAllOperations(std::string srcName, std::string dstName, std::string timestamp, const FileInfoImageJpeg::Orientation& orientation, const FileInfoImageJpeg::Orientation& orientationFixed, std::function<void(fs::path, const FileInfoImageJpeg::Orientation&, const std::string&)> checkFileInfoCustom) -> void
     {
         fs::remove_all(m_dstBaseDir1);
@@ -75,7 +75,6 @@ protected:
         ASSERT_TRUE(fs::exists(srcPath));
     }
 
-protected:
     using CommonTestFixtures::SetUp;
     fs::path m_dstBaseDir1 = m_testDataDir / "tmp1";
     fs::path m_dstBaseDir2 = m_testDataDir / "tmp2";

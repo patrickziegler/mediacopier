@@ -33,14 +33,14 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path)
 {
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionaryEntry* tag = nullptr;
-    char errbuf[256];
+    std::array<char, 256> errbuf {}; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 
     int ret = avformat_open_input(&fmt_ctx, path.string().c_str(), nullptr, nullptr);
 
     if (ret != 0) {
-        av_strerror(ret, errbuf, sizeof(errbuf));
+        av_strerror(ret, errbuf.data(), sizeof(errbuf));
         std::ostringstream oss;
-        oss << "Could not read metadata: " << errbuf;
+        oss << "Could not read metadata: " << errbuf.data();
         throw FileInfoError { oss.str() };
     }
 

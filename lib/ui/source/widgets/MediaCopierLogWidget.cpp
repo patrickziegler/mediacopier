@@ -51,6 +51,6 @@ void MediaCopierLogWidget::clear()
 
 void MediaCopierLogWidget::updateProgress(StatusProgress info)
 {
-    ui->logProgressBar->setMaximum(info.count);
-    ui->logProgressBar->setValue(info.progress);
+    ui->logProgressBar->setMaximum(static_cast<int>(info.count));
+    ui->logProgressBar->setValue(static_cast<int>(info.progress));
 }

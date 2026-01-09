@@ -25,7 +25,7 @@ namespace fs = std::filesystem;
 namespace mediacopier::test {
 
 class FileRegisterTests : public CommonTestFixtures {
-protected:
+public:
     using CommonTestFixtures::SetUp;
 
     auto executeCopyOperation(const fs::path& srcPath) -> void

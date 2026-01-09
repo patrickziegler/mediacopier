@@ -55,6 +55,12 @@ public Q_SLOTS:
     void quit();
 
 protected:
+    auto getConfig()
+    {
+        return m_config;
+    }
+
+private:
     std::shared_ptr<Config> m_config;
     QThread m_thread;
 };
@@ -66,6 +72,10 @@ public:
         : m_config { std::move(config) }
     {
     }
+    WorkerFactory(const WorkerFactory&) = delete;
+    WorkerFactory& operator=(const WorkerFactory&) = delete;
+    WorkerFactory(WorkerFactory&&) = delete;
+    WorkerFactory& operator=(WorkerFactory&&) = delete;
     virtual ~WorkerFactory() { }
     virtual std::unique_ptr<Worker> make_worker(const QString& /* description */)
     {
@@ -73,5 +83,11 @@ public:
     }
 
 protected:
+    auto getConfig()
+    {
+        return m_config;
+    }
+
+private:
     std::shared_ptr<Config> m_config;
 };
