@@ -58,7 +58,7 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
 
     // ----------------- read input file
 
-    unsigned long inputBufSize = 0;
+    long inputBufSize = 0;
     unique_file_t inputFile(std::fopen(file.path().string().c_str(), "rb"), &std::fclose);
 
     if (!inputFile) {
@@ -71,7 +71,7 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
         return false;
     }
 
-    unique_buf_t inputBufPtr((unsigned char*)tjAlloc(inputBufSize), &tjFree);
+    unique_buf_t inputBufPtr((unsigned char*)tjAlloc(static_cast<int>(inputBufSize)), &tjFree);
 
     if (!inputBufPtr) {
         spdlog::warn("Could not allocate input buffer ({0})", file.path().string());
@@ -85,7 +85,7 @@ auto copy_rotate_jpeg(const FileInfoImageJpeg& file, const fs::path& dest) noexc
 
     // ----------------- execute transformation
 
-    tjhandle tjInstance;
+    tjhandle tjInstance = nullptr;
 
     if ((tjInstance = tjInitTransform()) == nullptr) {
         spdlog::warn("Could not initialize transformation ({0}): {1}", file.path().string(), tjGetErrorStr());

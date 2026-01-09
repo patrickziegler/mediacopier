@@ -39,12 +39,12 @@ const char* stringDestination() { return QT_TRANSLATE_NOOP("Strings", "Destinati
 MediaCopierDialogSlim::MediaCopierDialogSlim(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::MediaCopierDialogSlim)
+    , fsm(new QStateMachine(this))
 {
     ui->setupUi(this);
     this->resize(DEFAULT_DIALOG_WIDTH, DEFAULT_DIALOG_HEIGHT);
     this->setWindowTitle(mediacopier::MEDIACOPIER_PROJECT_NAME);
     move(screen()->geometry().center() - frameGeometry().center());
-    fsm = new QStateMachine(this);
 }
 
 MediaCopierDialogSlim::~MediaCopierDialogSlim()
@@ -58,9 +58,13 @@ void MediaCopierDialogSlim::init(std::shared_ptr<Config> config, std::unique_ptr
     m_factory = std::move(factory);
     ui->param->init(m_config);
 
+    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
     auto s1 = new QState(fsm); // waiting for input
+    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
     auto s2 = new QState(fsm); // checking parameters
+    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
     auto s3 = new QState(fsm); // executing operation
+    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
     auto s4 = new QFinalState(fsm); // closing dialog
 
     s1->addTransition(ui->dialogButtonBox, &QDialogButtonBox::accepted, s2);

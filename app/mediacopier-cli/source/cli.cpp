@@ -23,7 +23,7 @@
 namespace fs = std::filesystem;
 namespace mc = mediacopier;
 
-std::pair<mc::Cli::ParseResult, int> mc::Cli::parseArgs(int argc, char* argv[])
+std::pair<mc::Cli::ParseResult, int> mc::Cli::parseArgs(int argc, char** argv)
 {
     CLI::App app { mediacopier::MEDIACOPIER_PROJECT_NAME };
     app.set_version_flag("-v,--version", mediacopier::MEDIACOPIER_VERSION);

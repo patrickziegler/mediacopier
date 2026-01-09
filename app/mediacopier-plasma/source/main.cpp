@@ -93,7 +93,7 @@ public:
     PlasmaWorker(std::shared_ptr<Config> config, const QString& description)
         : Worker(config)
     {
-        auto job = new KMediaCopierJob(this, description, m_config->getOutputDir());
+        auto job = new KMediaCopierJob(this, description, getConfig()->getOutputDir());
         m_tracker.registerJob(job);
     }
 
@@ -109,7 +109,7 @@ public:
     }
     std::unique_ptr<Worker> make_worker(const QString& description) override
     {
-        return std::make_unique<PlasmaWorker>(m_config, description);
+        return std::make_unique<PlasmaWorker>(getConfig(), description);
     }
 };
 

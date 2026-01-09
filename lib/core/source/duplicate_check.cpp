@@ -16,6 +16,7 @@
 
 #include <mediacopier/duplicate_check.hpp>
 
+#include <array>
 #include <fstream>
 #include <vector>
 
@@ -24,24 +25,30 @@ namespace fs = std::filesystem;
 constexpr static const size_t BUFFER_SIZE = 64;
 constexpr static const size_t CHUNKS_MAX = 128;
 
+// as defined in https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
+constexpr static const std::array<uint8_t, 2> JPEG_SOS { 0xFF, 0xDA };
+constexpr static const std::array<uint8_t, 2> JPEG_SOI { 0xFF, 0xD8 };
+
 static auto seek_jpeg_data(std::ifstream* input) noexcept -> bool
 {
-    uint8_t s1 = 0, s2 = 0;
-    uint16_t buf = 0;
+    uint16_t s1 = 0, s2 = 0;
+    std::array<char, 2> buf {};
 
     input->seekg(2, std::ios_base::beg);
 
     while (input->good()) {
-        input->read(reinterpret_cast<char*>(&buf), 2);
-        /* data begins after section code 0xdaff was found,
-         * https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
-         * */
-        if (buf == 0xdaff) {
+        input->read(buf.data(), buf.size());
+        if (static_cast<unsigned char>(buf[0]) == JPEG_SOS[0]
+            && static_cast<unsigned char>(buf[1]) == JPEG_SOS[1]) {
             return true;
         }
-        input->read(reinterpret_cast<char*>(&s1), 1);
-        input->read(reinterpret_cast<char*>(&s2), 1);
-        input->seekg(256 * s1 + s2 - 2, std::ios_base::cur);
+        input->read(buf.data(), buf.size());
+        s1 = static_cast<unsigned char>(buf[0]);
+        s2 = static_cast<unsigned char>(buf[1]);
+
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
+        auto segment_length = (s1 << 8) | s2;
+        input->seekg(segment_length - 2, std::ios_base::cur);
     }
 
     return false;
@@ -54,10 +61,11 @@ static auto prepare_input_stream(const fs::path& file) -> std::unique_ptr<std::i
     }
     auto input = std::make_unique<std::ifstream>(file, std::ios_base::in | std::ios_base::binary);
 
-    uint16_t magic;
-    input->read(reinterpret_cast<char*>(&magic), 2);
+    std::array<char, 2> magic {};
+    input->read(magic.data(), magic.size());
 
-    if (magic == 0xd8ff) { // is jpeg file
+    if (static_cast<unsigned char>(magic[0]) == JPEG_SOI[0]
+        && static_cast<unsigned char>(magic[1]) == JPEG_SOI[1]) { // is jpeg file
         seek_jpeg_data(input.get());
     }
     return input;
@@ -70,7 +78,7 @@ auto is_duplicate(const fs::path& file1, const fs::path& file2) -> bool
     const auto input1 = prepare_input_stream(file1);
     const auto input2 = prepare_input_stream(file2);
 
-    std::vector<char> buffer(BUFFER_SIZE, '\0');
+    std::vector<char> buf(BUFFER_SIZE, '\0');
 
     std::string chunk1, chunk2;
     size_t chunks_left = CHUNKS_MAX;
@@ -81,11 +89,11 @@ auto is_duplicate(const fs::path& file1, const fs::path& file2) -> bool
         } else if (!input1->good() || !input2->good()) {
             return false;
         }
-        input1->read(buffer.data(), BUFFER_SIZE);
-        chunk1 = { buffer.begin(), buffer.begin() + input1->gcount() };
+        input1->read(buf.data(), BUFFER_SIZE);
+        chunk1 = { buf.begin(), buf.begin() + input1->gcount() };
 
-        input2->read(buffer.data(), BUFFER_SIZE);
-        chunk2 = { buffer.begin(), buffer.begin() + input2->gcount() };
+        input2->read(buf.data(), BUFFER_SIZE);
+        chunk2 = { buf.begin(), buf.begin() + input2->gcount() };
 
         if (chunk1 != chunk2) {
             return false;

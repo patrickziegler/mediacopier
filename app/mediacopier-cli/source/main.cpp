@@ -31,6 +31,7 @@
 namespace fs = std::filesystem;
 namespace mc = mediacopier;
 
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 static volatile std::atomic<bool> operationCancelled(false);
 
 auto media_files(const fs::path& path)

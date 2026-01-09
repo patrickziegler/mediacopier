@@ -36,7 +36,9 @@ namespace {
 
 namespace mc = mediacopier;
 
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 static volatile std::atomic<bool> operationCancelled(false);
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 static volatile std::atomic<bool> operationSuspended(false);
 
 static constexpr const unsigned int DEFAULT_WAIT_MS = 200;
@@ -143,7 +145,7 @@ void Worker::kill()
 
 void Worker::exec()
 {
-    ExecFuncPtr execute;
+    ExecFuncPtr execute = nullptr;
     switch (m_config->getCommand()) {
     case Config::Command::Copy:
         execute = &::execute<mc::FileOperationCopyJpeg>;

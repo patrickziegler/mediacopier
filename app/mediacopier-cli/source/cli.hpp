@@ -31,7 +31,7 @@ public:
         Continue,
         Break
     };
-    std::pair<ParseResult, int> parseArgs(int argc, char* argv[]);
+    std::pair<ParseResult, int> parseArgs(int argc, char** argv);
     auto command() const -> Command { return m_command; }
     auto inputDir() const -> const std::filesystem::path& { return m_inputDir; }
     auto outputDir() const -> const std::filesystem::path& { return m_outputDir; }

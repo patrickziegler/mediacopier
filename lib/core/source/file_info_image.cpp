@@ -26,19 +26,19 @@
  * 'digitized' is the moment where the picture was scanned (should be the same for digital cams),
  * the plain 'DateTime' is the fallback if the above keys are missing */
 
-static constexpr const std::array<char[29], 3> keysDateTime = {
+static constexpr const std::array<std::string_view, 3> keysDateTime = {
     "Exif.Photo.DateTimeOriginal",
     "Exif.Photo.DateTimeDigitized",
     "Exif.Image.DateTime",
 };
 
-static constexpr const std::array<char[31], 3> keysSubSec = {
+static constexpr const std::array<std::string_view, 3> keysSubSec = {
     "Exif.Photo.SubSecTimeOriginal",
     "Exif.Photo.SubSecTimeDigitized",
     "Exif.Photo.SubSecTime"
 };
 
-static constexpr const std::array<char[31], 3> keysOffset = {
+static constexpr const std::array<std::string_view, 3> keysOffset = {
     "Exif.Photo.OffsetTimeOriginal",
     "Exif.Photo.OffsetTimeDigitized",
     "Exif.Photo.OffsetTime",
@@ -50,18 +50,18 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif)
     : AbstractFileInfo { std::move(path) }
 {
     std::string key, value;
-    int hours, minutes;
-    char colon; // used for parsing timezone offset without scanning for separator
+    int hours = 0, minutes = 0;
+    char colon = 0; // used for parsing timezone offset without scanning for separator
 
-    size_t i = keysDateTime.size() + 1;
+    size_t i = keysDateTime.size();
     for (size_t j = 0; j < keysDateTime.size(); ++j) {
-        key = keysDateTime[j];
+        key = keysDateTime.at(j);
         if (exif.findKey(Exiv2::ExifKey { key }) != exif.end()) {
             i = j;
             break;
         }
     }
-    if (i > keysDateTime.size()) {
+    if (i == keysDateTime.size()) {
         throw FileInfoError { "No date information found" };
     }
 
@@ -69,7 +69,7 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif)
     value = exif[key].toString();
     timestamp << value;
 
-    key = keysSubSec[i];
+    key = keysSubSec.at(i);
     if (exif.findKey(Exiv2::ExifKey { key }) != exif.end()) {
         value = exif[key].toString();
         if (value.size() > 0) {
@@ -85,7 +85,7 @@ FileInfoImage::FileInfoImage(std::filesystem::path path, Exiv2::ExifData& exif)
         throw FileInfoError { "Invalid date info found" };
     }
 
-    key = keysOffset[i];
+    key = keysOffset.at(i);
     if (exif.findKey(Exiv2::ExifKey { key }) != exif.end()) {
         value = exif[key].toString();
         timestamp.str(value);

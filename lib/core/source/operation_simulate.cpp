@@ -23,6 +23,7 @@
 #include <thread>
 
 static constexpr const char* PATTERN_TIMESTAMP = "{:%Y-%m-%d %H:%M:%S}";
+static constexpr const size_t DEFAULT_DELAY_MS = 200;
 
 namespace mediacopier {
 
@@ -39,19 +40,19 @@ auto FileOperationSimulate::dumpFilePaths(const AbstractFileInfo& file) const ->
 
 auto FileOperationSimulate::visit(const FileInfoImage& file) -> void
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_DELAY_MS));
     dumpFilePaths(file);
 }
 
 auto FileOperationSimulate::visit(const FileInfoImageJpeg& file) -> void
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_DELAY_MS));
     dumpFilePaths(file);
 }
 
 auto FileOperationSimulate::visit(const FileInfoVideo& file) -> void
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_DELAY_MS));
     dumpFilePaths(file);
 }
 
