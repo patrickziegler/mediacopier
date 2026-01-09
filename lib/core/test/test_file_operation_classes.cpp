@@ -16,13 +16,12 @@
 
 #include "common_test_fixtures.hpp"
 
+#include <mediacopier/duplicate_check.hpp>
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
 #include <mediacopier/operation_copy_jpeg.hpp>
 #include <mediacopier/operation_move_jpeg.hpp>
 #include <mediacopier/operation_simulate.hpp>
-
-namespace fs = std::filesystem;
 
 namespace mediacopier::test {
 
@@ -31,7 +30,10 @@ static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDi
 {
     FileRegister destinationRegister { dstBaseDir, DEFAULT_PATTERN, false };
     auto file = FileInfoFactory::createFromPath(srcPath);
-    auto path = destinationRegister.add(file).value();
+    if (file == nullptr) {
+        throw std::runtime_error("file not found: " + srcPath.string());
+    }
+    const auto path = destinationRegister.add(file).value();
     T operation { path };
     file->accept(operation);
     return path;
@@ -39,19 +41,26 @@ static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDi
 
 class FileOperationTests : public CommonTestFixtures {
 public:
-    auto checkAllOperations(std::string srcName, std::string dstName, std::string timestamp, const FileInfoImageJpeg::Orientation& orientation, const FileInfoImageJpeg::Orientation& orientationFixed, std::function<void(fs::path, const FileInfoImageJpeg::Orientation&, const std::string&)> checkFileInfoCustom) -> void
+    FileOperationTests()
+    {
+        m_dstBaseDir1 = workdir() / "tmp1";
+        m_dstBaseDir2 = workdir() / "tmp2";
+    }
+    auto checkAllOperations(const std::string& srcName, const std::string& dstName, const std::string& timestamp,
+        const FileInfoImageJpeg::Orientation& orientation, const FileInfoImageJpeg::Orientation& orientationFixed,
+        std::function<void(const fs::path&, const FileInfoImageJpeg::Orientation&, const std::string&)> checkFileInfoCustom) const
     {
         fs::remove_all(m_dstBaseDir1);
         fs::remove_all(m_dstBaseDir2);
 
         fs::path srcPath, dstPath;
 
-        // test show operation
-        srcPath = m_testDataDirOrig / srcName;
+        // simulate
+        srcPath = srcName;
         ASSERT_NO_THROW(execute_operation<FileOperationSimulate>(srcPath, m_dstBaseDir1));
 
         // copy src -> dst1
-        srcPath = m_testDataDirOrig / srcName;
+        srcPath = srcName;
         dstPath = execute_operation<FileOperationCopy>(srcPath, m_dstBaseDir1);
         checkFileInfoCustom(dstPath, orientation, timestamp);
         ASSERT_TRUE(fs::exists(srcPath));
@@ -69,28 +78,37 @@ public:
         ASSERT_FALSE(fs::exists(srcPath));
 
         // copy src -> dst2, jpeg aware
-        srcPath = m_testDataDirOrig / srcName;
+        srcPath = srcName;
         dstPath = execute_operation<FileOperationCopyJpeg>(srcPath, m_dstBaseDir2);
         checkFileInfoCustom(dstPath, orientationFixed, timestamp);
         ASSERT_TRUE(fs::exists(srcPath));
     }
+    const auto& dstdir()
+    {
+        return m_dstBaseDir2;
+    }
 
-    using CommonTestFixtures::SetUp;
-    fs::path m_dstBaseDir1 = m_testDataDir / "tmp1";
-    fs::path m_dstBaseDir2 = m_testDataDir / "tmp2";
+private:
+    fs::path m_dstBaseDir1;
+    fs::path m_dstBaseDir2;
 };
 
 TEST_F(FileOperationTests, singleImageJpeg0ImageAllOperations)
 {
-    std::string srcName = "lena64_rot0.jpg";
-    std::string dstName = "2019/02/05/TEST_20190205_121032.123456000.jpg";
-    std::string timestamp = "2019-02-05 12:10:32.123456";
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:10:32");
+    img.setExif("SubSecTimeOriginal", "123456");
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
 
-    const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;
-    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto srcName = img.path();
+    const std::string dstName = "2019/02/05/TEST_20190205_121032.123456000.jpg";
+    const std::string timestamp = "2019-02-05 12:10:32.123456";
+    const auto orientation = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
     auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
+        checkFileInfoJpegAttrs(dstPath, orientation, timestamp);
     };
 
     checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
@@ -98,98 +116,150 @@ TEST_F(FileOperationTests, singleImageJpeg0ImageAllOperations)
 
 TEST_F(FileOperationTests, singleImageJpeg90ImageAllOperations)
 {
-    std::string srcName = "lena64_rot90.jpg";
-    std::string dstName = "2019/02/05/TEST_20190205_121132.000000000.jpg";
-    std::string timestamp = "2019-02-05 12:11:32";
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:11:32");
+    img.rotate(Rotation::R90);
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_90);
 
-    const auto& orientation = FileInfoImageJpeg::Orientation::ROT_90;
-    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto srcName = img.path();
+    const std::string dstName = "2019/02/05/TEST_20190205_121132.000000000.jpg";
+    const std::string timestamp = "2019-02-05 12:11:32";
+    const auto orientation = FileInfoImageJpeg::Orientation::ROT_90;
+    const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
     auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
+        checkFileInfoJpegAttrs(dstPath, orientation, timestamp);
     };
 
     checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
+
+    img.rotate(Rotation::R270, true, false);
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
+
+    ASSERT_TRUE(is_duplicate(img.path(), dstdir() / dstName));
 }
 
 TEST_F(FileOperationTests, singleImageJpeg180ImageAllOperations)
 {
-    std::string srcName = "lena64_rot180.jpg";
-    std::string dstName = "2019/02/05/TEST_20190205_121232.123400000.jpg";
-    std::string timestamp = "2019-02-05 12:12:32.1234";
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:12:32");
+    img.setExif("SubSecTimeOriginal", "1234");
+    img.rotate(Rotation::R180);
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_180);
 
-    const auto& orientation = FileInfoImageJpeg::Orientation::ROT_180;
-    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto srcName = img.path();
+    const std::string dstName = "2019/02/05/TEST_20190205_121232.123400000.jpg";
+    const std::string timestamp = "2019-02-05 12:12:32.1234";
+    const auto orientation = FileInfoImageJpeg::Orientation::ROT_180;
+    const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
     auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
+        checkFileInfoJpegAttrs(dstPath, orientation, timestamp);
     };
 
     checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
+
+    img.rotate(Rotation::R180, true, false);
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
+
+    ASSERT_TRUE(is_duplicate(img.path(), dstdir() / dstName));
 }
 
 TEST_F(FileOperationTests, singleImageJpeg270ImageAllOperations)
 {
-    std::string srcName = "lena64_rot270.jpg";
-    std::string dstName = "2019/02/05/TEST_20190205_121332.123000000.jpg";
-    std::string timestamp = "2019-02-05 12:13:32.123";
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:13:32");
+    img.setExif("SubSecTimeOriginal", "123");
+    img.rotate(Rotation::R270);
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_270);
 
-    const auto& orientation = FileInfoImageJpeg::Orientation::ROT_270;
-    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto srcName = img.path();
+    const std::string dstName = "2019/02/05/TEST_20190205_121332.123000000.jpg";
+    const std::string timestamp = "2019-02-05 12:13:32.123";
+    const auto orientation = FileInfoImageJpeg::Orientation::ROT_270;
+    const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
     auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
+        checkFileInfoJpegAttrs(dstPath, orientation, timestamp);
     };
 
     checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
+
+    img.rotate(Rotation::R90, true, false);
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
+
+    ASSERT_TRUE(is_duplicate(img.path(), dstdir() / dstName));
 }
 
 TEST_F(FileOperationTests, singleImageJpeg90WrongSizeImageAllOperations)
 {
-    std::string srcName = "lena50_rot90.jpg";
-    std::string dstName = "2018/05/05/TEST_20180505_061132.000000000.jpg";
-    std::string timestamp = "2018-05-05 06:11:32";
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg", "50x50");
+    img.setExif("DateTimeOriginal", "2018-05-05 06:11:32");
+    img.rotate(Rotation::R90, false);
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_90);
 
-    const auto& orientation = FileInfoImageJpeg::Orientation::ROT_90;
-    const auto& orientationFixed = orientation;
+    const auto srcName = img.path();
+    const std::string dstName = "2018/05/05/TEST_20180505_061132.000000000.jpg";
+    const std::string timestamp = "2018-05-05 06:11:32";
+    const auto orientation = FileInfoImageJpeg::Orientation::ROT_90;
+    const auto orientationFixed = orientation;
 
     auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoJpegAttrs(std::move(dstPath), orientation, timestamp);
+        checkFileInfoJpegAttrs(dstPath, orientation, timestamp);
     };
 
     checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
+
+    ASSERT_TRUE(is_duplicate(img.path(), dstdir() / dstName));
 }
 
-TEST_F(FileOperationTests, singleImageAllOperations)
+TEST_F(FileOperationTests, singleRawImageAllOperations)
 {
-    std::string srcName = "lena16_rot90.tiff";
-    std::string dstName = "2019/02/05/TEST_20190205_120932.000000000.tiff";
-    std::string timestamp = "2019-02-05 12:09:32";
+    ImageTestFile img;
+    img.copy(workdir() / "test.tiff");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:09:32");
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
 
-    const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;
-    const auto& orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
+    checkFileInfoType(img.path(), FileInfoType::FileInfoImage);
+
+    const auto srcName = img.path();
+    const std::string dstName = "2019/02/05/TEST_20190205_120932.000000000.tiff";
+    const std::string timestamp = "2019-02-05 12:09:32";
+    const auto orientation = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
 
     auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoAttrs(std::move(dstPath), timestamp);
+        checkFileInfoDateTime(dstPath, timestamp);
     };
 
     checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
+
+    ASSERT_TRUE(is_duplicate(img.path(), dstdir() / dstName));
 }
 
 TEST_F(FileOperationTests, singleVideoAllOperations)
 {
-    std::string srcName = "roundhay_garden_scene.mp4";
-    std::string dstName = "2018/01/01/TEST_20180101_010101.000000000.mp4";
-    std::string timestamp = "2018-01-01 01:01:01";
+    VideoTestFile vid;
+    vid.copy(workdir() / "test.mp4");
+    vid.setCreationTime("2018-01-01 01:01:01Z");
 
-    const auto& orientation = FileInfoImageJpeg::Orientation::ROT_0;
-    const auto& orientationFixed = orientation;
+    const auto srcName = vid.path();
+    const std::string dstName = "2018/01/01/TEST_20180101_010101.000000000.mp4";
+    const std::string timestamp = "2018-01-01 01:01:01";
+    const auto orientation = FileInfoImageJpeg::Orientation::ROT_0;
+    const auto orientationFixed = orientation;
 
     auto checkFileInfoCustom = [this](fs::path dstPath, const FileInfoImageJpeg::Orientation& orientation, const std::string& timestamp) -> void {
-        checkFileInfoAttrs(std::move(dstPath), timestamp);
+        checkFileInfoDateTime(dstPath, timestamp);
     };
 
     checkAllOperations(srcName, dstName, timestamp, orientation, orientationFixed, checkFileInfoCustom);
+
+    ASSERT_TRUE(is_duplicate(vid.path(), dstdir() / dstName));
 }
 
 } // namespace mediacopier::test
