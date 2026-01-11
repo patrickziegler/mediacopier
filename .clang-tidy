@@ -1,4 +1,7 @@
 Checks: >
     clang-analyzer-*,
     cppcoreguidelines-*
+    -cppcoreguidelines-special-member-functions
+    -cppcoreguidelines-non-private-member-variables-in-classes
+    -cppcoreguidelines-avoid-magic-numbers
 WarningsAsErrors: '*'

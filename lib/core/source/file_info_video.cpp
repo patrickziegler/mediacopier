@@ -33,7 +33,7 @@ FileInfoVideo::FileInfoVideo(std::filesystem::path path)
 {
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionaryEntry* tag = nullptr;
-    std::array<char, 256> errbuf {}; // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+    std::array<char, 256> errbuf {};
 
     int ret = avformat_open_input(&fmt_ctx, path.string().c_str(), nullptr, nullptr);
 
