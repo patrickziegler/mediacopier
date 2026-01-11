@@ -78,7 +78,6 @@ TEST_F(FileRegisterTests, multipleAddDifferentSource)
     img1.setExif(FileInfoImageJpeg::Orientation::ROT_270);
 
     ImageTestFile img2;
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
     img2.convert(workdir() / "test2.jpg", "64x64", 20);
     img2.rotate(Rotation::R270);
     img2.setExif("DateTimeOriginal", "2019-02-05 12:13:32");

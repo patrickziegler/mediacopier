@@ -46,7 +46,6 @@ static auto seek_jpeg_data(std::ifstream* input) noexcept -> bool
         s1 = static_cast<unsigned char>(buf[0]);
         s2 = static_cast<unsigned char>(buf[1]);
 
-        // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
         auto segment_length = (s1 << 8) | s2;
         input->seekg(segment_length - 2, std::ios_base::cur);
     }

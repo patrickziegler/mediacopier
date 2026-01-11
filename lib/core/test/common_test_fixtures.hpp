@@ -113,7 +113,6 @@ public:
         : TestFile(fs::path { TEST_DATA_DIR } / "lena512color.tiff")
     {
     }
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
     void convert(const fs::path& dst, const std::string_view size = "64x64", size_t quality = 25)
     {
         std::string cmd = "magick";

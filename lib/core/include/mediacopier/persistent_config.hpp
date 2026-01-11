@@ -25,7 +25,6 @@ public:
     Configurable(const T& defaultValue)
         : originalValue { defaultValue }
         , defaultValue { defaultValue }
-        , currentValue { std::nullopt }
     {
     }
     Configurable& operator=(const T& value)
@@ -65,7 +64,7 @@ public:
 private:
     T originalValue;
     T defaultValue;
-    std::optional<T> currentValue;
+    std::optional<T> currentValue = std::nullopt;
 };
 
 namespace mediacopier {
