@@ -32,7 +32,8 @@ auto reset_exif_orientation(const fs::path& path) noexcept -> bool
         image->readMetadata();
 
         auto exif = image->exifData();
-        exif["Exif.Image.Orientation"] = static_cast<int>(FileInfoImageJpeg::Orientation::ROT_0);
+        // from exiv2/types.hpp: Exif SHORT type, 16-bit (2-byte) unsigned integer
+        exif["Exif.Image.Orientation"] = static_cast<uint16_t>(FileInfoImageJpeg::Orientation::ROT_0);
 
         image->setExifData(exif);
         image->writeMetadata();
