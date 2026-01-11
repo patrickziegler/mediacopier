@@ -8,7 +8,8 @@ target_sources(${TARGET_NAME} PRIVATE
     "common_test_fixtures.hpp"
     "test_file_info_classes.cpp"
     "test_file_operation_classes.cpp"
-    "test_file_register.cpp")
+    "test_file_register.cpp"
+    "test_persistent_config.cpp")
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     gtest gtest_main "${MEDIACOPIER_CORE_LIB}")
