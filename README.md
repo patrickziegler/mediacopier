@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml/badge.svg?branch=master)](https://github.com/patrickziegler/MediaCopier/actions/workflows/build-and-test.yml?query=branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/patrickziegler/mediacopier/badge.svg?branch=master)](https://coveralls.io/github/patrickziegler/mediacopier?branch=master)
 
-This is an app that searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
+This app searches for **tagged media files** in a given directory and copies or moves those files to another directory while renaming them according to the specified format.
 The original creation date is used to **generate a folder structure** and unique filenames.
 It supports a wide variety of image and videos formats (including raw) and features **lossless on-the-fly auto-rotation of JPEG files**.
 
@@ -27,29 +27,25 @@ zypper ar -f https://download.opensuse.org/repositories/home:/zipat:/mediacopier
 zypper in mediacopier-plasma
 ```
 
-### :hammer: Build and Install
+### :hammer: Manually Build and Install
 
-Direct dependencies (library):
+Dependencies:
+- Exiv2 (https://exiv2.org/)
+- ffmpeg (https://www.ffmpeg.org/download.html)
+- libjpeg-turbo (https://libjpeg-turbo.org/)
 - spdlog (https://github.com/gabime/spdlog) >=[1.9.2](https://github.com/gabime/spdlog/releases/tag/v1.9.2)
 - toml11 (https://github.com/ToruNiina/toml11)
-- Exiv2 (https://exiv2.org/)
-- libjpeg-turbo (https://libjpeg-turbo.org/)
-- ffmpeg (https://www.ffmpeg.org/download.html)
-
-Direct dependencies (tools):
 - CLI11 (https://github.com/CLIUtils/CLI11)
-- Qt5 (https://doc.qt.io/qt-5/)
+- Qt5 or Qt6 (https://doc.qt.io/qt-6/)
 - KJobWidgets (https://api.kde.org/frameworks/kjobwidgets/html/index.html)
 
-For example on openSUSE, these dependencies can be installed via
+For openSUSE, these dependencies can be installed via the following commands
 
 ```sh
 zypper install spdlog-devel toml11-devel libexiv2-devel libjpeg8-devel ffmpeg-7-libavformat-devel ffmpeg-7-libavutil-devel # for the core library
 zypper install cli11-devel # for the pure command line interface
-zypper install libQt5Widgets-devel libqt5-linguist-devel ki18n-devel kjobwidgets-devel # for the Qt5 based graphical user interface
-zypper install ki18n-devel kjobwidgets-devel # for the KDE Plasma integration with Qt5
-zypper install qt6-core-devel qt6-widgets-devel qt6-statemachine-devel qt6-linguist-devel # for Qt6 based graphical user interface 
-zypper install kf6-ki18n-devel kf6-kjobwidgets-devel # for the KDE Plasma integration with Qt6
+zypper install qt6-core-devel qt6-widgets-devel qt6-statemachine-devel qt6-linguist-devel # for Qt based graphical user interface 
+zypper install kf6-ki18n-devel kf6-kjobwidgets-devel # for the KDE Plasma integration
 zypper install gtest lcov clang exiftool ImageMagick # for testing
 ```
 
@@ -63,7 +59,7 @@ cd MediaCopier && mkdir build && cd $_
 Build and install the package
 ```sh
 export CC=gcc-14 CXX=g++-14 # set specific compiler (optional)
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=release .. && make -j$(nproc) && sudo make install
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc) && sudo make install
 ```
 
 Available cmake flags
@@ -78,7 +74,7 @@ Available cmake flags
 | `ENABLE_TEST_COVERAGE` | Enable test and coverage targets                 | `OFF`   |
 | `ENABLE_CLANG_TIDY`    | Enable static code analysis with `clang-tidy`    | `OFF`   |
 
-### :factory: Containerized build environment
+### :factory: Containerized Build Environment (for development purposes)
 
 Build und run the container image as specified in the `Dockerfile` with the following commands
 
@@ -90,9 +86,7 @@ docker run -it --rm -v ${PWD}:/run/src/mediacopier -u $(id -u):$(id -g) mediacop
 Inside the container, run the test suite or generate coverage reports with the following commands
 
 ```sh
-cmake -DUSE_QT5=ON -DENABLE_CLANG_TIDY=ON /run/src/mediacopier/ && make formatcheck && make -j $(nproc)
-cmake -DUSE_QT5=ON -DENABLE_TEST=ON /run/src/mediacopier/ && make -j $(nproc) && make test
-cmake -DUSE_QT5=ON -DENABLE_TEST_COVERAGE=ON /run/src/mediacopier/ && make formatcheck && make -j $(nproc) && make test && make coverage
+cmake -DUSE_QT5=ON -DENABLE_TEST_COVERAGE=ON -DENABLE_CLANG_TIDY=ON /run/src/mediacopier/ && make formatcheck && make -j $(nproc) && make test && make coverage
 ```
 
 ### :paperclip: Build Instructions for Windows
