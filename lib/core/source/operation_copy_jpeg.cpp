@@ -132,10 +132,12 @@ auto FileOperationCopyJpeg::copyFileJpeg(const FileInfoImageJpeg& file) const ->
         spdlog::warn("Could not create parent path ({0}): {1}", m_destination.parent_path().string(), err.message());
         return;
     }
-    if (file.orientation() != upright && copy_rotate_jpeg(file, m_destination) && reset_exif_orientation(m_destination)) {
-        return;
+    if (file.orientation() != upright) {
+        if (copy_rotate_jpeg(file, m_destination) && reset_exif_orientation(m_destination)) {
+            return; // operation ok
+        }
+        spdlog::warn("Fallback to regular copy operation for {}", file.path().string());
     }
-    spdlog::warn("Fallback to regular copy operation for {}", file.path().string());
     copyFile(file);
 }
 
