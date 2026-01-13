@@ -46,7 +46,7 @@
     <message>
         <location filename="../source/widgets/MediaCopierParamWidget.cpp" line="41"/>
         <source>Local time</source>
-        <translation>Lokale zeit</translation>
+        <translation>Lokale Zeit</translation>
     </message>
     <message>
         <location filename="../source/widgets/MediaCopierParamWidget.cpp" line="40"/>
