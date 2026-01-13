@@ -24,6 +24,8 @@ namespace fs = std::filesystem;
 
 namespace mediacopier::test {
 
+const constexpr char* DEFAULT_PATTERN = "%Y/%m/%d/TEST_%Y%m%d_%H%M%S";
+
 class FileRegisterTests : public CommonTestFixtures {
 public:
     auto dstdir() const
@@ -46,6 +48,8 @@ public:
 
         FileOperationCopyJpeg copy { path1.value() };
         file->accept(copy);
+
+        ASSERT_TRUE(fs::is_regular_file(path1.value()));
     }
 };
 
