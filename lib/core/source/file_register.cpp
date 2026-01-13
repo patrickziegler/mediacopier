@@ -25,6 +25,27 @@
 
 namespace fs = std::filesystem;
 
+static void identify_replacement_field(std::string& fmt)
+{
+    auto it = fmt.begin();
+    while (true) {
+        it = std::find(it, fmt.end(), '%');
+        if (it == fmt.end()) {
+            break;
+        }
+        if (std::next(it) != fmt.end() && *std::next(it) == '%') {
+            it = std::next(it, 2); // skip %%
+            continue;
+        }
+        break; // first unescaped % found
+    }
+    if (it != fmt.end()) {
+        auto pos = std::distance(fmt.begin(), it);
+        fmt.insert(pos, "{:");
+    }
+    fmt.push_back('}');
+}
+
 namespace mediacopier {
 
 FileRegister::FileRegister(fs::path destination, std::string pattern, bool useUtc)
@@ -33,6 +54,7 @@ FileRegister::FileRegister(fs::path destination, std::string pattern, bool useUt
     , m_useUtc { useUtc }
 {
     m_destdir /= ""; // this will append a trailing directory separator when necessary
+    identify_replacement_field(m_pattern);
 }
 
 auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
@@ -100,7 +122,7 @@ auto FileRegister::constructDestinationPath(const FileInfoPtr& file, size_t suff
         tp -= file->offset(); // convert local time to utc
     }
 
-    os << std::vformat("{:" + m_pattern + "}", std::make_format_args(tp));
+    os << std::vformat(m_pattern, std::make_format_args(tp));
 
     if (suffix > 0) {
         os << "_" << suffix;

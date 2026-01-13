@@ -25,6 +25,8 @@
 
 namespace mediacopier::test {
 
+const constexpr char* DEFAULT_PATTERN = "TEST_%Y%m%d_%H%M%S";
+
 template <typename T>
 static auto execute_operation(const fs::path& srcPath, const fs::path& dstBaseDir) -> const fs::path
 {
@@ -102,7 +104,7 @@ TEST_F(FileOperationTests, singleImageJpeg0ImageAllOperations)
     img.setExif(FileInfoImageJpeg::Orientation::ROT_0);
 
     const auto srcName = img.path();
-    const std::string dstName = "2019/02/05/TEST_20190205_121032.123456000.jpg";
+    const std::string dstName = "TEST_20190205_121032.123456000.jpg";
     const std::string timestamp = "2019-02-05 12:10:32.123456";
     const auto orientation = FileInfoImageJpeg::Orientation::ROT_0;
     const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
@@ -123,7 +125,7 @@ TEST_F(FileOperationTests, singleImageJpeg90ImageAllOperations)
     img.setExif(FileInfoImageJpeg::Orientation::ROT_90);
 
     const auto srcName = img.path();
-    const std::string dstName = "2019/02/05/TEST_20190205_121132.000000000.jpg";
+    const std::string dstName = "TEST_20190205_121132.000000000.jpg";
     const std::string timestamp = "2019-02-05 12:11:32";
     const auto orientation = FileInfoImageJpeg::Orientation::ROT_90;
     const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
@@ -150,7 +152,7 @@ TEST_F(FileOperationTests, singleImageJpeg180ImageAllOperations)
     img.setExif(FileInfoImageJpeg::Orientation::ROT_180);
 
     const auto srcName = img.path();
-    const std::string dstName = "2019/02/05/TEST_20190205_121232.123400000.jpg";
+    const std::string dstName = "TEST_20190205_121232.123400000.jpg";
     const std::string timestamp = "2019-02-05 12:12:32.1234";
     const auto orientation = FileInfoImageJpeg::Orientation::ROT_180;
     const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
@@ -177,7 +179,7 @@ TEST_F(FileOperationTests, singleImageJpeg270ImageAllOperations)
     img.setExif(FileInfoImageJpeg::Orientation::ROT_270);
 
     const auto srcName = img.path();
-    const std::string dstName = "2019/02/05/TEST_20190205_121332.123000000.jpg";
+    const std::string dstName = "TEST_20190205_121332.123000000.jpg";
     const std::string timestamp = "2019-02-05 12:13:32.123";
     const auto orientation = FileInfoImageJpeg::Orientation::ROT_270;
     const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
@@ -203,7 +205,7 @@ TEST_F(FileOperationTests, singleImageJpeg90WrongSizeImageAllOperations)
     img.setExif(FileInfoImageJpeg::Orientation::ROT_90);
 
     const auto srcName = img.path();
-    const std::string dstName = "2018/05/05/TEST_20180505_061132.000000000.jpg";
+    const std::string dstName = "TEST_20180505_061132.000000000.jpg";
     const std::string timestamp = "2018-05-05 06:11:32";
     const auto orientation = FileInfoImageJpeg::Orientation::ROT_90;
     const auto orientationFixed = orientation;
@@ -227,7 +229,7 @@ TEST_F(FileOperationTests, singleRawImageAllOperations)
     checkFileInfoType(img.path(), FileInfoType::FileInfoImage);
 
     const auto srcName = img.path();
-    const std::string dstName = "2019/02/05/TEST_20190205_120932.000000000.tiff";
+    const std::string dstName = "TEST_20190205_120932.000000000.tiff";
     const std::string timestamp = "2019-02-05 12:09:32";
     const auto orientation = FileInfoImageJpeg::Orientation::ROT_0;
     const auto orientationFixed = FileInfoImageJpeg::Orientation::ROT_0;
@@ -248,7 +250,7 @@ TEST_F(FileOperationTests, singleVideoAllOperations)
     vid.setCreationTime("2018-01-01 01:01:01Z");
 
     const auto srcName = vid.path();
-    const std::string dstName = "2018/01/01/TEST_20180101_010101.000000000.mp4";
+    const std::string dstName = "TEST_20180101_010101.000000000.mp4";
     const std::string timestamp = "2018-01-01 01:01:01";
     const auto orientation = FileInfoImageJpeg::Orientation::ROT_0;
     const auto orientationFixed = orientation;

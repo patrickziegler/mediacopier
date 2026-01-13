@@ -27,8 +27,6 @@
 
 namespace fs = std::filesystem;
 
-const constexpr char* DEFAULT_PATTERN = "%Y/%m/%d/TEST_%Y%m%d_%H%M%S";
-
 static auto parse_timestamp(std::string timestamp)
 {
     std::istringstream ss { timestamp };
