@@ -22,9 +22,10 @@ Valid format specifiers for the renaming pattern can be found [here](https://en.
 
 There are packages being built with the [Open Build Service](https://openbuildservice.org/). You can add the repostory to your distribution and install `mediacopier` easily with the following commands:
 
-```
-zypper ar -f https://download.opensuse.org/repositories/home:/zipat:/mediacopier/openSUSE_Tumbleweed/ mediacopier
-zypper in mediacopier-plasma
+```sh
+SUSE_DIST=openSUSE_Tumbleweed # use '16.0' for Leap 16
+zypper addrepo --refresh https://download.opensuse.org/repositories/home:/zipat:/mediacopier/${SUSE_DIST}/ mediacopier
+zypper install mediacopier-plasma
 ```
 
 ### :hammer: Manually Build and Install
@@ -37,16 +38,17 @@ Dependencies:
 - toml11 (https://github.com/ToruNiina/toml11)
 - CLI11 (https://github.com/CLIUtils/CLI11)
 - Qt5 or Qt6 (https://doc.qt.io/qt-6/)
-- KJobWidgets (https://api.kde.org/frameworks/kjobwidgets/html/index.html)
+- KJobWidgets (https://api.kde.org/kjobwidgets-index.html)
 
 For openSUSE, these dependencies can be installed via the following commands
 
 ```sh
-zypper install spdlog-devel toml11-devel libexiv2-devel libjpeg8-devel ffmpeg-7-libavformat-devel ffmpeg-7-libavutil-devel # for the core library
-zypper install cli11-devel # for the pure command line interface
-zypper install qt6-core-devel qt6-widgets-devel qt6-statemachine-devel qt6-linguist-devel # for Qt based graphical user interface 
-zypper install kf6-ki18n-devel kf6-kjobwidgets-devel # for the KDE Plasma integration
-zypper install gtest lcov clang exiftool ImageMagick # for testing
+zypper install \
+    spdlog-devel toml11-devel cli11-devel \
+    libexiv2-devel libjpeg8-devel ffmpeg-7-libavformat-devel ffmpeg-7-libavutil-devel \
+    qt6-core-devel qt6-widgets-devel qt6-statemachine-devel qt6-linguist-devel \
+    kf6-ki18n-devel kf6-kjobwidgets-devel \
+    gtest lcov clang exiftool ImageMagick
 ```
 
 Clone this repository and create a build directory
@@ -92,6 +94,10 @@ cmake -DUSE_QT5=ON -DENABLE_TEST_COVERAGE=ON -DENABLE_CLANG_TIDY=ON /run/src/med
 ### :paperclip: Build Instructions for Windows
 
 Prepare the [vcpkg](https://github.com/microsoft/vcpkg#using-vcpkg-with-cmake) environment like described in a very helpful [article by Sam Elborai](https://sam.elborai.me/articles/vscode-cpp-dev-environment-2020/)
+
+> [!NOTE]
+> These instructions haven't been tested for a while and likely won't work (without updating the package list at least)
+
 ```sh
 .\bootstrap-vcpkg.bat -disableMetrics
 .\vcpkg.exe install spdlog exiv2 libjpeg-turbo ffmpeg qt5 --triplet=x64-windows
