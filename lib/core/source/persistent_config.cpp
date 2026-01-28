@@ -45,7 +45,10 @@ auto PersistentConfig::storePersistentConfig(const fs::path& outputDir) const ->
         return;
     }
     const auto persistentConfigFile = outputDir / PERSISTENT_CONFIG;
-    toml::value output { { "pattern", m_pattern.get() }, { "useUtc", m_useUtc.get() } };
+    toml::value output = toml::table {
+        { "pattern", m_pattern.get() },
+        { "useUtc", m_useUtc.get() }
+    };
     std::ofstream os { persistentConfigFile };
     os << "# this file is updated on every run of mediacopier"
        << ", manual changes might be lost\n"
