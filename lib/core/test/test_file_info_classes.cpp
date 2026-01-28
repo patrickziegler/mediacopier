@@ -19,7 +19,6 @@
 
 namespace mediacopier::test {
 
-// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class FileInfoTests : public CommonTestFixtures {
 };
 

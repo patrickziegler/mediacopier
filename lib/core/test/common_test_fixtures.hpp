@@ -79,7 +79,6 @@ enum class VideoConvPreset {
     MKV
 };
 
-// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class TestFile {
 public:
     explicit TestFile(fs::path path)
