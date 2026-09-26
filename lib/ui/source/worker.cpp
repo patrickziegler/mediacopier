@@ -18,8 +18,8 @@
 
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
-#include <mediacopier/operation_copy_jpeg.hpp>
-#include <mediacopier/operation_move_jpeg.hpp>
+#include <mediacopier/operation_copy.hpp>
+#include <mediacopier/operation_move.hpp>
 #ifndef NDEBUG
 #include <mediacopier/operation_simulate.hpp>
 #endif
@@ -151,10 +151,10 @@ void Worker::exec()
     ExecFuncPtr execute = nullptr;
     switch (m_config->getCommand()) {
     case Config::Command::Copy:
-        execute = &::execute<mc::FileOperationCopyJpeg>;
+        execute = &::execute<mc::FileOperationCopy>;
         break;
     case Config::Command::Move:
-        execute = &::execute<mc::FileOperationMoveJpeg>;
+        execute = &::execute<mc::FileOperationMove>;
         break;
 #ifndef NDEBUG
     case Config::Command::Sim:
