@@ -16,6 +16,7 @@
 
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
+#include <mediacopier/file_status.hpp>
 #include <mediacopier/operation_copy.hpp>
 #include <mediacopier/operation_move.hpp>
 #include <mediacopier/operation_simulate.hpp>
@@ -37,11 +38,14 @@ static volatile std::atomic<bool> operationCancelled(false);
 auto media_files(const fs::path& path)
 {
     static auto convert = [](const fs::directory_entry& entry) -> mc::FileInfoPtr {
-        if (fs::is_regular_file(entry)) {
-            return mc::to_file_info_ptr(entry.path());
-        } else {
+        if (!fs::is_regular_file(entry)) {
             return nullptr;
         }
+        auto file = mc::to_file_info_ptr(entry.path());
+        if (file == nullptr) {
+            mc::set_file_status(entry.path(), mc::FileStatus::Unsupported);
+        }
+        return file;
     };
     return std::ranges::subrange(
                fs::recursive_directory_iterator(path),
@@ -50,7 +54,7 @@ auto media_files(const fs::path& path)
 }
 
 template <typename Operation>
-auto exec(const mc::Cli& cli) -> void
+auto exec(const mc::Cli& cli, bool markResults) -> void
 {
     // register callback for graceful shutdown via CTRL-C
     std::signal(SIGINT, [](int) -> void {
@@ -70,9 +74,22 @@ auto exec(const mc::Cli& cli) -> void
                 spdlog::info("Processing: {0} -> {1}", file->path().string(), dest.value().string());
                 Operation op(dest.value());
                 file->accept(op);
+                if (markResults) {
+                    if (fs::exists(dest.value())) {
+                        mc::set_file_status(file->path(), mc::FileStatus::Copied);
+#ifdef MEDIACOPIER_MARK_DESTINATION_FILES
+                        mc::set_file_status(dest.value(), mc::FileStatus::Copied);
+#endif
+                    } else {
+                        mc::set_file_status(file->path(), mc::FileStatus::Error);
+                    }
+                }
             }
         } catch (const std::exception& err) {
             spdlog::error(err.what());
+            if (markResults && file != nullptr) {
+                mc::set_file_status(file->path(), mc::FileStatus::Error);
+            }
         }
     }
 
@@ -97,13 +114,13 @@ int main(int argc, char* argv[])
     cli.loadPersistentConfig(outputDir);
     switch (cli.command()) {
     case mc::Cli::Command::Copy:
-        exec<mediacopier::FileOperationCopy>(cli);
+        exec<mediacopier::FileOperationCopy>(cli, true);
         break;
     case mc::Cli::Command::Move:
-        exec<mediacopier::FileOperationMove>(cli);
+        exec<mediacopier::FileOperationMove>(cli, true);
         break;
     case mc::Cli::Command::Sim:
-        exec<mediacopier::FileOperationSimulate>(cli);
+        exec<mediacopier::FileOperationSimulate>(cli, false);
         break;
     }
     cli.storePersistentConfig(outputDir);

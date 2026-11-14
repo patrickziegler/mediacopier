@@ -1,15 +1,35 @@
 set(KF_LIBS)
 
+set(CMAKE_AUTOMOC ON)
+
 if(${USE_QT5})
     find_package(KF5I18n REQUIRED)
     find_package(KF5JobWidgets REQUIRED)
+    find_package(KF5KIO REQUIRED)
+    find_package(Qt5 REQUIRED COMPONENTS Core)
     list(APPEND KF_LIBS KF5::I18n KF5::JobWidgets)
     set(KF_VERSION ${KF5I18n_VERSION})
+    set(KIO_CORE_TARGET KF5::KIOCore)
+    set(OVERLAY_NAMESPACE "kf5/overlayicon")
+    if(QT5_INSTALL_PLUGINS)
+        set(OVERLAY_INSTALL_DIR "${QT5_INSTALL_PLUGINS}/${OVERLAY_NAMESPACE}")
+    else()
+        set(OVERLAY_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/qt5/plugins/${OVERLAY_NAMESPACE}")
+    endif()
 else()
     find_package(KF6I18n REQUIRED)
     find_package(KF6JobWidgets REQUIRED)
+    find_package(KF6KIO REQUIRED)
+    find_package(Qt6 REQUIRED COMPONENTS Core)
     list(APPEND KF_LIBS KF6::I18n KF6::JobWidgets)
     set(KF_VERSION ${KF6I18n_VERSION})
+    set(KIO_CORE_TARGET KF6::KIOCore)
+    set(OVERLAY_NAMESPACE "kf6/overlayicon")
+    if(QT6_INSTALL_PLUGINS)
+        set(OVERLAY_INSTALL_DIR "${QT6_INSTALL_PLUGINS}/${OVERLAY_NAMESPACE}")
+    else()
+        set(OVERLAY_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/qt6/plugins/${OVERLAY_NAMESPACE}")
+    endif()
 endif()
 
 set(TARGET_NAME mediacopier-plasma)
@@ -48,4 +68,20 @@ endif()
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${SERVICE_MENU_FILE_NAME}"
     DESTINATION "${INSTALL_SERVICE_MENUS_DIR}")
 
+set(OVERLAY_TARGET_NAME mediacopier-overlayicon)
+
+add_library(${OVERLAY_TARGET_NAME} MODULE
+    "source/MediaCopierOverlayPlugin.cpp"
+    "${CMAKE_SOURCE_DIR}/lib/core/source/file_status.cpp")
+
+target_include_directories(${OVERLAY_TARGET_NAME} PRIVATE
+    "${CMAKE_SOURCE_DIR}/lib/core/include")
+
+target_link_libraries(${OVERLAY_TARGET_NAME} PRIVATE
+    ${KIO_CORE_TARGET})
+
+install(TARGETS ${OVERLAY_TARGET_NAME}
+    DESTINATION "${OVERLAY_INSTALL_DIR}")
+
 register_code_format_target(${TARGET_NAME})
+register_code_format_target(${OVERLAY_TARGET_NAME})

@@ -9,6 +9,7 @@ target_sources(${TARGET_NAME} PRIVATE
     "test_file_info_classes.cpp"
     "test_file_operation_classes.cpp"
     "test_file_register.cpp"
+    "test_file_status.cpp"
     "test_persistent_config.cpp")
 
 target_link_libraries(${TARGET_NAME} PRIVATE

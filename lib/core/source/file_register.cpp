@@ -18,6 +18,7 @@
 
 #include <mediacopier/duplicate_check.hpp>
 #include <mediacopier/error.hpp>
+#include <mediacopier/file_status.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -67,6 +68,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
         if (fs::exists(dest)) {
             if (is_duplicate(file->path(), dest)) {
                 spdlog::info("Ignoring already existing: {0} (same as {1})", file->path().filename().string(), dest.filename().string());
+                set_file_status(file->path(), FileStatus::Duplicate);
                 return {};
             }
             // possible duplicate of 'dest'
@@ -78,6 +80,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
         if (item != m_register.end()) {
             if (is_duplicate(file->path(), item->second->path())) {
                 spdlog::info("Ignoring duplicate: {0} (same as {1})", file->path().filename().string(), item->second->path().filename().string());
+                set_file_status(file->path(), FileStatus::Duplicate);
                 return {};
             }
             // possible duplicate of 'item' at destination
@@ -87,6 +90,7 @@ auto FileRegister::add(FileInfoPtr file) -> std::optional<fs::path>
         }
         if (conflicts.size() > 0) {
             m_conflicts[dest.string()] = std::move(conflicts);
+            m_sources[dest.string()] = file->path();
         }
         m_register[dest.string()] = std::move(file);
         return { std::move(dest) };
@@ -105,6 +109,11 @@ auto FileRegister::removeDuplicates() -> void
                 fs::remove(path, err);
                 if (err) {
                     spdlog::warn("Failed to remove the duplicate file: ({0}): {1}", path, err.message());
+                } else {
+                    const auto source = m_sources.find(path);
+                    if (source != m_sources.end()) {
+                        set_file_status(source->second, FileStatus::Duplicate);
+                    }
                 }
                 break;
             }

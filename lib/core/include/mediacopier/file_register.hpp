@@ -41,6 +41,7 @@ private:
     bool m_useUtc;
     FileInfoMap m_register;
     FileConflictMap m_conflicts;
+    std::unordered_map<std::string, std::filesystem::path> m_sources;
 };
 
 } // namespace mediacopier
