@@ -10,6 +10,25 @@ It supports a wide variety of image and videos formats (including raw) and featu
 <!--gif was created with 'ffmpeg -i capture.mp4 -r 10 -vf "fps=10,scale=830:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 demo.gif'-->
 The app focusses on integrating into the native [KDE Plasma](https://kde.org/de/) notification system and context menu ([screenshot](https://i.imgur.com/LF5Vnj9.mp4)) but other desktop environments are supported as well.
 
+### :white_check_mark: File status in Dolphin
+
+The Plasma integration ships a Dolphin overlay icon plugin. After an operation, processed files are tagged with the `user.mediacopier.status` extended attribute so their result is visible directly in Dolphin:
+
+| Status        | Overlay                  |
+|---------------|--------------------------|
+| `copied`      | green check mark         |
+| `duplicate`   | information symbol       |
+| `error`       | red cross                |
+| `unsupported` | warning symbol           |
+
+By default only the source files are tagged. Configure with `-DMARK_DESTINATION_FILES=ON` to also tag successfully copied files in the destination directory. Restart Dolphin so it picks up the plugin, then refresh the view (F5) if it was already open during the operation. The status requires a filesystem with extended attribute support.
+
+When installing to a prefix other than `/usr`, add the plugin directory to `QT_PLUGIN_PATH` before starting Dolphin, for example:
+
+```sh
+QT_PLUGIN_PATH=/usr/local/lib/qt6/plugins dolphin
+```
+
 Valid format specifiers for the renaming pattern can be found [here](https://en.cppreference.com/w/cpp/chrono/system_clock/formatter.html).
 
 ## Getting Started
@@ -39,6 +58,7 @@ Dependencies:
 - CLI11 (https://github.com/CLIUtils/CLI11)
 - Qt5 or Qt6 (https://doc.qt.io/qt-6/)
 - KJobWidgets (https://api.kde.org/kjobwidgets-index.html)
+- KIO (https://api.kde.org/kio-index.html) for the Dolphin overlay icon plugin
 
 For openSUSE, these dependencies can be installed via the following commands
 
@@ -75,6 +95,7 @@ Available cmake flags
 | `ENABLE_TEST`          | Enable test targets                              | `OFF`   |
 | `ENABLE_TEST_COVERAGE` | Enable test and coverage targets                 | `OFF`   |
 | `ENABLE_CLANG_TIDY`    | Enable static code analysis with `clang-tidy`    | `OFF`   |
+| `MARK_DESTINATION_FILES` | Mark copied files in the destination directory | `OFF`   |
 
 ### :factory: Containerized Build Environment (for development purposes)
 

@@ -18,6 +18,7 @@
 
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
+#include <mediacopier/file_status.hpp>
 #include <mediacopier/operation_copy_jpeg.hpp>
 
 namespace fs = std::filesystem;
@@ -45,6 +46,7 @@ public:
         // both srcPath are binary equal, file should be ignored
         auto path2 = dst.add(file);
         ASSERT_FALSE(path2.has_value());
+        ASSERT_EQ(get_file_status(srcPath), FileStatus::Duplicate);
 
         FileOperationCopyJpeg copy { path1.value() };
         file->accept(copy);
@@ -70,6 +72,7 @@ TEST_F(FileRegisterTests, multipleAddSameSource)
     // binary equal destination already exists, file should be ignored
     auto path = dst.add(to_file_info_ptr(srcPath));
     ASSERT_FALSE(path.has_value());
+    ASSERT_EQ(get_file_status(srcPath), FileStatus::Duplicate);
 }
 
 TEST_F(FileRegisterTests, multipleAddDifferentSource)
@@ -102,6 +105,43 @@ TEST_F(FileRegisterTests, multipleAddDifferentSource)
     // file is added because image at source is different
     auto path2 = dst.add(to_file_info_ptr(srcPathMod));
     ASSERT_TRUE(path2.has_value());
+}
+
+TEST_F(FileRegisterTests, removeDuplicateMarksSource)
+{
+    ImageTestFile img;
+    img.convert(workdir() / "test.jpg");
+    img.setExif("DateTimeOriginal", "2019-02-05 12:14:32");
+    img.setExif("SubSecTimeOriginal", "42");
+    img.rotate(Rotation::R270);
+    img.setExif(FileInfoImageJpeg::Orientation::ROT_270);
+
+    ImageTestFile img2;
+    img2.m_path = img.path();
+    img2.copy(workdir() / "test2.jpg");
+
+    FileRegister dst { dstdir(), DEFAULT_PATTERN, false };
+
+    auto file1 = to_file_info_ptr(img.path());
+    auto path1 = dst.add(file1);
+    ASSERT_TRUE(path1.has_value());
+    {
+        FileOperationCopyJpeg copy { path1.value() };
+        file1->accept(copy);
+    }
+
+    auto file2 = to_file_info_ptr(img2.path());
+    auto path2 = dst.add(file2);
+    ASSERT_TRUE(path2.has_value());
+    {
+        FileOperationCopyJpeg copy { path2.value() };
+        file2->accept(copy);
+    }
+
+    dst.removeDuplicates();
+
+    ASSERT_FALSE(fs::exists(path2.value()));
+    ASSERT_EQ(get_file_status(img2.path()), FileStatus::Duplicate);
 }
 
 } // namespace mediacopier::test

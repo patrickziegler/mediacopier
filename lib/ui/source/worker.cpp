@@ -18,6 +18,7 @@
 
 #include <mediacopier/file_info_factory.hpp>
 #include <mediacopier/file_register.hpp>
+#include <mediacopier/file_status.hpp>
 #include <mediacopier/operation_copy.hpp>
 #include <mediacopier/operation_move.hpp>
 #ifndef NDEBUG
@@ -66,11 +67,14 @@ auto is_operation_cancelled()
 auto media_files(const fs::path& path)
 {
     static auto convert = [](const fs::directory_entry& entry) -> mc::FileInfoPtr {
-        if (fs::is_regular_file(entry)) {
-            return mc::to_file_info_ptr(entry.path());
-        } else {
+        if (!fs::is_regular_file(entry)) {
             return nullptr;
         }
+        auto file = mc::to_file_info_ptr(entry.path());
+        if (file == nullptr) {
+            mc::set_file_status(entry.path(), mc::FileStatus::Unsupported);
+        }
+        return file;
     };
 
     return std::ranges::subrange(
@@ -148,6 +152,11 @@ void Worker::kill()
 
 void Worker::exec()
 {
+#ifndef NDEBUG
+    const bool markResults = m_config->getCommand() != Config::Command::Sim;
+#else
+    const bool markResults = true;
+#endif
     ExecFuncPtr execute = nullptr;
     switch (m_config->getCommand()) {
     case Config::Command::Copy:
@@ -188,9 +197,22 @@ void Worker::exec()
                 spdlog::debug("Processing: {0} -> {1}", file->path().string(), dest.value().string());
                 Q_EMIT updateDescription({ file->path(), dest.value() });
                 execute(dest.value(), file);
+                if (markResults) {
+                    if (fs::exists(dest.value())) {
+                        mc::set_file_status(file->path(), mc::FileStatus::Copied);
+#ifdef MEDIACOPIER_MARK_DESTINATION_FILES
+                        mc::set_file_status(dest.value(), mc::FileStatus::Copied);
+#endif
+                    } else {
+                        mc::set_file_status(file->path(), mc::FileStatus::Error);
+                    }
+                }
             }
         } catch (const std::exception& err) {
             spdlog::error(err.what());
+            if (markResults && file != nullptr) {
+                mc::set_file_status(file->path(), mc::FileStatus::Error);
+            }
         }
     }
 

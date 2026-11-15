@@ -14,8 +14,13 @@ option(USE_QT5 "Build against Qt5 libraries (legacy)" OFF)
 option(ENABLE_TEST "Enable test targets" OFF)
 option(ENABLE_TEST_COVERAGE "Enable test and coverage targets" OFF)
 option(ENABLE_CLANG_TIDY "Enable static code analysis with clang-tidy" OFF)
+option(MARK_DESTINATION_FILES "Mark copied files in the destination directory" OFF)
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+if(${MARK_DESTINATION_FILES})
+    add_compile_definitions(MEDIACOPIER_MARK_DESTINATION_FILES=1)
+endif()
 
 include(ClangFormat)
 
